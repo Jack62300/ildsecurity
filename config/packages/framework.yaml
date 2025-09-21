@@ -2,13 +2,17 @@
 framework:
     secret: '%env(APP_SECRET)%'
     default_locale: fr
+    trusted_proxies: '%env(TRUSTED_PROXIES)%'
+    trusted_headers: ['x-forwarded-for','x-forwarded-proto','x-forwarded-port','x-forwarded-host']
     translator:
         enabled: true
         default_path: '%kernel.project_dir%/translations'
         fallbacks:
             - fr
     # Note that the session will be started ONLY if you read or write from it.
-    session: true
+    session:
+        cookie_secure: auto
+        cookie_samesite: lax
 
     #esi: true
     #fragments: true
