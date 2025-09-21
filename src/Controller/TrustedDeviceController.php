@@ -90,66 +90,6 @@ class TrustedDeviceController extends AbstractController
         $this->addFlash('success', 'Demande envoyée (MAIL_TRUSTED_DEVICE).');
         return $this->redirectToRoute('devices_index');
     }
-
-    #[Route('/_mail-test', name: '_mail_test')]
-    public function mailTest(\Symfony\Component\Mailer\MailerInterface $mailer): Response
-    {
-        $to = getenv('MAIL_TRUSTED_DEVICE') ?: 'devunity62400@gmail.com';
-        try {
-            $email = (new \Symfony\Component\Mime\Email())
-                ->from(getenv('MAIL_FROM') ?: 'contact@toplegends.fr')
-                ->to($to)
-                ->subject('Test SMTP LWS')
-                ->text('Bonjour, test SMTP depuis Symfony.');
-
-            $mailer->send($email);
-            return new Response('OK: envoyé à '.$to);
-        } catch (\Throwable $e) {
-            return new Response('Mailer error: '.$e->getMessage(), 500);
-        }
-    }
-
-    #[Route('/_mail-diag', name: '_mail_diag')]
-    public function __invoke(): Response
-    {
-        $dsn   = getenv('MAILER_DSN') ?: '';
-        $from  = getenv('MAIL_FROM') ?: '';
-        $to    = getenv('MAIL_TRUSTED_DEVICE') ?: 'devunity62400@gmail.com';
-
-        // Masque le mot de passe dans le DSN pour affichage
-        $dsnMasked = preg_replace('#(://[^:]+:)([^@]+)(@)#', '$1********$3', $dsn ?? '');
-
-        $out = [];
-        $out[] = 'MAILER_DSN = '.$dsnMasked;
-        $out[] = 'MAIL_FROM  = '.$from;
-        $out[] = 'TO (test)  = '.$to;
-
-        try {
-            $transport = Transport::fromDsn($dsn);
-            // Teste la connexion/auth TLS avant l’envoi
-            $transport->start();
-            $out[] = '[OK] transport->start()';
-        } catch (\Throwable $e) {
-            $out[] = '[ERR] transport->start(): '.$e->getMessage();
-            return new Response(implode("\n", $out), 500, ['Content-Type' => 'text/plain; charset=UTF-8']);
-        }
-
-        try {
-            $mailer = new Mailer($transport);
-            $email = (new Email())
-                ->from($from ?: 'contact@toplegends.fr') // ← DOIT être l’adresse de la boîte LWS
-                ->to($to)
-                ->subject('Diag SMTP depuis Symfony')
-                ->text("Test simple.\nHeure=".date('c'));
-
-            $mailer->send($email);
-            $out[] = '[OK] mailer->send()';
-            return new Response(implode("\n", $out), 200, ['Content-Type' => 'text/plain; charset=UTF-8']);
-        } catch (\Throwable $e) {
-            $out[] = '[ERR] mailer->send(): '.$e->getMessage();
-            return new Response(implode("\n", $out), 500, ['Content-Type' => 'text/plain; charset=UTF-8']);
-        }
-    }
 }
 
 

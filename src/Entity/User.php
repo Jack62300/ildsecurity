@@ -62,5 +62,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function getAgence(): ?string { return $this->agence; }
     public function setAgence(string $agence): self { $this->agence = $agence; return $this; }
 
-    public function eraseCredentials(): void {}
+    #[\Deprecated(reason: 'eraseCredentials() n’est plus utilisé depuis Symfony 7.3')]
+    public function eraseCredentials(): void
+    {
+        // plus rien à faire ici
+    }
 }
