@@ -1,0 +1,12 @@
+{% extends 'base.html.twig' %}
+{% block title %}Validation appareil{% endblock %}
+{% block body %}
+<div class="container py-4">
+  {% if success %}
+    <div class="alert alert-success">Appareil autorisé. Vous pouvez vous connecter.</div>
+  {% else %}
+    <div class="alert alert-danger">Lien invalide ou expiré.</div>
+  {% endif %}
+  <a class="btn btn-primary" href="{{ path('app_login') }}">Aller à la connexion</a>
+</div>
+{% endblock %}

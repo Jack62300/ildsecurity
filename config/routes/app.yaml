@@ -1,0 +1,11 @@
+# app_shell:
+#   path: /app
+#   controller: App\Controller\ApiReadController::index
+#   schemes: [http, https]
+
+# app_shell_catchall:
+#   path: /app/{path}
+#   controller: App\Controller\ApiReadController::catchAll
+#   requirements:
+#     path: .+
+#   schemes: [http, https]

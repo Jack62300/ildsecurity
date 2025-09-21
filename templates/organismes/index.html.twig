@@ -1,0 +1,387 @@
+{% extends 'base.html.twig' %}
+{% block title %}Organismes{% endblock %}
+
+{% block stylesheets %}
+  {{ parent() }}
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+
+  <style>
+    /* ========== VARIABLES CSS MODERNES ========== */
+    :root {
+      --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      --card-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+      --card-shadow-hover: 0 15px 40px rgba(0, 0, 0, 0.12);
+      --border-radius: 12px;
+      --border-radius-lg: 16px;
+      --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      --glass-bg: rgba(255, 255, 255, 0.95);
+      --glass-border: rgba(255, 255, 255, 0.2);
+    }
+
+    /* ========== HEADER SECTION ========== */
+    .page-header {
+      background: var(--primary-gradient);
+      border-radius: var(--border-radius-lg);
+      color: white;
+      padding: 2rem;
+      margin-bottom: 2rem;
+      position: relative;
+      overflow: hidden;
+    }
+    .page-header::before {
+      content: '';
+      position: absolute; top: 0; right: 0; width: 100%; height: 100%;
+      background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="80" cy="20" r="20" fill="rgba(255,255,255,0.1)"/><circle cx="90" cy="60" r="15" fill="rgba(255,255,255,0.08)"/><circle cx="70" cy="80" r="10" fill="rgba(255,255,255,0.06)"/></svg>');
+      background-size: 200px 200px; opacity: 0.3;
+    }
+    .page-header h1 { font-size: 2.5rem; font-weight: 700; margin-bottom: .5rem; position: relative; z-index: 1; }
+    .page-header .subtitle { opacity: .9; font-size: 1.1rem; position: relative; z-index: 1; }
+
+    .btn-new-organisme {
+      position: relative; z-index: 1;
+      background: rgba(255,255,255,.15);
+      border: 2px solid rgba(255,255,255,.3);
+      color: #fff; font-weight: 600; border-radius: var(--border-radius);
+      backdrop-filter: blur(10px);
+      transition: var(--transition);
+    }
+    .btn-new-organisme:hover { background: rgba(255,255,255,.25); border-color: rgba(255,255,255,.5); color:#fff; transform: translateY(-2px); }
+
+    /* ========== BARRE DE RECHERCHE ========== */
+    .search-container { position: relative; margin-bottom: 2rem; }
+    .search-input-wrapper { position: relative; max-width: 500px; margin: 0 auto; }
+    .search-input {
+      border: none; border-radius: var(--border-radius-lg);
+      padding: 1rem 1rem 1rem 3rem; font-size: 1.1rem;
+      background: white; box-shadow: var(--card-shadow);
+      transition: var(--transition); width: 100%;
+    }
+    .search-input:focus { box-shadow: var(--card-shadow-hover); transform: translateY(-2px); outline: none; border: 2px solid #667eea; }
+    .search-icon { position: absolute; left: 1rem; top: 50%; transform: translateY(-50%); color:#6c757d; font-size:1.2rem; z-index:2; }
+    .search-clear { position: absolute; right: 1rem; top: 50%; transform: translateY(-50%); background: none; border: none; color:#6c757d; font-size:1.2rem; cursor: pointer; opacity: 0; transition: var(--transition); }
+    .search-clear.show { opacity: 1; }
+    .search-clear:hover { color: #dc3545; }
+
+    /* ========== MESSAGES FLASH ========== */
+    .flash-messages {
+      margin-bottom: 2rem;
+    }
+    .alert-modern {
+      border: none;
+      border-radius: var(--border-radius);
+      padding: 1rem 1.5rem;
+      font-weight: 500;
+      box-shadow: var(--card-shadow);
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      margin-bottom: 1rem;
+      animation: slideInDown 0.5s ease-out;
+    }
+    .alert-success {
+      background: linear-gradient(135deg, rgba(34, 197, 94, 0.1), rgba(22, 163, 74, 0.05));
+      color: #15803d;
+      border-left: 4px solid #22c55e;
+    }
+    .alert-danger {
+      background: linear-gradient(135deg, rgba(248, 113, 113, 0.1), rgba(239, 68, 68, 0.05));
+      color: #dc2626;
+      border-left: 4px solid #ef4444;
+    }
+    @keyframes slideInDown {
+      from { opacity: 0; transform: translateY(-20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ========== TABLEAU (Desktop) ========== */
+    .modern-table-container {
+      background: white;
+      border-radius: var(--border-radius-lg);
+      box-shadow: var(--card-shadow);
+      overflow: visible !important;
+      margin-bottom: 2rem;
+    }
+    .modern-table { margin: 0; border: none; }
+    .modern-table thead th {
+      background: linear-gradient(135deg,#f8fafc 0%,#e2e8f0 100%);
+      color:#2d3748; font-weight:700; font-size:.9rem; text-transform: uppercase; letter-spacing:.5px;
+      border:none; padding:1.25rem 1rem;
+    }
+    .modern-table tbody tr { transition: var(--transition); border: none; }
+    .modern-table tbody tr:hover { background:#f8fafc; transform: none !important; }
+    .modern-table tbody td { padding:1rem; border-top:1px solid rgba(0,0,0,.05); vertical-align: middle; }
+
+    .organisme-avatar { 
+      width:50px; height:50px; border-radius: var(--border-radius); 
+      display: flex; align-items: center; justify-content: center;
+      background: var(--primary-gradient);
+      color: white; font-size: 1.2rem; font-weight: 700;
+      box-shadow: 0 4px 12px rgba(0,0,0,.1); transition: var(--transition); 
+    }
+    .organisme-avatar:hover { transform: scale(1.1); }
+    .organisme-name { font-weight:600; font-size:1.1rem; color:#2d3748; }
+    .organisme-id { font-size:.8rem; color:#6c757d; font-weight:500; }
+
+    /* ========== DROPDOWN ACTIONS ========== */
+    .actions-dropdown { position: relative; }
+    .actions-dropdown .dropdown-toggle {
+      border-radius: var(--border-radius);
+      border: 2px solid #e2e8f0; background:white; color:#4a5568; font-weight:600; transition: var(--transition);
+    }
+    .actions-dropdown .dropdown-toggle:hover { border-color:#667eea; color:#667eea; transform: translateY(-2px); }
+
+    .dropdown-menu {
+      border: none; border-radius: var(--border-radius);
+      box-shadow: var(--card-shadow-hover);
+      padding: .5rem 0;
+      z-index: 2001 !important;
+    }
+    .dropdown-item { padding:.75rem 1.5rem; font-weight:500; transition: var(--transition); }
+    .dropdown-item:hover { background:#f8fafc; color:#667eea; transform: translateX(5px); }
+    .dropdown-item.text-danger:hover { background:#fef2f2; color:#dc2626; }
+
+    /* ========== CARTES MOBILES ========== */
+    .organisme-card { background:#fff; border-radius: var(--border-radius-lg); box-shadow: var(--card-shadow); margin-bottom:1.5rem; overflow:hidden; transition: var(--transition); }
+    .organisme-card:hover { box-shadow: var(--card-shadow-hover); transform: translateY(-5px); }
+    .organisme-card-header { display:flex; align-items:center; gap:1rem; padding:1.5rem; border-bottom:1px solid rgba(0,0,0,.05); }
+    .organisme-card-avatar { 
+      width:60px; height:60px; border-radius: var(--border-radius); 
+      display: flex; align-items: center; justify-content: center;
+      background: var(--primary-gradient);
+      color: white; font-size: 1.5rem; font-weight: 700;
+      box-shadow: 0 4px 12px rgba(0,0,0,.1); 
+    }
+    .organisme-card-info h5 { margin:0 0 .25rem 0; font-weight:700; color:#2d3748; }
+    .organisme-card-actions { display:flex; gap:.5rem; padding:1rem 1.5rem; }
+    .btn-card-action { flex:1; border-radius: var(--border-radius); font-weight:600; transition: var(--transition); display:flex; align-items:center; justify-content:center; gap:.5rem; }
+    .btn-card-action:hover { transform: translateY(-2px); }
+
+    /* ========== RESPONSIVE ========== */
+    @media (max-width: 768px) {
+      .page-header { padding: 1.5rem; text-align: center; }
+      .page-header h1 { font-size: 2rem; }
+      .modern-table-container { display: none; }
+      .search-input-wrapper { max-width: 100%; }
+    }
+    @media (min-width: 769px) { .mobile-cards { display: none; } }
+
+    /* ========== ÉTAT VIDE ========== */
+    .empty-state { text-align:center; padding:4rem 2rem; background:#fff; border-radius: var(--border-radius-lg); box-shadow: var(--card-shadow); }
+    .empty-state-icon { font-size:4rem; color:#a0aec0; margin-bottom:1rem; }
+    .empty-state h4 { color:#2d3748; font-weight:600; margin-bottom:.5rem; }
+    .empty-state p { color:#6c757d; margin-bottom:0; }
+  </style>
+{% endblock %}
+
+{% block body %}
+<div class="container-fluid px-4 py-3">
+
+  {# ========== HEADER MODERNE ========== #}
+  <div class="page-header">
+    <div class="d-flex justify-content-between align-items-center">
+      <div>
+        <h1>Gestion des Organismes</h1>
+        <p class="subtitle mb-0">{{ items|length }} organisme{{ items|length > 1 ? 's' : '' }} enregistré{{ items|length > 1 ? 's' : '' }}</p>
+      </div>
+      <a href="{{ path('organisme_new') }}" class="btn btn-new-organisme">
+        <i class="bi bi-plus-lg me-2"></i>Nouvel Organisme
+      </a>
+    </div>
+  </div>
+
+  {# ========== MESSAGES FLASH ========== #}
+  <div class="flash-messages">
+    {% for m in app.flashes('organisme_success') %}
+      <div class="alert alert-success alert-modern">
+        <i class="bi bi-check-circle-fill"></i>
+        {{ m }}
+      </div>
+    {% endfor %}
+    {% for m in app.flashes('organisme_error') %}
+      <div class="alert alert-danger alert-modern">
+        <i class="bi bi-exclamation-triangle-fill"></i>
+        {{ m }}
+      </div>
+    {% endfor %}
+  </div>
+
+
+
+  {% if items is empty %}
+    <div class="empty-state">
+      <i class="bi bi-building empty-state-icon"></i>
+      <h4>Aucun organisme trouvé</h4>
+      <p>Commencez par ajouter votre premier organisme pour voir la liste ici</p>
+    </div>
+  {% else %}
+
+    {# ========== TABLEAU (Desktop) ========== #}
+    <div class="modern-table-container">
+      <table class="table modern-table">
+        <thead>
+          <tr>
+            <th style="width: 80px;">Avatar</th>
+            <th>Organisme</th>
+            <th style="width: 200px;" class="text-center">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+        {% for o in items %}
+          <tr data-organisme-id="{{ o.id }}">
+            <td>
+              <div class="organisme-avatar">
+                {{ o.name|first|upper }}
+              </div>
+            </td>
+            <td>
+              <div class="organisme-name">{{ o.name }}</div>
+              <div class="organisme-id">#{{ o.id }}</div>
+            </td>
+            <td class="text-center">
+              <div class="dropdown actions-dropdown">
+                <button class="btn btn-sm dropdown-toggle"
+                        type="button"
+                        data-bs-toggle="dropdown"
+                        data-bs-boundary="viewport"
+                        data-bs-offset="0,8">
+                  <i class="bi bi-three-dots"></i>
+                </button>
+                <ul class="dropdown-menu dropdown-menu-end">
+                  <li>
+                    <a class="dropdown-item" href="{{ path('organisme_edit', {id: o.id}) }}">
+                      <i class="bi bi-pencil me-2"></i>Modifier
+                    </a>
+                  </li>
+                  <li><hr class="dropdown-divider"></li>
+                  <li>
+                    <form method="post" action="{{ path('organisme_delete', {id: o.id}) }}" 
+                          onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer cet organisme ?');" class="m-0">
+                      <input type="hidden" name="_token" value="{{ csrf_token('delete_organisme_' ~ o.id) }}">
+                      <button class="dropdown-item text-danger" type="submit">
+                        <i class="bi bi-trash me-2"></i>Supprimer
+                      </button>
+                    </form>
+                  </li>
+                </ul>
+              </div>
+            </td>
+          </tr>
+        {% endfor %}
+        </tbody>
+      </table>
+    </div>
+
+    {# ========== CARTES MOBILES ========== #}
+    <div class="mobile-cards">
+      {% for o in items %}
+        <div class="organisme-card" data-organisme-id="{{ o.id }}">
+          <div class="organisme-card-header">
+            <div class="organisme-card-avatar">
+              {{ o.name|first|upper }}
+            </div>
+            <div class="organisme-card-info flex-grow-1">
+              <h5>{{ o.name }}</h5>
+              <p class="text-muted small mb-0">
+                <i class="bi bi-hash me-1"></i>Organisme #{{ o.id }}
+              </p>
+            </div>
+          </div>
+          <div class="organisme-card-actions">
+            <a href="{{ path('organisme_edit', {id: o.id}) }}" class="btn btn-primary btn-card-action">
+              <i class="bi bi-pencil"></i>Modifier
+            </a>
+            <form method="post" action="{{ path('organisme_delete', {id: o.id}) }}" 
+                  onsubmit="return confirm('Supprimer cet organisme ?');" 
+                  class="d-inline flex-fill">
+              <input type="hidden" name="_token" value="{{ csrf_token('delete_organisme_' ~ o.id) }}">
+              <button class="btn btn-outline-danger btn-card-action w-100">
+                <i class="bi bi-trash"></i>Supprimer
+              </button>
+            </form>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+
+  {% endif %}
+</div>
+
+{# ========== JAVASCRIPT ========== #}
+<script>
+(function() {
+  const input = document.getElementById('organisme-search');
+  const clearBtn = document.getElementById('search-clear');
+  if (!input || !clearBtn) return;
+
+  const showClear = () => clearBtn.classList.add('show');
+  const hideClear = () => clearBtn.classList.remove('show');
+
+  function performSearch(query) {
+    const organismes = document.querySelectorAll('.modern-table tbody tr, .organisme-card');
+    
+    organismes.forEach(organisme => {
+      const text = organisme.textContent.toLowerCase();
+      if (text.includes(query.toLowerCase())) {
+        organisme.style.display = '';
+      } else {
+        organisme.style.display = 'none';
+      }
+    });
+  }
+
+  input.addEventListener('input', function() {
+    const q = this.value.trim();
+    if (!q) { 
+      hideClear(); 
+      // Afficher tous les organismes
+      const organismes = document.querySelectorAll('.modern-table tbody tr, .organisme-card');
+      organismes.forEach(organisme => organisme.style.display = '');
+      return; 
+    }
+    showClear();
+    performSearch(q);
+  });
+
+  input.addEventListener('focus', function() {
+    if (this.value.trim()) { showClear(); }
+  });
+
+  clearBtn.addEventListener('click', function() {
+    input.value = ''; 
+    input.focus(); 
+    hideClear();
+    // Afficher tous les organismes
+    const organismes = document.querySelectorAll('.modern-table tbody tr, .organisme-card');
+    organismes.forEach(organisme => organisme.style.display = '');
+  });
+
+  input.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') { 
+      // Afficher tous les organismes
+      const organismes = document.querySelectorAll('.modern-table tbody tr, .organisme-card');
+      organismes.forEach(organisme => organisme.style.display = '');
+      this.blur(); 
+    }
+  });
+
+  // Animation automatique de suppression des messages flash après 5 secondes
+  const flashMessages = document.querySelectorAll('.alert-modern');
+  flashMessages.forEach((alert, index) => {
+    setTimeout(() => {
+      alert.style.animation = 'slideOutUp 0.5s ease-in forwards';
+      setTimeout(() => alert.remove(), 500);
+    }, 5000 + (index * 500)); // Décalage pour plusieurs messages
+  });
+})();
+
+// Animation de sortie pour les messages flash
+const style = document.createElement('style');
+style.textContent = `
+  @keyframes slideOutUp {
+    from { opacity: 1; transform: translateY(0); }
+    to { opacity: 0; transform: translateY(-20px); }
+  }
+`;
+document.head.appendChild(style);
+</script>
+{% endblock %}

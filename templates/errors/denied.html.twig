@@ -1,0 +1,29 @@
+{# templates/errors/denied.html.twig #}
+{% extends 'base.html.twig' %}
+
+{% block title %}Accès refusé{% endblock %}
+
+{% block body %}
+<div class="deny-wrap">
+  <div class="deny-card">
+   <div class="deny-illu" aria-hidden="true">
+  <div class="logo-wrapper">
+    <img class="logo" src="{{ asset('assets/images/logo.png') }}" alt="Logo">
+  </div>
+</div>
+
+    <div class="deny-content">
+      <h1>Sorry!</h1>
+      <p class="lead">You are not authorized to access.</p>
+
+      <p class="sub">
+        Votre IP : <strong>{{ ip|default('—') }}</strong>
+      </p>
+
+      <p class="actions">
+        <a class="link" href="{{ path('app_index') is defined ? path('app_index') : '/' }}">CONNEXION</a>
+      </p>
+    </div>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,523 @@
+{# templates/index/index.html.twig #}
+{% extends 'base.html.twig' %}
+
+{% block title %}Clients{% endblock %}
+
+{% block stylesheets %}
+  {{ parent() }}
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+
+  <style>
+    /* ========== VARIABLES CSS MODERNES ========== */
+    :root {
+      --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      --card-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+      --card-shadow-hover: 0 15px 40px rgba(0, 0, 0, 0.12);
+      --border-radius: 12px;
+      --border-radius-lg: 16px;
+      --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      --glass-bg: rgba(255, 255, 255, 0.95);
+      --glass-border: rgba(255, 255, 255, 0.2);
+    }
+
+    /* ========== HEADER SECTION ========== */
+    .page-header {
+      background: var(--primary-gradient);
+      border-radius: var(--border-radius-lg);
+      color: white;
+      padding: 2rem;
+      margin-bottom: 2rem;
+      position: relative;
+      overflow: hidden;
+    }
+    .page-header::before {
+      content: '';
+      position: absolute; top: 0; right: 0; width: 100%; height: 100%;
+      background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="80" cy="20" r="20" fill="rgba(255,255,255,0.1)"/><circle cx="90" cy="60" r="15" fill="rgba(255,255,255,0.08)"/><circle cx="70" cy="80" r="10" fill="rgba(255,255,255,0.06)"/></svg>');
+      background-size: 200px 200px; opacity: 0.3;
+    }
+    .page-header h1 { font-size: 2.5rem; font-weight: 700; margin-bottom: .5rem; position: relative; z-index: 1; }
+    .page-header .subtitle { opacity: .9; font-size: 1.1rem; position: relative; z-index: 1; }
+
+    .btn-new-client {
+      position: relative; z-index: 1;
+      background: rgba(255,255,255,.15);
+      border: 2px solid rgba(255,255,255,.3);
+      color: #fff; font-weight: 600; border-radius: var(--border-radius);
+      backdrop-filter: blur(10px);
+      transition: var(--transition);
+    }
+    .btn-new-client:hover { background: rgba(255,255,255,.25); border-color: rgba(255,255,255,.5); color:#fff; transform: translateY(-2px); }
+
+    /* ========== BARRE DE RECHERCHE ========== */
+    .search-container { position: relative; margin-bottom: 2rem; }
+    .search-input-wrapper { position: relative; max-width: 500px; margin: 0 auto; }
+    .search-input {
+      border: none; border-radius: var(--border-radius-lg);
+      padding: 1rem 1rem 1rem 3rem; font-size: 1.1rem;
+      background: white; box-shadow: var(--card-shadow);
+      transition: var(--transition); width: 100%;
+    }
+    .search-input:focus { box-shadow: var(--card-shadow-hover); transform: translateY(-2px); outline: none; border: 2px solid #667eea; }
+    .search-icon { position: absolute; left: 1rem; top: 50%; transform: translateY(-50%); color:#6c757d; font-size:1.2rem; z-index:2; }
+    .search-clear { position: absolute; right: 1rem; top: 50%; transform: translateY(-50%); background: none; border: none; color:#6c757d; font-size:1.2rem; cursor: pointer; opacity: 0; transition: var(--transition); }
+    .search-clear.show { opacity: 1; }
+    .search-clear:hover { color: #dc3545; }
+
+    .search-results {
+      position: absolute; top: calc(100% + .8rem); left: 0; right: 0;
+      background: var(--glass-bg); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+      border: 1px solid var(--glass-border); border-radius: var(--border-radius-lg);
+      box-shadow: var(--card-shadow-hover);
+      z-index: 1050;              /* IMPORTANT pour rester sous le dropdown (qui sera au-dessus) */
+      max-height: 450px; overflow: hidden;
+      transform: translateY(-10px); opacity: 0; animation: slideIn .3s ease-out forwards;
+    }
+    @keyframes slideIn { to { transform: translateY(0); opacity: 1; } }
+
+    .search-results { overflow-y: auto; }
+    .search-results::-webkit-scrollbar { width: 6px; }
+    .search-results::-webkit-scrollbar-track { background: rgba(0,0,0,.05); border-radius: 3px; }
+    .search-results::-webkit-scrollbar-thumb { background: linear-gradient(180deg,#667eea,#764ba2); border-radius: 3px; }
+    .search-results::-webkit-scrollbar-thumb:hover { background: linear-gradient(180deg,#764ba2,#667eea); }
+
+    .search-result-item {
+      padding: 1.2rem 1.5rem; border-bottom: 1px solid rgba(0,0,0,.06);
+      cursor: pointer; transition: all .4s cubic-bezier(.4,0,.2,1);
+      display: flex; align-items: center; gap: 1.2rem; position: relative; overflow: hidden;
+      animation: fadeInUp .3s ease-out both;
+    }
+    .search-result-item:nth-child(1){animation-delay:.05s}
+    .search-result-item:nth-child(2){animation-delay:.1s}
+    .search-result-item:nth-child(3){animation-delay:.15s}
+    .search-result-item:nth-child(4){animation-delay:.2s}
+    .search-result-item:nth-child(5){animation-delay:.25s}
+
+    @keyframes fadeInUp { from { opacity:0; transform: translateY(20px);} to { opacity:1; transform:none; } }
+
+    .search-result-item::before {
+      content:''; position:absolute; left:-100%; top:0; width:100%; height:100%;
+      background: linear-gradient(90deg,transparent,rgba(102,126,234,.1),transparent);
+      transition: left .5s ease;
+    }
+    .search-result-item:hover::before { left:100%; }
+    .search-result-item:hover {
+      background: linear-gradient(135deg, rgba(102,126,234,.08), rgba(118,75,162,.05));
+      transform: translateX(8px) scale(1.02);
+      border-left: 4px solid #667eea; padding-left: calc(1.5rem - 4px);
+    }
+    .search-result-item:last-child{border-bottom:none;border-radius:0 0 var(--border-radius-lg) var(--border-radius-lg)}
+    .search-result-item:first-child{border-radius:var(--border-radius-lg) var(--border-radius-lg) 0 0}
+
+    .search-result-thumb { width:65px; height:65px; border-radius: var(--border-radius); object-fit: cover; background: linear-gradient(135deg,#f8fafc,#e2e8f0); box-shadow: 0 8px 25px rgba(0,0,0,.12); transition: all .4s; position: relative; overflow: hidden; }
+    .search-result-thumb::after { content:''; position:absolute; inset:0; border-radius: var(--border-radius); box-shadow: inset 0 0 0 1px rgba(255,255,255,.3); pointer-events:none; }
+    .search-result-item:hover .search-result-thumb { transform: scale(1.1) rotate(2deg); box-shadow: 0 12px 35px rgba(102,126,234,.25); }
+
+    .search-result-info { flex: 1; min-width: 0; }
+    .search-result-info h6 { font-size:1.1rem; font-weight:700; color:#2d3748; margin:0 0 .4rem 0; line-height:1.3; transition: all .3s; }
+    .search-result-item:hover .search-result-info h6 { color:#667eea; transform: translateX(4px); }
+    .search-result-info .text-muted { font-size:.9rem; margin:0; color:#6c757d; display:flex; align-items:center; gap:.4rem; line-height:1.4; }
+    .search-result-info .text-muted i { color:#a0aec0; transition: all .3s; }
+    .search-result-item:hover .search-result-info .text-muted i { color:#667eea; transform: scale(1.2); }
+
+    .search-result-item::after {
+      content:'\F285'; font-family:'bootstrap-icons'; opacity:0; transform: translateX(20px);
+      transition: all .3s; color:#a0aec0; font-size:1.2rem;
+    }
+    .search-result-item:hover::after { opacity:1; transform:none; color:#667eea; }
+
+    .search-results-empty { padding:3rem 2rem; text-align:center; color:#6c757d; }
+    .search-results-empty-icon { font-size:3rem; color:#cbd5e0; margin-bottom:1rem; opacity:.7; }
+    .search-results-empty h6 { font-weight:600; color:#4a5568; margin-bottom:.5rem; }
+    .search-results-empty p { margin:0; font-size:.9rem; }
+    .search-results-error { padding:2rem; text-align:center; background: linear-gradient(135deg, rgba(248,113,113,.1), rgba(239,68,68,.05)); color:#dc2626; }
+    .search-results-error i { font-size:2rem; margin-bottom:1rem; display:block; }
+
+    /* ========== TABLEAU (Desktop) ========== */
+    .modern-table-container {
+      background: white;
+      border-radius: var(--border-radius-lg);
+      box-shadow: var(--card-shadow);
+      overflow: visible !important; /* FIX: ne pas couper le menu */
+      margin-bottom: 2rem;
+    }
+    .modern-table { margin: 0; border: none; }
+    .modern-table thead th {
+      background: linear-gradient(135deg,#f8fafc 0%,#e2e8f0 100%);
+      color:#2d3748; font-weight:700; font-size:.9rem; text-transform: uppercase; letter-spacing:.5px;
+      border:none; padding:1.25rem 1rem;
+    }
+    .modern-table tbody tr { transition: var(--transition); border: none; }
+    .modern-table tbody tr:hover { background:#f8fafc; transform: none !important; } /* FIX: pas de scale */
+    .modern-table tbody td { padding:1rem; border-top:1px solid rgba(0,0,0,.05); vertical-align: middle; }
+
+    .client-avatar { width:60px; height:60px; border-radius: var(--border-radius); object-fit:cover; box-shadow: 0 4px 12px rgba(0,0,0,.1); transition: var(--transition); }
+    .client-avatar:hover { transform: scale(1.1); }
+    .client-name { font-weight:600; font-size:1.1rem; color:#2d3748; }
+    .client-id { font-size:.8rem; color:#6c757d; font-weight:500; }
+
+    /* ========== BADGES ORGANISME ========== */
+    .org-badge { font-weight:600; font-size:.85rem; padding:.5rem 1rem; border-radius:50px; border:none; letter-spacing:.3px; position:relative; overflow:hidden; }
+    .org-badge::before { content:''; position:absolute; top:0; left:-100%; width:100%; height:100%; background:linear-gradient(90deg,transparent,rgba(255,255,255,.2),transparent); transition:left .5s; }
+    .org-badge:hover::before { left:100%; }
+
+    /* ========== DROPDOWN ACTIONS ========== */
+    .actions-dropdown { position: relative; }
+    .actions-dropdown .dropdown-toggle {
+      border-radius: var(--border-radius);
+      border: 2px solid #e2e8f0; background:white; color:#4a5568; font-weight:600; transition: var(--transition);
+    }
+    .actions-dropdown .dropdown-toggle:hover { border-color:#667eea; color:#667eea; transform: translateY(-2px); }
+
+    .dropdown-menu {
+      border: none; border-radius: var(--border-radius);
+      box-shadow: var(--card-shadow-hover);
+      padding: .5rem 0;
+      z-index: 2001 !important;  /* FIX: au-dessus de la zone de recherche (1050) */
+    }
+    .dropdown-item { padding:.75rem 1.5rem; font-weight:500; transition: var(--transition); }
+    .dropdown-item:hover { background:#f8fafc; color:#667eea; transform: translateX(5px); }
+    .dropdown-item.text-danger:hover { background:#fef2f2; color:#dc2626; }
+
+    /* ========== CARTES MOBILES ========== */
+    .client-card { background:#fff; border-radius: var(--border-radius-lg); box-shadow: var(--card-shadow); margin-bottom:1.5rem; overflow:hidden; transition: var(--transition); }
+    .client-card:hover { box-shadow: var(--card-shadow-hover); transform: translateY(-5px); }
+    .client-card-header { display:flex; align-items:center; gap:1rem; padding:1.5rem; border-bottom:1px solid rgba(0,0,0,.05); }
+    .client-card-avatar { width:70px; height:70px; border-radius: var(--border-radius); object-fit: cover; box-shadow: 0 4px 12px rgba(0,0,0,.1); }
+    .client-card-info h5 { margin:0 0 .25rem 0; font-weight:700; color:#2d3748; }
+    .client-card-actions { display:flex; gap:.5rem; padding:1rem 1.5rem; }
+    .btn-card-action { flex:1; border-radius: var(--border-radius); font-weight:600; transition: var(--transition); display:flex; align-items:center; justify-content:center; gap:.5rem; }
+    .btn-card-action:hover { transform: translateY(-2px); }
+
+    /* ========== PAGINATION ========== */
+    .modern-pagination { display:flex; justify-content:center; gap:.5rem; margin-top:2rem; }
+    .modern-pagination .page-link { border:none; border-radius: var(--border-radius); padding:.75rem 1rem; color:#4a5568; font-weight:600; background:#fff; box-shadow: 0 2px 8px rgba(0,0,0,.05); transition: var(--transition); }
+    .modern-pagination .page-link:hover { background:#667eea; color:#fff; transform: translateY(-2px); }
+    .modern-pagination .page-item.active .page-link { background: var(--primary-gradient); color:#fff; box-shadow: var(--card-shadow); }
+    .modern-pagination .page-item.disabled .page-link { opacity:.5; cursor:not-allowed; }
+
+    /* ========== RESPONSIVE ========== */
+    @media (max-width: 768px) {
+      .page-header { padding: 1.5rem; text-align: center; }
+      .page-header h1 { font-size: 2rem; }
+      .modern-table-container { display: none; }
+      .search-input-wrapper { max-width: 100%; }
+      .search-results { margin: 0 1rem; max-height: 350px; }
+      .search-result-item { padding: 1rem; gap: 1rem; }
+      .search-result-thumb { width: 55px; height: 55px; }
+      .search-result-info h6 { font-size: 1rem; }
+      .search-result-info .text-muted { font-size: .85rem; }
+    }
+    @media (min-width: 769px) { .mobile-cards { display: none; } }
+
+    /* ========== ÉTAT VIDE ========== */
+    .empty-state { text-align:center; padding:4rem 2rem; background:#fff; border-radius: var(--border-radius-lg); box-shadow: var(--card-shadow); }
+    .empty-state-icon { font-size:4rem; color:#a0aec0; margin-bottom:1rem; }
+    .empty-state h4 { color:#2d3748; font-weight:600; margin-bottom:.5rem; }
+    .empty-state p { color:#6c757d; margin-bottom:0; }
+
+    /* ========== ACCESSIBILITÉ ========== */
+    .search-result-item:focus-visible { outline:2px solid #667eea; outline-offset:-2px; background: linear-gradient(135deg, rgba(102,126,234,.1), rgba(118,75,162,.05)); }
+
+    /* ========== THÈME SOMBRE (bonus) ========== */
+    @media (prefers-color-scheme: dark) {
+      .search-results { background: rgba(26,32,44,.95); border-color: rgba(255,255,255,.1); }
+      .search-result-info h6 { color:#f7fafc; }
+      .search-result-item:hover .search-result-info h6 { color:#90cdf4; }
+      .search-result-info .text-muted { color:#a0aec0; }
+      .search-result-item:hover { background: linear-gradient(135deg, rgba(102,126,234,.15), rgba(118,75,162,.1)); border-left-color:#90cdf4; }
+    }
+  </style>
+{% endblock %}
+
+{% block body %}
+<div class="container-fluid px-4 py-3">
+
+  {# ========== HEADER MODERNE ========== #}
+  <div class="page-header">
+    <div class="d-flex justify-content-between align-items-center">
+      <div>
+        <h1>Gestion des Clients</h1>
+        <p class="subtitle mb-0">{{ clients|length }} client{{ clients|length > 1 ? 's' : '' }} enregistré{{ clients|length > 1 ? 's' : '' }}</p>
+      </div>
+      {% if is_granted('ROLE_ADMIN') %}
+        <a href="{{ path('clients_new') }}" class="btn btn-new-client">
+          <i class="bi bi-plus-lg me-2"></i>Nouveau Client
+        </a>
+      {% endif %}
+    </div>
+  </div>
+
+  {# ========== BARRE DE RECHERCHE ========== #}
+  <div class="search-container">
+    <div class="search-input-wrapper">
+      <i class="bi bi-search search-icon"></i>
+      <input type="search" id="client-search" class="search-input"
+             placeholder="Rechercher un client par nom, organisme ou adresse..."
+             autocomplete="off" spellcheck="false">
+      <button type="button" id="search-clear" class="search-clear">
+        <i class="bi bi-x-circle-fill"></i>
+      </button>
+      <div id="client-results" class="search-results d-none"></div>
+    </div>
+    <div id="client-loader" class="modern-loader d-none">
+      <div class="loader-spinner"></div>
+      <span class="text-muted">Recherche en cours...</span>
+    </div>
+  </div>
+
+  {% set baseUpload = '/uploads/clients' %}
+  {% set palette = ['primary','success','info','warning','danger','dark','secondary'] %}
+  {% set orgColors = {} %}
+  {% set orgCount = 0 %}
+
+  {% if clients is empty %}
+    <div class="empty-state">
+      <i class="bi bi-people empty-state-icon"></i>
+      <h4>Aucun client trouvé</h4>
+      <p>Commencez par ajouter votre premier client pour voir la liste ici</p>
+    </div>
+  {% else %}
+
+    {# ========== TABLEAU (Desktop) ========== #}
+    <div class="modern-table-container">
+      <table class="table modern-table">
+        <thead>
+          <tr>
+            <th style="width: 80px;">Photo</th>
+            <th>Client</th>
+            <th>Organisme</th>
+            <th>Adresse</th>
+            <th style="width: 120px;" class="text-center">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+        {% for c in clients %}
+          {% set thumb = null %}
+          {% if c.photos|length > 0 %}
+            {% for p in c.photos %}
+              {% if p.imageName and thumb is null %}
+                {% set thumb = asset(baseUpload ~ '/' ~ p.imageName) %}
+              {% endif %}
+            {% endfor %}
+          {% endif %}
+          {% if not thumb %}
+            {% set thumb = 'https://picsum.photos/120/120?grayscale&random=' ~ c.id %}
+          {% endif %}
+
+          {% set orgName = c.organisme ? c.organisme.name : 'Sans organisme' %}
+          {% if orgColors[orgName] is not defined %}
+            {% set orgColors = orgColors|merge({ (orgName): palette[orgCount % (palette|length)] }) %}
+            {% set orgCount = orgCount + 1 %}
+          {% endif %}
+          {% set color = orgColors[orgName] %}
+
+          <tr>
+            <td><img src="{{ thumb }}" alt="Photo {{ c.nom }}" class="client-avatar" loading="lazy"></td>
+            <td>
+              <div class="client-name">{{ c.nom }}</div>
+              <div class="client-id">#{{ c.id }}</div>
+            </td>
+            <td><span class="badge bg-{{ color }} org-badge">{{ orgName }}</span></td>
+            <td class="text-truncate" style="max-width: 300px;" title="{{ c.adresse ?? '' }}">
+              {% if c.adresse %}
+                <i class="bi bi-geo-alt text-muted me-1"></i>
+                {{ c.adresse|length > 50 ? c.adresse|slice(0,50) ~ '...' : c.adresse }}
+              {% else %}
+                <span class="text-muted fst-italic">Non renseignée</span>
+              {% endif %}
+            </td>
+            <td class="text-center">
+              <div class="dropdown actions-dropdown">
+                <button class="btn btn-sm dropdown-toggle"
+                        type="button"
+                        data-bs-toggle="dropdown"
+                        data-bs-boundary="viewport"
+                        data-bs-offset="0,8">
+                  <i class="bi bi-three-dots"></i>
+                </button>
+                <ul class="dropdown-menu dropdown-menu-end">
+                  <li>
+                    <a class="dropdown-item" href="{{ path('client_show', {id: c.id}) }}">
+                      <i class="bi bi-eye me-2"></i>Voir le détail
+                    </a>
+                  </li>
+                  {% if is_granted('ROLE_ADMIN') %}
+                    <li>
+                      <a class="dropdown-item" href="{{ path('clients_edit', {id: c.id}) }}">
+                        <i class="bi bi-pencil me-2"></i>Modifier
+                      </a>
+                    </li>
+                    <li><hr class="dropdown-divider"></li>
+                    <li>
+                      <form method="post" action="{{ path('clients_delete', {id: c.id}) }}"
+                            onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer ce client ?');">
+                        <input type="hidden" name="_token" value="{{ csrf_token('delete_client_' ~ c.id) }}">
+                        <button class="dropdown-item text-danger" type="submit">
+                          <i class="bi bi-trash me-2"></i>Supprimer
+                        </button>
+                      </form>
+                    </li>
+                  {% endif %}
+                </ul>
+              </div>
+            </td>
+          </tr>
+        {% endfor %}
+        </tbody>
+      </table>
+    </div>
+
+    {# ========== CARTES MOBILES ========== #}
+    <div class="mobile-cards">
+      {% for c in clients %}
+        {% set thumb = null %}
+        {% if c.photos|length > 0 %}
+          {% for p in c.photos %}
+            {% if p.imageName and thumb is null %}
+              {% set thumb = asset(baseUpload ~ '/' ~ p.imageName) %}
+            {% endif %}
+          {% endfor %}
+        {% endif %}
+        {% if not thumb %}
+          {% set thumb = 'https://picsum.photos/120/120?grayscale&random=' ~ c.id %}
+        {% endif %}
+
+        {% set orgName = c.organisme ? c.organisme.name : 'Sans organisme' %}
+        {% if orgColors[orgName] is not defined %}
+          {% set orgColors = orgColors|merge({ (orgName): palette[orgCount % (palette|length)] }) %}
+          {% set orgCount = orgCount + 1 %}
+        {% endif %}
+        {% set color = orgColors[orgName] %}
+
+        <div class="client-card">
+          <div class="client-card-header">
+            <img src="{{ thumb }}" alt="Photo {{ c.nom }}" class="client-card-avatar" loading="lazy">
+            <div class="client-card-info flex-grow-1">
+              <h5>{{ c.nom }}</h5>
+              <div class="mb-2"><span class="badge bg-{{ color }} org-badge">{{ orgName }}</span></div>
+              {% if c.adresse %}
+                <p class="text-muted small mb-0">
+                  <i class="bi bi-geo-alt me-1"></i>{{ c.adresse|slice(0,60) }}{{ c.adresse|length > 60 ? '...' : '' }}
+                </p>
+              {% endif %}
+            </div>
+          </div>
+          <div class="client-card-actions">
+            <a href="{{ path('client_show', {id: c.id}) }}" class="btn btn-primary btn-card-action">
+              <i class="bi bi-eye"></i>Voir
+            </a>
+            {% if is_granted('ROLE_ADMIN') %}
+              <a href="{{ path('clients_edit', {id: c.id}) }}" class="btn btn-outline-secondary btn-card-action">
+                <i class="bi bi-pencil"></i>Éditer
+              </a>
+              <form method="post" action="{{ path('clients_delete', {id: c.id}) }}" onsubmit="return confirm('Supprimer ce client ?');" class="d-inline flex-fill">
+                <input type="hidden" name="_token" value="{{ csrf_token('delete_client_' ~ c.id) }}">
+                <button class="btn btn-outline-danger btn-card-action w-100">
+                  <i class="bi bi-trash"></i>Suppr.
+                </button>
+              </form>
+            {% endif %}
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+
+    {# ========== PAGINATION ========== #}
+    {% set current = pagination.currentPageNumber %}
+    {% set total = pagination.pageCount %}
+    {% if total > 1 %}
+      <nav class="modern-pagination">
+        <ul class="pagination mb-0">
+          {% if current > 1 %}
+            <li class="page-item">
+              <a class="page-link" href="{{ path(app.request.attributes.get('_route'), app.request.query.all | merge({'page': current - 1})) }}">
+                <i class="bi bi-chevron-left"></i>
+              </a>
+            </li>
+          {% endif %}
+          {% set start = current - 2 < 1 ? 1 : current - 2 %}
+          {% set end = current + 2 > total ? total : current + 2 %}
+          {% for page in start..end %}
+            <li class="page-item {{ page == current ? 'active' : '' }}">
+              <a class="page-link" href="{{ path(app.request.attributes.get('_route'), app.request.query.all | merge({'page': page})) }}">{{ page }}</a>
+            </li>
+          {% endfor %}
+          {% if current < total %}
+            <li class="page-item">
+              <a class="page-link" href="{{ path(app.request.attributes.get('_route'), app.request.query.all | merge({'page': current + 1})) }}">
+                <i class="bi bi-chevron-right"></i>
+              </a>
+            </li>
+          {% endif %}
+        </ul>
+      </nav>
+    {% endif %}
+
+  {% endif %}
+</div>
+
+{# ========== JAVASCRIPT ========== #}
+<script>
+(function() {
+  const input = document.getElementById('client-search');
+  const results = document.getElementById('client-results');
+  const loader = document.getElementById('client-loader');
+  const clearBtn = document.getElementById('search-clear');
+  if (!input || !results || !loader) return;
+
+  const endpoint = "{{ path('clients_search') }}";
+  let searchTimeout = null;
+
+  const showLoader = () => loader.classList.remove('d-none');
+  const hideLoader = () => loader.classList.add('d-none');
+  const showResults = () => results.classList.remove('d-none');
+  const hideResults = () => results.classList.add('d-none');
+  const showClear = () => clearBtn.classList.add('show');
+  const hideClear = () => clearBtn.classList.remove('show');
+
+  function performSearch(query) {
+    if (!query.trim()) { hideResults(); hideLoader(); hideClear(); return; }
+    showClear(); showLoader();
+    const url = new URL(endpoint, window.location.origin);
+    url.searchParams.set('q', query);
+    fetch(url, { headers: { 'X-Requested-With': 'XMLHttpRequest' }})
+      .then(r => r.text())
+      .then(html => { results.innerHTML = html; showResults(); })
+      .catch(() => {
+        results.innerHTML = '<div class="search-result-item"><div class="text-danger"><i class="bi bi-exclamation-triangle me-2"></i>Erreur lors de la recherche. Veuillez réessayer.</div></div>';
+        showResults();
+      })
+      .finally(hideLoader);
+  }
+
+  input.addEventListener('input', function() {
+    const q = this.value.trim();
+    clearTimeout(searchTimeout);
+    if (!q) { hideResults(); hideClear(); return; }
+    searchTimeout = setTimeout(() => performSearch(q), 300);
+  });
+
+  input.addEventListener('focus', function() {
+    if (this.value.trim()) { showResults(); showClear(); }
+  });
+
+  clearBtn.addEventListener('click', function() {
+    input.value = ''; input.focus(); hideResults(); hideClear();
+  });
+
+  document.addEventListener('click', function(e) {
+    if (!input.contains(e.target) && !results.contains(e.target)) { hideResults(); }
+  });
+
+  input.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') { hideResults(); this.blur(); }
+  });
+
+  results.addEventListener('click', function(e) {
+    const item = e.target.closest('.search-result-item');
+    if (item) { const link = item.querySelector('a'); if (link) window.location.href = link.href; }
+  });
+})();
+</script>
+{% endblock %}

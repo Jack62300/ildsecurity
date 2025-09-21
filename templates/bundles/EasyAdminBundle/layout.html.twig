@@ -1,0 +1,113 @@
+{% extends '@!EasyAdmin/layout.html.twig' %}
+
+{# classes Tailwind sur <body> #}
+{% block body_class %}bg-slate-50 text-slate-700 antialiased{% endblock %}
+
+{% block wrapper_wrapper %}
+<div class="min-h-screen flex">
+  {# ===== Sidebar ===== #}
+  <aside class="hidden lg:flex lg:w-64 bg-white shadow-card border-r border-slate-200">
+    <div class="w-full flex flex-col">
+      <a href="{{ path(ea.dashboardRouteName) }}" class="px-6 py-6 flex items-center gap-3">
+        <img src="../assets/images/logo2.png" class="h-7" alt="logo">
+        <span class="font-semibold text-slate-800"></span>
+      </a>
+
+      <nav class="flex-1 px-3 overflow-y-auto">
+        {# on laisse EA générer les items mais via notre menu Tailwind #}
+        {{ include(ea.templatePath('main_menu')) }}
+      </nav>
+      <div class="p-4 text-xs text-slate-400">v1.0</div>
+    </div>
+  </aside>
+
+  {# ===== Colonne principale ===== #}
+  <div class="flex-1 flex flex-col min-w-0">
+    {# Topbar #}
+    <header class="sticky top-0 z-30 bg-white/80 backdrop-blur border-b border-slate-200">
+      <div class="h-16 px-4 lg:px-8 flex items-center gap-3">
+        <button class="lg:hidden p-2 rounded-md border border-slate-200" x-data @click="document.getElementById('mobileSidebar').classList.remove('hidden')">
+          <i class="fa-solid fa-bars text-slate-600"></i>
+        </button>
+
+        <div class="flex-1">
+          <div class="relative">
+            <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"></i>
+            <input class="w-full sm:w-[460px] pl-10 pr-4 h-11 rounded-xl border border-slate-200 focus:border-primary focus:ring-0"
+                   placeholder="Search or type command…">
+          </div>
+        </div>
+
+        <div class="ml-auto flex items-center gap-2">
+          <div class="page-actions">
+            {% block page_actions %}{% endblock %}
+          </div>
+        </div>
+
+        {# user menu EA conservé mais skinné #}
+        <div class="flex items-center gap-2">
+          <twig:ea:ActionMenu class="relative">
+            <twig:ea:ActionMenu:Button class="inline-flex items-center gap-2 px-3 py-2 rounded-xl border border-slate-200 bg-white">
+              <twig:ea:Icon name="internal:user" />
+              {% if ea.userMenu.isNameDisplayed %}
+                <span class="hidden sm:inline text-sm">{{ ea.userMenu.name }}</span>
+              {% endif %}
+            </twig:ea:ActionMenu:Button>
+            <twig:ea:ActionMenu:Overlay>
+              <twig:ea:ActionMenu:ActionList class="shadow-card rounded-xl bg-white border border-slate-200">
+                {% for item in ea.userMenu.items %}
+                  {% if item.isMenuSection %}
+                    <twig:ea:ActionMenu:ActionList:Header label="{{ item.label|trans }}" />
+                  {% else %}
+                    <twig:ea:ActionMenu:ActionList:Item
+                      label="{{ item.label|trans }}" icon="{{ item.icon }}"
+                      url="{{ item.linkUrl }}" target="{{ item.linkTarget }}" rel="{{ item.linkRel }}" />
+                  {% endif %}
+                {% endfor %}
+              </twig:ea:ActionMenu:ActionList>
+            </twig:ea:ActionMenu:Overlay>
+          </twig:ea:ActionMenu>
+        </div>
+      </div>
+    </header>
+
+    {# Contenu #}
+    <main class="flex-1 p-4 lg:p-8">
+      {# entête de page (titre + breadcrumb) #}
+      <div class="mb-6 flex items-center justify-between">
+        <h1 class="text-xl lg:text-2xl font-bold text-slate-900">
+          {% block content_title %}{% endblock %}
+        </h1>
+        <nav class="text-sm text-slate-500">
+          <a class="hover:text-slate-700" href="{{ path(ea.dashboardRouteName) }}">Home</a>
+          <span class="mx-2">/</span>
+          <span>{{ ea.crud ? ea.crud.entityLabelInPlural|default('Dashboard') : 'Dashboard' }}</span>
+        </nav>
+      </div>
+
+      {# Flashs EA #}
+      {{ include(ea.templatePath('flash_messages')) }}
+
+      {# zone principale EA #}
+      <section id="main">
+        {% block main %}{% endblock %}
+      </section>
+
+      {% if block('content_footer') is not empty %}
+        <section class="mt-6">{% block content_footer %}{% endblock %}</section>
+      {% endif %}
+    </main>
+  </div>
+
+  {# Sidebar mobile #}
+  <div id="mobileSidebar" class="hidden fixed inset-0 z-40 lg:hidden" x-data @click.self="document.getElementById('mobileSidebar').classList.add('hidden')">
+    <div class="absolute inset-0 bg-black/30"></div>
+    <aside class="absolute left-0 top-0 h-full w-72 bg-white shadow-card p-4">
+      <a href="{{ path(ea.dashboardRouteName) }}" class="flex items-center gap-3 mb-6">
+        <img src="../assets/images/logo2.png" class="h-7"><span class="font-semibold">ILD Admin</span>
+      </a>
+      {{ include(ea.templatePath('main_menu')) }}
+    </aside>
+  </div>
+</div>
+{% endblock wrapper_wrapper %}
