@@ -26,7 +26,7 @@ class LoginFormAuthenticator extends AbstractLoginFormAuthenticator
     public function __construct(
         private UserRepository $users,
         private RouterInterface $router,
-        private TrustedDeviceManager $devices,   // ✅ gestion des appareils/IP approuvés
+        private TrustedDeviceManager $devices,
     ) {}
 
     public function authenticate(Request $request): Passport
@@ -36,25 +36,21 @@ class LoginFormAuthenticator extends AbstractLoginFormAuthenticator
         $agence   = trim((string) $request->request->get('agence', ''));
         $csrf     = (string) $request->request->get('_csrf_token', '');
 
-        // mémoriser l'identifiant saisi
         $request->getSession()->set('_security.last_username', $email);
 
         if ($agence === '') {
             throw new CustomUserMessageAuthenticationException('Le code agence est requis.');
         }
 
-        // On récupère IP + User-Agent une seule fois
         $ip = $request->getClientIp() ?? '0.0.0.0';
         $ua = $request->headers->get('User-Agent', '');
 
         $userBadge = new UserBadge($email, function (string $identifier) use ($agence, $ip, $ua) {
             $user = $this->users->findOneBy(['email' => $identifier]);
             if (!$user) {
-                // on ne révèle pas lequel est faux
                 throw new CustomUserMessageAuthenticationException('Identifiants invalides.');
             }
 
-            // === Contrôle "code agence" (compat : entité ListAgence OU string) ===
             $userAgence = $user->getAgence();
             $userCode = is_object($userAgence) && method_exists($userAgence, 'getCodeAgence')
                 ? (string) $userAgence->getCodeAgence()
@@ -64,14 +60,10 @@ class LoginFormAuthenticator extends AbstractLoginFormAuthenticator
                 throw new CustomUserMessageAuthenticationException('Code agence invalide.');
             }
 
-            // === Contrôle "appareil/IP approuvé" ===
             if (!$this->devices->isApproved($user, $ip)) {
-                // Crée (ou réutilise) une demande en attente + envoie un email avec lien de validation
                 $this->devices->createOrSendPending($user, $ip, $ua);
-
-                // On bloque l’authentification tant que l’appareil n’est pas validé
                 throw new CustomUserMessageAuthenticationException(
-                    'Nouvel appareil détecté : un e-mail de validation vous a été envoyé.'
+                    'Nouvel appareil détecté : un e-mail de validation a été envoyé.'
                 );
             }
 
@@ -83,7 +75,7 @@ class LoginFormAuthenticator extends AbstractLoginFormAuthenticator
             new PasswordCredentials($password),
             [
                 new CsrfTokenBadge('authenticate', $csrf),
-                new RememberMeBadge(), // si tu as remember_me activé côté firewall
+                new RememberMeBadge(),
             ]
         );
     }

@@ -1,6 +1,5 @@
 <?php
 // src/Security/TrustedDeviceManager.php
-
 declare(strict_types=1);
 
 namespace App\Security;
@@ -13,19 +12,6 @@ use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\Mime\Email;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
-/**
- * Gère l’approbation des appareils (par IP) et l’envoi d’e-mails de validation.
- *
- * NOTE: Injecte la whitelist d’IP via services.yaml :
- *
- * parameters:
- *     trusted_ips: '%env(csv:TRUSTED_IPS)%'
- *
- * services:
- *     App\Security\TrustedDeviceManager:
- *         arguments:
- *             $trustedIps: '%trusted_ips%'
- */
 class TrustedDeviceManager
 {
     public function __construct(
@@ -33,47 +19,31 @@ class TrustedDeviceManager
         private readonly TrustedDeviceRepository $repo,
         private readonly MailerInterface $mailer,
         private readonly UrlGeneratorInterface $urlGen,
-
-        /** Liste d’IP autorisées (whitelist) injectée depuis l’env/config */
         private readonly array $trustedIps = [],
-
-        /** Adresse expéditeur par défaut pour les e-mails de validation */
         private readonly string $fromEmail = 'no-reply@example.com',
-
-        /** Durée de validité (heures) du lien d’approbation */
+        private readonly ?string $approvalRecipientEmail = null,
         private readonly int $ttlHours = 24,
     ) {}
 
-    /**
-     * Indique si l’IP est explicitement autorisée (whitelist).
-     */
     public function isTrustedIp(string $ip): bool
     {
-        // Comparaison stricte pour éviter les surprises
         return in_array($ip, $this->trustedIps, true);
     }
 
-    /**
-     * Retourne true si un appareil (IP) est déjà approuvé pour cet utilisateur,
-     * OU si l’IP est dans la whitelist (bypass complet).
-     */
     public function isApproved(User $user, string $ip): bool
     {
-        // ✅ Bypass si l’IP est whitelistée
         if ($this->isTrustedIp($ip)) {
             return true;
         }
-
         return (bool) $this->repo->findApprovedByUserAndIp($user, $ip);
     }
 
     /**
-     * Crée/renvoie une demande en attente + envoie l’e-mail de validation,
-     * sauf si l’IP est whitelistée (dans ce cas, on ne fait rien).
+     * Appelé quand l’appareil n’est pas reconnu : crée/refresh une demande
+     * et envoie un email à MAIL_TRUSTED_DEVICE avec le lien d’approbation.
      */
     public function createOrSendPending(User $user, string $ip, ?string $userAgent = null): void
     {
-        // ✅ Rien à faire si l’IP est whitelistée
         if ($this->isTrustedIp($ip)) {
             return;
         }
@@ -84,40 +54,49 @@ class TrustedDeviceManager
                 ->setIp($ip)
                 ->setUserAgent($userAgent);
 
-        // Génère un token et le stocke hashé
         $rawToken = bin2hex(random_bytes(32));
-        $hash = hash('sha256', $rawToken);
-        $pending->setApprovalTokenHash($hash);
+        $pending->setApprovalTokenHash(hash('sha256', $rawToken));
         $pending->setExpiresAt((new \DateTimeImmutable())->modify("+{$this->ttlHours} hours"));
 
         $this->em->persist($pending);
         $this->em->flush();
 
-        // Lien de validation (id + token brut)
-        $url = $this->urlGen->generate('device_approve', [
-            'id'    => $pending->getId(),
+        $this->sendApprovalEmail($user, $pending, $rawToken);
+    }
+
+    private function sendApprovalEmail(User $user, TrustedDevice $device, string $rawToken): void
+    {
+        $to = $this->approvalRecipientEmail;
+        if (!$to) {
+            return; // pas de destinataire → on n’envoie pas
+        }
+
+        $approveUrl = $this->urlGen->generate('device_approve', [
+            'id'    => $device->getId(),
             'token' => $rawToken,
         ], UrlGeneratorInterface::ABSOLUTE_URL);
 
+        $ip = $device->getIp() ?? 'n/a';
+        $ua = $device->getUserAgent() ?? 'n/a';
+
         $email = (new Email())
             ->from($this->fromEmail)
-            ->to($user->getEmail())
+            ->to($to)
             ->subject('Validation d’un nouvel appareil')
             ->html(<<<HTML
-                <p>Bonjour {$user->getUsername()},</p>
-                <p>Une tentative de connexion a été détectée depuis l’adresse IP <strong>{$ip}</strong>.</p>
-                <p>Si c’est bien vous, cliquez ici pour autoriser cet appareil :</p>
-                <p><a href="{$url}">Autoriser cet appareil</a></p>
+                <p>Un nouvel appareil a tenté de se connecter au compte de <strong>{$user->getUserIdentifier()}</strong>.</p>
+                <ul>
+                  <li><strong>IP :</strong> {$ip}</li>
+                  <li><strong>User-Agent :</strong> {$ua}</li>
+                </ul>
+                <p>Pour approuver cet appareil :</p>
+                <p><a href="{$approveUrl}">👉 Valider cet appareil</a></p>
                 <p>Ce lien expire dans {$this->ttlHours} heures.</p>
             HTML);
 
         $this->mailer->send($email);
     }
 
-    /**
-     * Valide l’appareil si le token est correct et non expiré.
-     * Retourne true si l’approbation a réussi.
-     */
     public function approve(int $id, string $rawToken): bool
     {
         /** @var TrustedDevice|null $device */
@@ -126,19 +105,17 @@ class TrustedDeviceManager
             return false;
         }
 
-        // Expiration
         $expiresAt = $device->getExpiresAt();
         if ($expiresAt instanceof \DateTimeImmutable && $expiresAt < new \DateTimeImmutable()) {
             return false;
         }
 
-        // Vérification du token
         $expected = $device->getApprovalTokenHash();
         if (!$expected || !hash_equals($expected, hash('sha256', $rawToken))) {
             return false;
         }
 
-        $device->approve();
+        $device->approve(); // marque approuvé et purge token si prévu dans l’entité
         $this->em->flush();
 
         return true;

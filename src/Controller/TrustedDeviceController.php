@@ -1,25 +1,18 @@
 <?php
-// src/Controller/TrustedDeviceController.php
 namespace App\Controller;
 
 use App\Entity\TrustedDevice;
-use Symfony\Component\Mime\Email;
+use App\Repository\TrustedDeviceRepository;
 use App\Security\TrustedDeviceManager;
 use Doctrine\ORM\EntityManagerInterface;
-use App\Repository\TrustedDeviceRepository;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 class TrustedDeviceController extends AbstractController
 {
-    /**
-     * ✅ Route publique appelée depuis l'email
-     * Valide un appareil si le token est correct (géré par TrustedDeviceManager)
-     */
     #[Route('/device/approve/{id}/{token}', name: 'device_approve', methods: ['GET'])]
     public function approve(int $id, string $token, TrustedDeviceManager $manager): Response
     {
@@ -30,9 +23,6 @@ class TrustedDeviceController extends AbstractController
         ]);
     }
 
-    /**
-     * ✅ Liste admin des appareils (en attente / approuvés)
-     */
     #[IsGranted('ROLE_ADMIN')]
     #[Route('/admin/devices', name: 'devices_index', methods: ['GET'])]
     public function index(TrustedDeviceRepository $repo): Response
@@ -44,10 +34,6 @@ class TrustedDeviceController extends AbstractController
         ]);
     }
 
-    /**
-     * ✅ Validation admin d’un appareil (sans email)
-     * Astuce : on réutilise la logique de l’entité (->approve()) et on purge le token.
-     */
     #[IsGranted('ROLE_ADMIN')]
     #[Route('/admin/devices/{id}/approve', name: 'devices_approve_admin', methods: ['POST','GET'])]
     public function approveAdmin(TrustedDevice $device, EntityManagerInterface $em): Response
@@ -57,17 +43,13 @@ class TrustedDeviceController extends AbstractController
             return $this->redirectToRoute('devices_index');
         }
 
-        $device->approve(); // passe approved=true, approvedAt=now, et nettoie le token si tu l’as fait dans approve()
+        $device->approve();
         $em->flush();
 
         $this->addFlash('success', 'Appareil approuvé avec succès.');
         return $this->redirectToRoute('devices_index');
     }
 
-    /**
-     * 🗑️ Suppression admin d’un appareil
-     * Utilise un token CSRF pour éviter les suppressions accidentelles.
-     */
     #[IsGranted('ROLE_ADMIN')]
     #[Route('/admin/devices/{id}/delete', name: 'devices_delete', methods: ['POST'])]
     public function delete(TrustedDevice $device, Request $request, EntityManagerInterface $em): Response
@@ -85,20 +67,24 @@ class TrustedDeviceController extends AbstractController
         return $this->redirectToRoute('devices_index');
     }
 
-    #[Route('/test-mail', name: 'test_mail')]
-    public function testMail(MailerInterface $mailer): Response
+    /**
+     * (Facultatif) route de test admin pour déclencher un email sur l’IP/UA courants.
+     */
+    #[IsGranted('ROLE_ADMIN')]
+    #[Route('/admin/devices/request-approval', name: 'devices_request_approval_test', methods: ['GET'])]
+    public function requestApprovalTest(TrustedDeviceManager $manager, Request $request): Response
     {
-        try {
-            $email = (new Email())
-                ->from('noreply@test.local')
-                ->to('user@example.com')
-                ->subject('Test MailHog')
-                ->text('Hello MailHog!');
-
-            $mailer->send($email);
-            return new Response('OK');
-        } catch (\Throwable $e) {
-            return new Response('Mailer error: '.$e->getMessage(), 500);
+        $user = $this->getUser();
+        if (!is_object($user)) {
+            throw $this->createAccessDeniedException('Utilisateur requis.');
         }
+
+        $ip  = $request->getClientIp() ?? '0.0.0.0';
+        $ua  = $request->headers->get('User-Agent');
+
+        $manager->createOrSendPending($user, $ip, $ua);
+
+        $this->addFlash('success', 'Demande envoyée (MAIL_TRUSTED_DEVICE).');
+        return $this->redirectToRoute('devices_index');
     }
 }
