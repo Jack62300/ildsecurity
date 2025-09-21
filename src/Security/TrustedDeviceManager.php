@@ -50,9 +50,9 @@ class TrustedDeviceManager
 
         $pending = $this->repo->findPendingByUserAndIp($user, $ip)
             ?? (new TrustedDevice())
-                ->setUser($user)
-                ->setIp($ip)
-                ->setUserAgent($userAgent);
+            ->setUser($user)
+            ->setIp($ip)
+            ->setUserAgent($userAgent);
 
         $rawToken = bin2hex(random_bytes(32));
         $pending->setApprovalTokenHash(hash('sha256', $rawToken));
@@ -65,48 +65,51 @@ class TrustedDeviceManager
     }
 
     private function sendApprovalEmail(User $user, TrustedDevice $device, string $rawToken): void
-{
-    // 🔧 Fallback runtime si l’injection est vide
-    $to = $this->approvalRecipientEmail ?: (getenv('MAIL_TRUSTED_DEVICE') ?: null);
-    if (!$to) {
-        // log si besoin
-        error_log('MAIL_TRUSTED_DEVICE manquant (injection et getenv).');
-        return;
+    {
+        $to   = $this->approvalRecipientEmail ?: (getenv('MAIL_TRUSTED_DEVICE') ?: null);
+        $from = $this->fromEmail ?: (getenv('MAIL_FROM') ?: 'contact@toplegends.fr');
+        if (!$to) {
+            error_log('MAIL_TRUSTED_DEVICE manquant');
+            return;
+        }
+
+        $approveUrl = $this->urlGen->generate('device_approve', [
+            'id'    => $device->getId(),
+            'token' => $rawToken,
+        ], UrlGeneratorInterface::ABSOLUTE_URL);
+
+        $ip = $device->getIp() ?? 'n/a';
+        $ua = $device->getUserAgent() ?? 'n/a';
+
+        $email = (new \Symfony\Component\Mime\Email())
+            ->from($from)
+            ->to($to)
+            // ->bcc('tonadresse@gmail.com') // 👈 décommente pour le test
+            ->subject('Validation d’un nouvel appareil')
+            ->text(<<<TXT
+                Un nouvel appareil a tenté de se connecter au compte {$user->getUserIdentifier()}.
+                IP: {$ip}
+                UA: {$ua}
+                Valider: {$approveUrl}
+                Ce lien expire dans {$this->ttlHours} heures.
+                TXT)
+                            ->html(<<<HTML
+                <p>Un nouvel appareil a tenté de se connecter au compte de <strong>{$user->getUserIdentifier()}</strong>.</p>
+                <ul>
+                <li><strong>IP :</strong> {$ip}</li>
+                <li><strong>User-Agent :</strong> {$ua}</li>
+                </ul>
+                <p><a href="{$approveUrl}">Valider cet appareil</a></p>
+                <p>Ce lien expire dans {$this->ttlHours} heures.</p>
+                HTML);
+
+        try {
+            $this->mailer->send($email);
+            error_log("Trusted email envoyé à $to (from $from)");
+        } catch (\Throwable $e) {
+            error_log('Mailer error (trusted): ' . $e->getMessage());
+        }
     }
-
-    // idem pour le from si tu veux un fallback runtime
-    $from = $this->fromEmail ?: (getenv('MAIL_FROM') ?: 'contact@toplegends.fr');
-
-    $approveUrl = $this->urlGen->generate('device_approve', [
-        'id'    => $device->getId(),
-        'token' => $rawToken,
-    ], UrlGeneratorInterface::ABSOLUTE_URL);
-
-    $ip = $device->getIp() ?? 'n/a';
-    $ua = $device->getUserAgent() ?? 'n/a';
-
-    $email = (new \Symfony\Component\Mime\Email())
-        ->from($from)
-        ->to($to)
-        ->bcc('devunity62400@gmail.com')
-        ->subject('Validation d’un nouvel appareil')
-        ->html(<<<HTML
-            <p>Un nouvel appareil a tenté de se connecter au compte de <strong>{$user->getUserIdentifier()}</strong>.</p>
-            <ul>
-              <li><strong>IP :</strong> {$ip}</li>
-              <li><strong>User-Agent :</strong> {$ua}</li>
-            </ul>
-            <p><a href="{$approveUrl}">👉 Valider cet appareil</a></p>
-            <p>Ce lien expire dans {$this->ttlHours} heures.</p>
-        HTML);
-
-    try {
-        $this->mailer->send($email);
-    } catch (\Throwable $e) {
-        error_log('Mailer error (trusted device): '.$e->getMessage());
-    }
-    error_log("Envoi email trusted vers $to pour user ".$user->getUserIdentifier()." ip=".$device->getIp());
-}
 
     public function approve(int $id, string $rawToken): bool
     {
