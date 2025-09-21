@@ -1,3 +1,4 @@
 framework:
-    dsn: '%env(MAILER_DSN)%'
-    messenger: false
+    mailer:
+        dsn: '%env(MAILER_DSN)%'
+        messenger: false
