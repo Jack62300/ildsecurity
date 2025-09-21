@@ -65,37 +65,47 @@ class TrustedDeviceManager
     }
 
     private function sendApprovalEmail(User $user, TrustedDevice $device, string $rawToken): void
-    {
-        $to = $this->approvalRecipientEmail;
-        if (!$to) {
-            return; // pas de destinataire → on n’envoie pas
-        }
-
-        $approveUrl = $this->urlGen->generate('device_approve', [
-            'id'    => $device->getId(),
-            'token' => $rawToken,
-        ], UrlGeneratorInterface::ABSOLUTE_URL);
-
-        $ip = $device->getIp() ?? 'n/a';
-        $ua = $device->getUserAgent() ?? 'n/a';
-
-        $email = (new Email())
-            ->from($this->fromEmail)
-            ->to($to)
-            ->subject('Validation d’un nouvel appareil')
-            ->html(<<<HTML
-                <p>Un nouvel appareil a tenté de se connecter au compte de <strong>{$user->getUserIdentifier()}</strong>.</p>
-                <ul>
-                  <li><strong>IP :</strong> {$ip}</li>
-                  <li><strong>User-Agent :</strong> {$ua}</li>
-                </ul>
-                <p>Pour approuver cet appareil :</p>
-                <p><a href="{$approveUrl}">👉 Valider cet appareil</a></p>
-                <p>Ce lien expire dans {$this->ttlHours} heures.</p>
-            HTML);
-
-        $this->mailer->send($email);
+{
+    // 🔧 Fallback runtime si l’injection est vide
+    $to = $this->approvalRecipientEmail ?: (getenv('MAIL_TRUSTED_DEVICE') ?: null);
+    if (!$to) {
+        // log si besoin
+        error_log('MAIL_TRUSTED_DEVICE manquant (injection et getenv).');
+        return;
     }
+
+    // idem pour le from si tu veux un fallback runtime
+    $from = $this->fromEmail ?: (getenv('MAIL_FROM') ?: 'contact@toplegends.fr');
+
+    $approveUrl = $this->urlGen->generate('device_approve', [
+        'id'    => $device->getId(),
+        'token' => $rawToken,
+    ], UrlGeneratorInterface::ABSOLUTE_URL);
+
+    $ip = $device->getIp() ?? 'n/a';
+    $ua = $device->getUserAgent() ?? 'n/a';
+
+    $email = (new \Symfony\Component\Mime\Email())
+        ->from($from)
+        ->to($to)
+        ->subject('Validation d’un nouvel appareil')
+        ->html(<<<HTML
+            <p>Un nouvel appareil a tenté de se connecter au compte de <strong>{$user->getUserIdentifier()}</strong>.</p>
+            <ul>
+              <li><strong>IP :</strong> {$ip}</li>
+              <li><strong>User-Agent :</strong> {$ua}</li>
+            </ul>
+            <p><a href="{$approveUrl}">👉 Valider cet appareil</a></p>
+            <p>Ce lien expire dans {$this->ttlHours} heures.</p>
+        HTML);
+
+    try {
+        $this->mailer->send($email);
+    } catch (\Throwable $e) {
+        error_log('Mailer error (trusted device): '.$e->getMessage());
+    }
+    error_log("Envoi email trusted vers $to pour user ".$user->getUserIdentifier()." ip=".$device->getIp());
+}
 
     public function approve(int $id, string $rawToken): bool
     {
