@@ -4,12 +4,13 @@ declare(strict_types=1);
 
 namespace App\Security;
 
-use App\Entity\TrustedDevice;
 use App\Entity\User;
-use App\Repository\TrustedDeviceRepository;
-use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Component\Mailer\MailerInterface;
+use App\Entity\TrustedDevice;
 use Symfony\Component\Mime\Email;
+use Doctrine\ORM\EntityManagerInterface;
+use App\Repository\TrustedDeviceRepository;
+use Symfony\Bridge\Twig\Mime\TemplatedEmail;
+use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class TrustedDeviceManager
@@ -67,47 +68,38 @@ class TrustedDeviceManager
     private function sendApprovalEmail(User $user, TrustedDevice $device, string $rawToken): void
     {
         $to   = $this->approvalRecipientEmail ?: (getenv('MAIL_TRUSTED_DEVICE') ?: null);
-        $from = $this->fromEmail ?: (getenv('MAIL_FROM') ?: 'contact@toplegends.fr');
-        if (!$to) {
-            error_log('MAIL_TRUSTED_DEVICE manquant');
-            return;
-        }
+        $from = $this->fromEmail ?: (getenv('MAIL_FROM') ?: 'noreply@example.com');
+        if (!$to) { return; }
 
         $approveUrl = $this->urlGen->generate('device_approve', [
             'id'    => $device->getId(),
             'token' => $rawToken,
         ], UrlGeneratorInterface::ABSOLUTE_URL);
 
-        $ip = $device->getIp() ?? 'n/a';
-        $ua = $device->getUserAgent() ?? 'n/a';
+        $context = [
+            'appName'        => 'ILD Security', // adapte
+            'approveUrl'     => $approveUrl,
+            'ip'             => $device->getIp() ?? 'n/a',
+            'ua'             => $device->getUserAgent() ?? 'n/a',
+            'userIdentifier' => method_exists($user, 'getUserIdentifier') ? $user->getUserIdentifier() : ($user->getEmail() ?? 'Utilisateur'),
+            'ttlHours'       => $this->ttlHours,
+            'supportEmail'   => 'devunity62400@gmail.com', // optionnel
+            'logoUrl'        => $this->urlGen->getContext()->getScheme().'://'.$this->urlGen->getContext()->getHost().'/assets/images/logo.png',
+        ];
 
-        $email = (new \Symfony\Component\Mime\Email())
+        $email = (new TemplatedEmail())
             ->from($from)
             ->to($to)
-            // ->bcc('tonadresse@gmail.com') // 👈 décommente pour le test
             ->subject('Validation d’un nouvel appareil')
-            ->text(<<<TXT
-                Un nouvel appareil a tenté de se connecter au compte {$user->getUserIdentifier()}.
-                IP: {$ip}
-                UA: {$ua}
-                Valider: {$approveUrl}
-                Ce lien expire dans {$this->ttlHours} heures.
-                TXT)
-                            ->html(<<<HTML
-                <p>Un nouvel appareil a tenté de se connecter au compte de <strong>{$user->getUserIdentifier()}</strong>.</p>
-                <ul>
-                <li><strong>IP :</strong> {$ip}</li>
-                <li><strong>User-Agent :</strong> {$ua}</li>
-                </ul>
-                <p><a href="{$approveUrl}">Valider cet appareil</a></p>
-                <p>Ce lien expire dans {$this->ttlHours} heures.</p>
-                HTML);
+            ->htmlTemplate('email/trusted_device_approval.html.twig')
+            ->textTemplate('email/trusted_device_approval.txt.twig')
+            ->context($context);
 
         try {
             $this->mailer->send($email);
-            error_log("Trusted email envoyé à $to (from $from)");
+            error_log("TrustedEmail: envoyé à $to (from $from)");
         } catch (\Throwable $e) {
-            error_log('Mailer error (trusted): ' . $e->getMessage());
+            error_log('TrustedEmail error: '.$e->getMessage());
         }
     }
 
