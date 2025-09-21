@@ -87,4 +87,24 @@ class TrustedDeviceController extends AbstractController
         $this->addFlash('success', 'Demande envoyée (MAIL_TRUSTED_DEVICE).');
         return $this->redirectToRoute('devices_index');
     }
+    
+    #[Route('/_mail-test', name: '_mail_test')]
+    public function mailTest(\Symfony\Component\Mailer\MailerInterface $mailer): Response
+    {
+        $to = getenv('MAIL_TRUSTED_DEVICE') ?: 'devunity62400@gmail.com';
+        try {
+            $email = (new \Symfony\Component\Mime\Email())
+                ->from(getenv('MAIL_FROM') ?: 'contact@toplegends.fr')
+                ->to($to)
+                ->subject('Test SMTP LWS')
+                ->text('Bonjour, test SMTP depuis Symfony.');
+
+            $mailer->send($email);
+            return new Response('OK: envoyé à '.$to);
+        } catch (\Throwable $e) {
+            return new Response('Mailer error: '.$e->getMessage(), 500);
+        }
+    }
 }
+
+

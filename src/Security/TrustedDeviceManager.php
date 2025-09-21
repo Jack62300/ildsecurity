@@ -20,7 +20,7 @@ class TrustedDeviceManager
         private readonly MailerInterface $mailer,
         private readonly UrlGeneratorInterface $urlGen,
         private readonly array $trustedIps = [],
-        private readonly string $fromEmail = 'no-reply@example.com',
+        private readonly string $fromEmail = 'contact@toplegends.fr',
         private readonly ?string $approvalRecipientEmail = null,
         private readonly int $ttlHours = 24,
     ) {}
