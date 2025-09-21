@@ -1,0 +1,124 @@
+/* Conteneur centré et lisible sur mobile */
+.client-form-shell {
+  max-width: 920px; /* largeur confortable sur desktop */
+}
+
+/* Cartes douces */
+.card {
+  border-radius: 1rem;
+}
+
+.card .card-body {
+  padding: clamp(1rem, 2vw, 2rem);
+}
+
+/* Champ collection photo : carte légère autour de chaque item */
+.card-photo {
+  border-radius: .75rem;
+  background: #fff;
+  box-shadow: 0 1px 3px rgba(16,24,40,.05);
+}
+
+/* Espacement entre groupes */
+#photos-collection > * + * {
+  margin-top: .5rem;
+}
+
+/* Boutons */
+.btn {
+  border-radius: .6rem;
+}
+
+/* Ajustements mobiles */
+@media (max-width: 576px) {
+  .client-form-shell {
+    padding-left: .5rem;
+    padding-right: .5rem;
+  }
+}
+/* public/assets/css/client-form.css */
+
+#photos-collection .vich-image .form-control {
+  /* agrandit légèrement la zone de clic sur mobile */
+  min-height: 44px;
+}
+
+#photos-collection .card-photo {
+  border-radius: .75rem;
+  background: #fff;
+  box-shadow: 0 1px 3px rgba(16,24,40,.06);
+}
+
+#photos-collection .vich-image .form-check {
+  margin-top: .25rem;
+}
+
+/* Conteneur centré */
+.client-form-shell { max-width: 920px; }
+
+/* Carte douce */
+.card { border-radius: 1rem; }
+.card .card-body { padding: clamp(1rem, 2vw, 2rem); }
+
+/* Miniature FIXE pour chaque photo (PC & Mobile) */
+.client-photo-preview {
+  width: 100%;
+  max-width: 300px;   /* largeur max sur desktop */
+  height: 200px;      /* hauteur FIXE (PC) */
+  margin: 0 auto .5rem auto;
+  border: 1px solid #dee2e6;
+  border-radius: .5rem;
+  overflow: hidden;
+  background: #f8f9fa;
+  display: flex; align-items: center; justify-content: center;
+}
+.client-photo-img {
+  width: 100%; height: 100%;
+  object-fit: cover; object-position: center; display: block;
+}
+
+/* Mobile: miniatures un peu plus petites & full width */
+@media (max-width: 576px) {
+  .client-photo-preview {
+    max-width: 100%;
+    height: 160px;    /* hauteur FIXE (Mobile) */
+  }
+}
+
+/* Boutons arrondis */
+.btn { border-radius: .6rem; }
+/* public/assets/css/client-form.css */
+
+/* Ta vignette fixe (déjà mise) */
+.client-photo-preview {
+  width: 100%;
+  max-width: 300px;
+  height: 200px;           /* fixe desktop */
+  margin: 0 auto .5rem;
+  border: 1px solid #dee2e6;
+  border-radius: .5rem;
+  overflow: hidden;
+  background: #f8f9fa;
+  display: flex; align-items: center; justify-content: center;
+}
+.client-photo-img {
+  width: 100%; height: 100%;
+  object-fit: cover; object-position: center; display: block;
+}
+
+/* Mobile : un peu plus petit */
+@media (max-width: 576px) {
+  .client-photo-preview { height: 160px; max-width: 100%; }
+}
+
+/* Kill preview Vich si jamais elle ressort (sécurité) */
+.vich-image img {
+  width: 100% !important;
+  height: 200px !important;
+  object-fit: cover !important;
+  object-position: center !important;
+  display: block !important;
+}
+@media (max-width: 576px) {
+  .vich-image img { height: 160px !important; }
+}

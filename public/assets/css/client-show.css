@@ -1,0 +1,95 @@
+/* Conteneur centré type “feuille” */
+.client-sheet {
+  max-width: 980px;
+}
+
+/* Définition visuelle façon PDF : marges et typographies sobres */
+.client-dl dt {
+  font-weight: 600;
+  color: #6c757d;
+}
+.client-dl dd {
+  margin-bottom: .5rem;
+}
+
+/* Chips (affichage des clés) */
+.chips {
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: .25rem .4rem;
+}
+.chip {
+  display: inline-block;
+  padding: .15rem .5rem;
+  border-radius: 999px;
+  background: #f1f3f5;
+  border: 1px solid #e9ecef;
+  font-size: .85rem;
+}
+
+/* Vignettes photos */
+.photo-card img {
+  object-fit: cover;
+  width: 100%;
+  aspect-ratio: 4/3;
+}
+
+/* Impression : styliser comme une fiche PDF propre */
+@media print {
+  .btn, .badge, .navbar, .breadcrumb, .alert { display: none !important; }
+  .container { max-width: 100% !important; }
+  .client-sheet { max-width: 100% !important; }
+  .card, .card-header, .card-body { box-shadow: none !important; border: none !important; }
+  .card-header { background: #000 !important; color: #fff !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  .photo-card img { border: 1px solid #ccc; }
+}
+/* Conteneur de la fiche */
+.client-sheet { max-width: 980px; }
+
+/* Grille responsive des photos */
+.client-photo-grid {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: repeat(4, 1fr); /* 4 colonnes sur PC */
+}
+
+/* Cartes photo */
+.client-photo-tile {
+  display: block;
+  width: 100%;
+  height: 220px;                 /* Hauteur fixe sur PC */
+  border-radius: .5rem;
+  overflow: hidden;
+  background: #f6f7f8;
+  border: 1px solid #e9ecef;
+  box-shadow: 0 1px 2px rgba(16,24,40,.04);
+}
+
+/* Image forcée à remplir la tuile */
+.client-photo-tile img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;             /* crop / zoom */
+  object-position: center;
+  display: block;
+}
+
+/* TABLETTES (<= 992px) → 3 colonnes et hauteur adaptée */
+@media (max-width: 992px) {
+  .client-photo-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+  .client-photo-tile {
+    height: 180px; /* plus petit */
+  }
+}
+
+/* MOBILE (<= 576px) → 2 colonnes */
+@media (max-width: 576px) {
+  .client-photo-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .client-photo-tile {
+    height: 150px; /* miniatures plus petites sur mobile */
+  }
+}

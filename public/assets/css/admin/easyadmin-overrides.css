@@ -1,0 +1,62 @@
+/* Fond TailAdmin partout */
+html, body { background:#F8FAFC !important; }
+.ea-content-header, .ea-main .content-top { background:transparent!important; border:0!important; box-shadow:none!important; }
+
+/* largeur sidebar desktop */
+@media (min-width:1024px){
+  .ea-main, .content-wrapper, .ea-content-wrapper { margin-left: 16rem; } /* 64 * 0.25rem = 16rem (w-64) */
+}
+
+/* enlever les styles Bootstrap visibles d’EA sur les a/btn */
+a, button { text-decoration:none !important; }
+
+/* contrainte de largeur pour que la sidebar ressemble à TailAdmin */
+@media (min-width: 1024px){
+  .ea-main, .content-wrapper, .ea-content-wrapper{ margin-left: 16rem; } /* 64 tailwind = 16rem */
+}
+
+/* neutralise le style de badges/lis EA dans le menu si un thème force quelque chose */
+.ea-sidebar .menu, #main-menu, .menu, .submenu { all: unset; }
+
+
+/* neutralise les styles EA de la table index */
+.ea-table, .datagrid { all: unset; } /* on supprime l'héritage EA */
+.datagrid thead th { font-weight: 600; }
+
+/* fond général TailAdmin */
+html, body, .content-wrapper { background:#F8FAFC !important; }
+
+
+
+/* Forcer le texte en noir dans la grille EasyAdmin */
+.ea-index table td { color:#0f172a !important; }      /* text-slate-900 */
+.ea-index table td a { color:inherit; }               /* garde la même couleur pour les liens */
+.ea-index table td .badge { color:inherit; }          /* évite le gris forcé dans les badges */
+
+/* ===== Force black text inside EA index tables ===== */
+.ea-index .content-wrapper table td,
+.ea-index .content-wrapper table td *:not(.badge):not(.btn):not(svg):not(.ea-icon) {
+  color: #0f172a !important; /* Tailwind text-slate-900 */
+  opacity: 1 !important;     /* kill Bootstrap's 'muted' opacity */
+}
+
+/* Headers too (links and icons) */
+.ea-index .content-wrapper thead th,
+.ea-index .content-wrapper thead th a,
+.ea-index .content-wrapper thead th * {
+  color: #0f172a !important;
+}
+
+/* Keep badges/icons readable without being dimmed */
+.ea-index table td .badge { filter: none !important; }
+.ea-index table td svg, 
+.ea-index table td .ea-icon { color: inherit !important; }
+
+/* Forcer le texte noir pour tous les champs EasyAdmin */
+.ea-index td[class*="field-"],
+.ea-index td[class*="field-"] * {
+  color: #0f172a !important;   /* Tailwind text-slate-900 */
+  opacity: 1 !important;       /* retire l'effet "gris" Bootstrap */
+}
+
+.table.datagrid, .datagrid { all: unset; }
