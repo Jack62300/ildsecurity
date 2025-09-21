@@ -14,9 +14,9 @@ services:
         autoconfigure: true # Automatically registers your services as commands, event subscribers, etc.
     App\Security\TrustedDeviceManager:
         arguments:
-        $trustedIps: '%trusted_ips%'
-        $fromEmail: '%env(MAIL_FROM)%'
-        $approvalRecipientEmail: '%env(MAIL_TRUSTED_DEVICE)%'
+            $trustedIps: '%trusted_ips%'
+            $fromEmail: '%env(MAIL_FROM)%'
+            $approvalRecipientEmail: '%env(MAIL_TRUSTED_DEVICE)%'
 
 
     # makes classes in src/ available to be used as services
