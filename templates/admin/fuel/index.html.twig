@@ -1,0 +1,729 @@
+{% extends 'base.html.twig' %}
+{% block title %}Gestion de la Flotte{% endblock %}
+
+{% block body %}
+<style>
+/* ========== VARIABLES MODERNES ========== */
+:root {
+  --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  --success-gradient: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  --danger-gradient: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+  --warning-gradient: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+  --card-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+  --card-shadow-hover: 0 15px 40px rgba(0, 0, 0, 0.12);
+  --border-radius: 12px;
+  --border-radius-lg: 16px;
+  --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* ========== CONTAINER PRINCIPAL ========== */
+.fleet-container {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 2rem;
+  background: #e5e5e5;
+  min-height: 100vh;
+}
+
+/* ========== HEADER SECTION ========== */
+.page-header {
+  background: var(--primary-gradient);
+  border-radius: var(--border-radius-lg);
+  color: white;
+  padding: 2rem;
+  margin-bottom: 2rem;
+  position: relative;
+  overflow: hidden;
+}
+
+.page-header::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 100%;
+  height: 100%;
+  background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="80" cy="20" r="20" fill="rgba(255,255,255,0.1)"/><circle cx="90" cy="60" r="15" fill="rgba(255,255,255,0.08)"/><circle cx="70" cy="80" r="10" fill="rgba(255,255,255,0.06)"/></svg>');
+  background-size: 200px 200px;
+  opacity: 0.3;
+}
+
+.header-content {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+}
+
+.header-title h1 {
+  font-size: 2.5rem;
+  font-weight: 700;
+  margin: 0;
+}
+
+.header-subtitle {
+  opacity: 0.9;
+  font-size: 1.1rem;
+  margin-top: 0.5rem;
+}
+
+.btn-new-fuel {
+  background: rgba(255, 255, 255, 0.15);
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  color: white;
+  font-weight: 600;
+  border-radius: var(--border-radius);
+  backdrop-filter: blur(10px);
+  transition: var(--transition);
+  padding: 0.75rem 1.5rem;
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.btn-new-fuel:hover {
+  background: rgba(255, 255, 255, 0.25);
+  border-color: rgba(255, 255, 255, 0.5);
+  color: white;
+  transform: translateY(-2px);
+}
+
+/* ========== SECTION VÉHICULE ========== */
+.vehicle-section {
+  background: white;
+  border-radius: var(--border-radius-lg);
+  box-shadow: var(--card-shadow);
+  margin-bottom: 2rem;
+  overflow: hidden;
+  animation: slideInUp 0.5s ease-out;
+}
+
+.vehicle-header {
+  background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+  padding: 1.5rem;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.vehicle-info {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.vehicle-avatar {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background: var(--primary-gradient);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-weight: 700;
+  font-size: 1.2rem;
+}
+
+.vehicle-details h3 {
+  margin: 0;
+  font-weight: 700;
+  color: #1f2937;
+  font-size: 1.4rem;
+}
+
+.vehicle-details .text-muted {
+  color: #6b7280;
+  font-size: 0.9rem;
+  margin-top: 0.25rem;
+}
+
+.vehicle-stats {
+  display: flex;
+  gap: 2rem;
+  flex-wrap: wrap;
+}
+
+.stat-item {
+  text-align: center;
+}
+
+.stat-value {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #1f2937;
+  display: block;
+}
+
+.stat-label {
+  font-size: 0.8rem;
+  color: #6b7280;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-top: 0.25rem;
+}
+
+/* ========== TABLEAU MODERNE ========== */
+.table-wrapper {
+  overflow-x: auto;
+}
+
+.modern-table {
+  margin: 0;
+  border: none;
+  width: 100%;
+}
+
+.modern-table thead th {
+  background: transparent;
+  color: #2d3748;
+  font-weight: 700;
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  border: none;
+  padding: 1rem;
+  border-bottom: 2px solid #e2e8f0;
+}
+
+.modern-table tbody tr {
+  transition: var(--transition);
+  border: none;
+}
+
+.modern-table tbody tr:hover {
+  background: #f8fafc;
+}
+
+.modern-table tbody td {
+  padding: 1rem;
+  border-top: 1px solid rgba(0, 0, 0, 0.05);
+  vertical-align: middle;
+}
+
+.fuel-date {
+  font-weight: 600;
+  color: #374151;
+}
+
+.fuel-time {
+  font-size: 0.8rem;
+  color: #6b7280;
+  margin-top: 0.25rem;
+}
+
+.metric-value {
+  font-weight: 600;
+  color: #1f2937;
+}
+
+.price-cell {
+  font-weight: 700;
+  color: #059669;
+  font-size: 1.05rem;
+}
+
+.distance-badge {
+  background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
+  color: #1e40af;
+  padding: 0.25rem 0.75rem;
+  border-radius: 20px;
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.status-badge {
+  padding: 0.25rem 0.75rem;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* ========== ACTIONS DROPDOWN ========== */
+.actions-dropdown {
+  position: relative;
+}
+
+.actions-dropdown .dropdown-toggle {
+  border-radius: var(--border-radius);
+  border: 2px solid #e2e8f0;
+  background: white;
+  color: #4a5568;
+  font-weight: 600;
+  transition: var(--transition);
+  padding: 0.5rem 1rem;
+  font-size: 0.9rem;
+}
+
+.actions-dropdown .dropdown-toggle:hover {
+  border-color: #667eea;
+  color: #667eea;
+  transform: translateY(-2px);
+}
+
+.dropdown-menu {
+  border: none;
+  border-radius: var(--border-radius);
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+  padding: 0.5rem 0;
+  min-width: 160px;
+}
+
+.dropdown-item {
+  padding: 0.75rem 1.5rem;
+  font-weight: 500;
+  transition: var(--transition);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.9rem;
+  border: none;
+  background: none;
+  width: 100%;
+  text-align: left;
+  color: #374151;
+}
+
+.dropdown-item:hover {
+  background: #f8fafc;
+  color: #667eea;
+  transform: translateX(5px);
+}
+
+.dropdown-item.text-danger {
+  color: #dc2626;
+}
+
+.dropdown-item.text-danger:hover {
+  background: #fef2f2;
+  color: #dc2626;
+}
+
+.dropdown-item.text-success {
+  color: #059669;
+}
+
+.dropdown-item.text-success:hover {
+  background: #f0fdf4;
+  color: #059669;
+}
+
+.dropdown-item.text-warning {
+  color: #d97706;
+}
+
+.dropdown-item.text-warning:hover {
+  background: #fffbeb;
+  color: #d97706;
+}
+
+/* ========== PAGINATION ========== */
+.pagination-container {
+  padding: 1.5rem;
+  background: #f8fafc;
+  border-top: 1px solid #e2e8f0;
+  display: flex;
+  justify-content: center;
+}
+
+.pagination {
+  margin: 0;
+}
+
+.pagination .page-item .page-link {
+  border: none;
+  border-radius: var(--border-radius);
+  margin: 0 0.25rem;
+  color: #4a5568;
+  font-weight: 600;
+  transition: var(--transition);
+  padding: 0.5rem 1rem;
+}
+
+.pagination .page-item.active .page-link {
+  background: var(--primary-gradient);
+  color: white;
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+}
+
+.pagination .page-item .page-link:hover {
+  background: #f8fafc;
+  color: #667eea;
+  transform: translateY(-2px);
+}
+
+/* ========== EMPTY STATE ========== */
+.empty-state {
+  padding: 3rem 2rem;
+  text-align: center;
+  color: #6b7280;
+}
+
+.empty-state-icon {
+  width: 60px;
+  height: 60px;
+  background: #f3f4f6;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 1rem;
+  font-size: 1.5rem;
+}
+
+/* ========== RESPONSIVE ========== */
+@media (max-width: 768px) {
+  .fleet-container {
+    padding: 1rem;
+  }
+
+  .page-header {
+    padding: 1.5rem;
+  }
+
+  .header-content {
+    flex-direction: column;
+    text-align: center;
+    gap: 1rem;
+  }
+
+  .header-title h1 {
+    font-size: 2rem;
+  }
+
+  .vehicle-header {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 1rem;
+  }
+
+  .vehicle-stats {
+    justify-content: space-around;
+    gap: 1rem;
+  }
+
+  .table-wrapper {
+    overflow-x: auto;
+  }
+
+  .modern-table {
+    min-width: 700px;
+  }
+}
+
+/* ========== ANIMATIONS ========== */
+@keyframes slideInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.vehicle-section {
+  animation: slideInUp 0.5s ease-out;
+}
+
+/* ========== GLOBAL STATS ========== */
+.global-stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.global-stat-card {
+  background: white;
+  border-radius: var(--border-radius);
+  padding: 1.5rem;
+  box-shadow: var(--card-shadow);
+  text-align: center;
+  transition: var(--transition);
+}
+
+.global-stat-card:hover {
+  transform: translateY(-5px);
+  box-shadow: var(--card-shadow-hover);
+}
+
+.global-stat-icon {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 1rem;
+  font-size: 1.5rem;
+  color: white;
+}
+
+.global-stat-icon.vehicles { background: var(--primary-gradient); }
+.global-stat-icon.fills { background: var(--warning-gradient); }
+.global-stat-icon.pending { background: var(--danger-gradient); }
+</style>
+
+<div class="fleet-container">
+  <!-- Header Section -->
+  <div class="page-header">
+    <div class="header-content">
+      <div class="header-title">
+        <h1>Gestion de la Flotte</h1>
+        <div class="header-subtitle">
+          {{ vehicles|length }} véhicule{{ vehicles|length > 1 ? 's' : '' }} • {{ fills.getTotalItemCount }} plein{{ fills.getTotalItemCount > 1 ? 's' : '' }} à traiter
+        </div>
+      </div>
+      
+      <div class="header-actions">
+        <a href="{{ path('admin_fuel_new') }}" class="btn-new-fuel">
+          + Nouveau Plein
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Stats Globales -->
+  <div class="global-stats">
+    <div class="global-stat-card">
+      <div class="global-stat-icon vehicles">🚗</div>
+      <div class="stat-value">{{ vehicles|length }}</div>
+      <div class="stat-label">Véhicules</div>
+    </div>
+    <div class="global-stat-card">
+      <div class="global-stat-icon fills">⛽</div>
+      <div class="stat-value">{{ fills.getTotalItemCount }}</div>
+      <div class="stat-label">Pleins en attente</div>
+    </div>
+    <div class="global-stat-card">
+      <div class="global-stat-icon pending">⏳</div>
+      <div class="stat-value">
+        {% set pendingCount = 0 %}
+        {% for fill in fills %}
+          {% if fill.status == 'pending' %}
+            {% set pendingCount = pendingCount + 1 %}
+          {% endif %}
+        {% endfor %}
+        {{ pendingCount }}
+      </div>
+      <div class="stat-label">En validation</div>
+    </div>
+  </div>
+
+  <!-- Sections par véhicule -->
+  {% if vehicles is empty %}
+    <div class="vehicle-section">
+      <div class="empty-state">
+        <div class="empty-state-icon">🚗</div>
+        <h4>Aucun véhicule enregistré</h4>
+        <p>Commencez par ajouter des véhicules à votre flotte pour pouvoir enregistrer des pleins de carburant.</p>
+      </div>
+    </div>
+  {% else %}
+    {% for vehicle in vehicles %}
+      {% set vehicleFills = [] %}
+      {% for fill in fills %}
+        {% if fill.vehicle.id == vehicle.id %}
+          {% set vehicleFills = vehicleFills|merge([fill]) %}
+        {% endif %}
+      {% endfor %}
+
+      <div class="vehicle-section">
+        <!-- En-tête du véhicule -->
+        <div class="vehicle-header">
+          <div class="vehicle-info">
+            <div class="vehicle-avatar">
+              {{ vehicle.plate|slice(0, 2) }}
+            </div>
+            <div class="vehicle-details">
+              <h3>{{ vehicle.plate }}</h3>
+              {% if vehicle.model %}
+                <div class="text-muted">{{ vehicle.model }}</div>
+              {% endif %}
+            </div>
+          </div>
+
+          {% if vehicleFills is not empty %}
+            <div class="vehicle-stats">
+              <div class="stat-item">
+                <span class="stat-value">{{ vehicleFills|length }}</span>
+                <div class="stat-label">Pleins</div>
+              </div>
+              <div class="stat-item">
+                <span class="stat-value">
+                  {% set totalLiters = 0 %}
+                  {% for fill in vehicleFills %}
+                    {% set totalLiters = totalLiters + fill.liters %}
+                  {% endfor %}
+                  {{ totalLiters|number_format(1) }} L
+                </span>
+                <div class="stat-label">Carburant</div>
+              </div>
+              <div class="stat-item">
+                <span class="stat-value">
+                  {% set totalCost = 0 %}
+                  {% for fill in vehicleFills %}
+                    {% set totalCost = totalCost + fill.totalPrice %}
+                  {% endfor %}
+                  {{ totalCost|number_format(2) }} €
+                </span>
+                <div class="stat-label">Coût total</div>
+              </div>
+            </div>
+          {% endif %}
+        </div>
+
+        <!-- Tableau des pleins -->
+        {% if vehicleFills is empty %}
+          <div class="empty-state">
+            <div class="empty-state-icon">⛽</div>
+            <h5>Aucun plein pour ce véhicule</h5>
+            <p>Ce véhicule n'a pas encore de pleins de carburant enregistrés en attente de traitement.</p>
+          </div>
+        {% else %}
+          <div class="table-wrapper">
+            <table class="modern-table table">
+              <thead>
+                <tr>
+                  <th>Date</th>
+                  <th>Odomètre</th>
+                  <th>Carburant</th>
+                  <th>Prix/L</th>
+                  <th>Total</th>
+                  <th>Distance</th>
+                  <th>Statut</th>
+                  <th style="width:120px;">Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for fill in vehicleFills %}
+                  <tr>
+                    <td>
+                      <div class="fuel-date">
+                        {{ fill.filledAt|date('d/m/Y') }}
+                      </div>
+                      <div class="fuel-time">
+                        {{ fill.filledAt|date('H:i') }}
+                      </div>
+                    </td>
+                    <td>
+                      <span class="metric-value">{{ fill.odometer|number_format(0, ',', ' ') }} km</span>
+                    </td>
+                    <td>
+                      <span class="metric-value">{{ fill.liters|number_format(2, ',', ' ') }} L</span>
+                    </td>
+                    <td>
+                      <span class="metric-value">{{ fill.pricePerLitre|number_format(3, ',', ' ') }} €</span>
+                    </td>
+                    <td>
+                      <span class="price-cell">{{ fill.totalPrice|number_format(2, ',', ' ') }} €</span>
+                    </td>
+                    <td>
+                      {% if fill.distanceKm is not null %}
+                        <span class="distance-badge">{{ fill.distanceKm|number_format(0, ',', ' ') }} km</span>
+                      {% else %}
+                        <span style="color: #9ca3af;">—</span>
+                      {% endif %}
+                    </td>
+                    <td>
+                      <span class="status-badge" style="background-color: {{ fill.statusColor }}33; color: {{ fill.statusColor }}; border: 1px solid {{ fill.statusColor }};">
+                        {{ fill.statusLabel ?? fill.status|default('Nouveau') }}
+                      </span>
+                    </td>
+                    <td>
+                      <div class="actions-dropdown dropdown">
+                        <button class="dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                          Actions
+                        </button>
+                        <ul class="dropdown-menu">
+                          <li>
+                            <a class="dropdown-item" href="{{ path('admin_fuel_show', {id: fill.id}) }}">
+                              👁️ Voir
+                            </a>
+                          </li>
+                          {% if fill.status != 'validated' %}
+                            <li>
+                              <a class="dropdown-item" href="{{ path('admin_fuel_edit', {id: fill.id}) }}">
+                                ✏️ Modifier
+                              </a>
+                            </li>
+                            {% if fill.status == 'pending' %}
+                              <li>
+                                <form method="post" action="{{ path('admin_fuel_validate', {id: fill.id}) }}" style="display: inline;">
+                                  <input type="hidden" name="_token" value="{{ csrf_token('validate_fill_' ~ fill.id) }}">
+                                  <button type="submit" class="dropdown-item text-success">
+                                    ✅ Valider
+                                  </button>
+                                </form>
+                              </li>
+                              <li>
+                                <form method="post" action="{{ path('admin_fuel_reject', {id: fill.id}) }}" style="display: inline;">
+                                  <input type="hidden" name="_token" value="{{ csrf_token('reject_fill_' ~ fill.id) }}">
+                                  <button type="submit" class="dropdown-item text-warning">
+                                    ❌ Refuser
+                                  </button>
+                                </form>
+                              </li>
+                            {% endif %}
+                            <li>
+                              <form method="post" action="{{ path('admin_fuel_delete', {id: fill.id}) }}"
+                                    onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer ce plein ?');">
+                                <input type="hidden" name="_token" value="{{ csrf_token('delete_fill_' ~ fill.id) }}">
+                                <button type="submit" class="dropdown-item text-danger">
+                                  🗑️ Supprimer
+                                </button>
+                              </form>
+                            </li>
+                          {% else %}
+                            <li>
+                              <span class="dropdown-item text-muted">
+                                🔒 Plein validé
+                              </span>
+                            </li>
+                          {% endif %}
+                        </ul>
+                      </div>
+                    </td>
+                  </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        {% endif %}
+      </div>
+    {% endfor %}
+
+    <!-- Pagination globale -->
+    
+      <div class="pagination-container">
+        {{ knp_pagination_render(fills) }}
+      </div>
+  
+  {% endif %}
+</div>
+
+<script>
+// Amélioration des dropdowns
+document.addEventListener('DOMContentLoaded', function() {
+  // Auto-fermeture des dropdowns
+  document.addEventListener('click', function(e) {
+    if (!e.target.closest('.dropdown')) {
+      document.querySelectorAll('.dropdown-menu.show').forEach(function(menu) {
+        menu.classList.remove('show');
+      });
+    }
+  });
+});
+</script>
+{% endblock %}

@@ -1,0 +1,36 @@
+{% extends 'base.html.twig' %}
+{% block body %}
+<h1>Flotte – Pleins carburant</h1>
+
+<p><a class="btn btn-primary" href="{{ path('fleet_fill_new') }}">Nouveau plein</a></p>
+
+<table class="table">
+  <thead>
+    <tr><th>Date</th><th>Véhicule</th><th>Compteur</th><th>Δ km</th><th>Litres</th><th>€/L</th><th>Total €</th></tr>
+  </thead>
+  <tbody>
+
+  {% for v in vehicles %}
+  {% if v.photoName %}
+    <img src="{{ vich_uploader_asset(v, 'photoFile') }}" alt="{{ v.plate }}" style="height:42px;border-radius:6px">
+  {% endif %}
+  {{ v.plate }} {{ v.model }}
+{% endfor %}
+
+
+  {% for f in fills %}
+    <tr>
+      <td>{{ f.filledAt|date('d/m/Y H:i') }}</td>
+      <td>{{ f.vehicle.plate }} {{ f.vehicle.model }}</td>
+      <td>{{ f.odometerKm|number_format(0,',',' ') }}</td>
+      <td>{{ f.kmSinceLast|number_format(0,',',' ') }}</td>
+      <td>{{ f.liters }}</td>
+      <td>{{ f.pricePerLiter }}</td>
+      <td>{{ f.totalPrice }}</td>
+    </tr>
+  {% else %}
+    <tr><td colspan="7"><em>Aucun plein saisi</em></td></tr>
+  {% endfor %}
+  </tbody>
+</table>
+{% endblock %}

@@ -1,0 +1,15 @@
+{% extends 'base.html.twig' %}
+{% block body %}
+<h1>Nouveau plein</h1>
+{{ form_start(form) }}
+  <div class="mb-3">
+    {{ form_label(form.vehicle) }}
+    {{ form_widget(form.vehicle, { attr: { class: 'vehicle-select' } }) }}
+  </div>
+  {{ form_row(form.filledAt) }}
+  {{ form_row(form.odometerKm) }}
+  {{ form_row(form.pricePerLiter) }}
+  {{ form_row(form.liters) }}
+  <button class="btn btn-success">Enregistrer</button>
+{{ form_end(form) }}
+{% endblock %}

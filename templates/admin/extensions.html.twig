@@ -1,0 +1,44 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Gestion des extensions{% endblock %}
+
+{% block body %}
+    <h1>Extensions disponibles</h1>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Nom</th>
+                <th>Description</th>
+                <th>État</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for ext in extensions %}
+            <tr>
+                <td>{{ ext.name }}</td>
+                <td>{{ ext.description ?: '-' }}</td>
+                <td>
+                    {% if ext.enabled %}
+                        ✅ Activé
+                    {% else %}
+                        ❌ Désactivé
+                    {% endif %}
+                </td>
+                <td>
+                    {% if ext.enabled %}
+                        <a href="{{ path('admin_extension_toggle', {id: ext.id}) }}" class="btn btn-warning btn-sm">Désactiver</a>
+                    {% else %}
+                        <a href="{{ path('admin_extension_toggle', {id: ext.id}) }}" class="btn btn-success btn-sm">Activer</a>
+                    {% endif %}
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="4">Aucune extension trouvée.</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}
