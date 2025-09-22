@@ -42,4 +42,18 @@ class FuelFillUpRepository extends ServiceEntityRepository
                 ->setParameter('validated', 'validated')
                 ->orderBy('f.filledAt', 'DESC');
         }
+
+        public function findPreviousOdometerForVehicle(Vehicle $vehicle, int $currentOdometer): ?FuelFillUp
+        {
+            return $this->createQueryBuilder('f')
+                ->andWhere('f.vehicle = :vehicle')
+                ->andWhere('f.odometer < :currentOdometer')
+                ->andWhere('f.odometer IS NOT NULL')
+                ->setParameter('vehicle', $vehicle)
+                ->setParameter('currentOdometer', $currentOdometer)
+                ->orderBy('f.odometer', 'DESC')  // Le plus proche en dessous
+                ->setMaxResults(1)
+                ->getQuery()
+                ->getOneOrNullResult();
+        }
 }

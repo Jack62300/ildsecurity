@@ -11,7 +11,7 @@ use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
-#[IsGranted('ROLE_USER')]
+#[IsGranted('ROLE_ADMIN')]
 #[Route('/admin/vehicles')]
 class VehicleAdminController extends AbstractController
 {

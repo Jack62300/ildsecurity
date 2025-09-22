@@ -14,7 +14,7 @@ use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
-#[IsGranted('ROLE_ADMIN')]
+#[IsGranted('ROLE_USER')]
 #[Route('/admin/fuel', name: 'admin_fuel_')]
 class FuelAdminController extends AbstractController
 {
@@ -118,21 +118,39 @@ class FuelAdminController extends AbstractController
         $form->handleRequest($req);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            // Sécurité: recalcul serveur (total & distance)
+            // Sécurité: recalcul serveur (total)
             $total = (float)$fill->getLiters() * (float)$fill->getPricePerLitre();
             $fill->setTotalPrice(number_format($total, 2, '.', ''));
 
-            $prev = $fill->getVehicle() ? $repo->findPreviousForVehicle($fill->getVehicle(), $fill->getFilledAt()) : null;
-            if ($prev && $fill->getOdometer() >= $prev->getOdometer()) {
-                $fill->setDistanceKm($fill->getOdometer() - $prev->getOdometer());
-            } else {
-                $fill->setDistanceKm(null);
-                if ($prev) {
-                    $this->addFlash('warning', sprintf(
-                        "Le kilométrage (%d) est inférieur au précédent plein (%d). Distance non calculée.",
-                        $fill->getOdometer(),
-                        $prev->getOdometer()
+            // === CALCUL DE DISTANCE CORRIGÉ ===
+            if ($fill->getVehicle()) {
+                // Cherche le plein avec l'odomètre le plus proche ET inférieur
+                $prev = $repo->findPreviousOdometerForVehicle(
+                    $fill->getVehicle(),
+                    $fill->getOdometer()
+                );
+
+                if ($prev && $fill->getOdometer() > $prev->getOdometer()) {
+                    $distance = $fill->getOdometer() - $prev->getOdometer();
+                    $fill->setDistanceKm($distance);
+
+                    $this->addFlash('info', sprintf(
+                        "Distance calculée : %d km (de %d à %d km)",
+                        $distance,
+                        $prev->getOdometer(),
+                        $fill->getOdometer()
                     ));
+                } else {
+                    $fill->setDistanceKm(null);
+                    if ($prev) {
+                        $this->addFlash('warning', sprintf(
+                            "Odomètre (%d km) inférieur ou égal au précédent (%d km). Distance non calculée.",
+                            $fill->getOdometer(),
+                            $prev->getOdometer()
+                        ));
+                    } else {
+                        $this->addFlash('info', 'Premier plein pour ce véhicule. Aucune distance calculée.');
+                    }
                 }
             }
 
@@ -148,7 +166,7 @@ class FuelAdminController extends AbstractController
             'fill' => $fill,
         ]);
     }
-
+    #[IsGranted('ROLE_ADMIN')]
     #[Route('/{id}/edit', name: 'edit', methods: ['GET', 'POST'])]
     public function edit(
         FuelFillUp $fill,
@@ -189,7 +207,7 @@ class FuelAdminController extends AbstractController
             'fill' => $fill,
         ]);
     }
-
+    #[IsGranted('ROLE_ADMIN')]
     #[Route('/{id}/delete', name: 'delete', methods: ['POST'])]
     public function delete(FuelFillUp $fill, Request $req, EntityManagerInterface $em): Response
     {
@@ -204,7 +222,7 @@ class FuelAdminController extends AbstractController
         $this->addFlash('success', 'Plein supprimé.');
         return $this->redirectToRoute('admin_fuel_index');
     }
-
+    #[IsGranted('ROLE_ADMIN')]
     #[Route('/admin/fuel/{id}/validate', name: 'validate', methods: ['POST'])]
     public function validate(FuelFillUp $fill, EntityManagerInterface $em): Response
     {
@@ -214,7 +232,7 @@ class FuelAdminController extends AbstractController
         $this->addFlash('success', 'Plein validé avec succès.');
         return $this->redirectToRoute('admin_fuel_index');
     }
-
+    #[IsGranted('ROLE_ADMIN')]
     #[Route('/admin/fuel/{id}/reject', name: 'reject', methods: ['POST'])]
     public function reject(FuelFillUp $fill, EntityManagerInterface $em): Response
     {

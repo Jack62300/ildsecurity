@@ -98,8 +98,9 @@
   border-radius: var(--border-radius-lg);
   box-shadow: var(--card-shadow);
   margin-bottom: 2rem;
-  overflow: hidden;
+  overflow: visible;
   animation: slideInUp 0.5s ease-out;
+  position: relative;
 }
 
 .vehicle-header {
@@ -172,13 +173,14 @@
 
 /* ========== TABLEAU MODERNE ========== */
 .table-wrapper {
-  overflow-x: auto;
+  overflow: visible;
 }
 
 .modern-table {
   margin: 0;
   border: none;
   width: 100%;
+  overflow: visible;
 }
 
 .modern-table thead th {
@@ -196,16 +198,20 @@
 .modern-table tbody tr {
   transition: var(--transition);
   border: none;
+  position: relative;
 }
 
 .modern-table tbody tr:hover {
   background: #f8fafc;
+  z-index: 10;
 }
 
 .modern-table tbody td {
   padding: 1rem;
   border-top: 1px solid rgba(0, 0, 0, 0.05);
   vertical-align: middle;
+  overflow: visible;
+  position: relative;
 }
 
 .fuel-date {
@@ -270,12 +276,25 @@
   transform: translateY(-2px);
 }
 
+.modern-table tbody tr:hover .actions-dropdown {
+  z-index: 1070;
+}
+
 .dropdown-menu {
   border: none;
   border-radius: var(--border-radius);
   box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
   padding: 0.5rem 0;
   min-width: 160px;
+  position: absolute !important;
+  top: 100% !important;
+  right: 0 !important;
+  left: auto !important;
+  z-index: 1080 !important;
+  transform: none !important;
+  margin-top: 0.5rem !important;
+  background: white;
+  border: 1px solid rgba(0, 0, 0, 0.1);
 }
 
 .dropdown-item {
@@ -291,6 +310,7 @@
   width: 100%;
   text-align: left;
   color: #374151;
+  white-space: nowrap;
 }
 
 .dropdown-item:hover {
@@ -417,6 +437,7 @@
 
   .modern-table {
     min-width: 700px;
+    overflow: visible;
   }
 }
 
