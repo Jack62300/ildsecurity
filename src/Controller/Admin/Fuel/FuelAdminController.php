@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Controller\Admin\Fuel;
 
 use App\Entity\Vehicle;
@@ -23,10 +24,10 @@ class FuelAdminController extends AbstractController
         EntityManagerInterface $em,
         PaginatorInterface $paginator
     ): Response {
-        // Liste des véhicules (pour l’entête + groupement par véhicule dans ton Twig)
+        // Liste des véhicules (pour l'entête + groupement par véhicule dans ton Twig)
         $vehicles = $em->getRepository(Vehicle::class)->findBy([], ['plate' => 'ASC']);
 
-        // QB des pleins NON validés (status != 'validated' ou NULL), plus récent d’abord
+        // QB des pleins NON validés (status != 'validated' ou NULL), plus récent d'abord
         $qb = $em->getRepository(FuelFillUp::class)->createQueryBuilder('f')
             ->addSelect('v')
             ->leftJoin('f.vehicle', 'v')
@@ -40,13 +41,73 @@ class FuelAdminController extends AbstractController
 
         $fills = $paginator->paginate($qb, $page, $limit);
 
+        // ===== CALCULS STATISTIQUES SUR TOUTES LES DONNÉES =====
+        // Récupération de TOUS les pleins non validés pour les statistiques
+        $allFillsQb = $em->getRepository(FuelFillUp::class)->createQueryBuilder('f')
+            ->addSelect('v')
+            ->leftJoin('f.vehicle', 'v')
+            ->andWhere("COALESCE(f.status, '') <> :validated")
+            ->setParameter('validated', 'validated');
+
+        $allFills = $allFillsQb->getQuery()->getResult();
+
+        // Calculs statistiques globaux
+        $globalStats = [
+            'totalDistance' => 0,
+            'pendingCount' => 0,
+            'totalCost' => 0,
+            'totalLiters' => 0
+        ];
+
+        foreach ($allFills as $fill) {
+            // Distance
+            if ($fill->getDistanceKm() && $fill->getDistanceKm() > 0) {
+                $globalStats['totalDistance'] += $fill->getDistanceKm();
+            }
+
+            // Statut pending
+            if ($fill->getStatus() === 'pending') {
+                $globalStats['pendingCount']++;
+            }
+
+            // Coût et litres
+            $globalStats['totalCost'] += $fill->getTotalPrice();
+            $globalStats['totalLiters'] += $fill->getLiters();
+        }
+
+        // Calculs statistiques par véhicule
+        $vehicleStats = [];
+        foreach ($vehicles as $vehicle) {
+            $vehicleStats[$vehicle->getId()] = [
+                'fillsCount' => 0,
+                'totalDistance' => 0,
+                'totalCost' => 0,
+                'totalLiters' => 0
+            ];
+        }
+
+        foreach ($allFills as $fill) {
+            $vehicleId = $fill->getVehicle()->getId();
+            if (isset($vehicleStats[$vehicleId])) {
+                $vehicleStats[$vehicleId]['fillsCount']++;
+                $vehicleStats[$vehicleId]['totalCost'] += $fill->getTotalPrice();
+                $vehicleStats[$vehicleId]['totalLiters'] += $fill->getLiters();
+
+                if ($fill->getDistanceKm() && $fill->getDistanceKm() > 0) {
+                    $vehicleStats[$vehicleId]['totalDistance'] += $fill->getDistanceKm();
+                }
+            }
+        }
+
         return $this->render('admin/fuel/index.html.twig', [
             'vehicles' => $vehicles,
-            'fills'    => $fills, // objet KnpPaginator (getTotalItemCount / haveToPaginate OK)
+            'fills' => $fills, // objet KnpPaginator (getTotalItemCount / haveToPaginate OK)
+            'globalStats' => $globalStats,
+            'vehicleStats' => $vehicleStats,
         ]);
     }
 
-    #[Route('/new', name: 'new', methods: ['GET','POST'])]
+    #[Route('/new', name: 'new', methods: ['GET', 'POST'])]
     public function new(
         Request $req,
         EntityManagerInterface $em,
@@ -69,7 +130,8 @@ class FuelAdminController extends AbstractController
                 if ($prev) {
                     $this->addFlash('warning', sprintf(
                         "Le kilométrage (%d) est inférieur au précédent plein (%d). Distance non calculée.",
-                        $fill->getOdometer(), $prev->getOdometer()
+                        $fill->getOdometer(),
+                        $prev->getOdometer()
                     ));
                 }
             }
@@ -87,7 +149,7 @@ class FuelAdminController extends AbstractController
         ]);
     }
 
-    #[Route('/{id}/edit', name: 'edit', methods: ['GET','POST'])]
+    #[Route('/{id}/edit', name: 'edit', methods: ['GET', 'POST'])]
     public function edit(
         FuelFillUp $fill,
         Request $req,
@@ -132,7 +194,7 @@ class FuelAdminController extends AbstractController
     public function delete(FuelFillUp $fill, Request $req, EntityManagerInterface $em): Response
     {
         $token = (string)$req->request->get('_token', '');
-        if (!$this->isCsrfTokenValid('delete_fill_'.$fill->getId(), $token)) {
+        if (!$this->isCsrfTokenValid('delete_fill_' . $fill->getId(), $token)) {
             $this->addFlash('danger', 'Jeton CSRF invalide.');
             return $this->redirectToRoute('admin_fuel_index');
         }
@@ -143,23 +205,23 @@ class FuelAdminController extends AbstractController
         return $this->redirectToRoute('admin_fuel_index');
     }
 
-     #[Route('/admin/fuel/{id}/validate', name: 'validate', methods: ['POST'])]
-        public function validate(FuelFillUp $fill, EntityManagerInterface $em): Response
-        {
-            $fill->setStatus('validated');
-            $em->flush();
-            
-            $this->addFlash('success', 'Plein validé avec succès.');
-            return $this->redirectToRoute('admin_fuel_index');
-        }
+    #[Route('/admin/fuel/{id}/validate', name: 'validate', methods: ['POST'])]
+    public function validate(FuelFillUp $fill, EntityManagerInterface $em): Response
+    {
+        $fill->setStatus('validated');
+        $em->flush();
 
-        #[Route('/admin/fuel/{id}/reject', name: 'reject', methods: ['POST'])]
-        public function reject(FuelFillUp $fill, EntityManagerInterface $em): Response
-        {
-            $fill->setStatus('rejected');
-            $em->flush();
-            
-            $this->addFlash('warning', 'Plein refusé.');
-            return $this->redirectToRoute('admin_fuel_index');
-        }
+        $this->addFlash('success', 'Plein validé avec succès.');
+        return $this->redirectToRoute('admin_fuel_index');
+    }
+
+    #[Route('/admin/fuel/{id}/reject', name: 'reject', methods: ['POST'])]
+    public function reject(FuelFillUp $fill, EntityManagerInterface $em): Response
+    {
+        $fill->setStatus('rejected');
+        $em->flush();
+
+        $this->addFlash('warning', 'Plein refusé.');
+        return $this->redirectToRoute('admin_fuel_index');
+    }
 }

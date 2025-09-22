@@ -473,6 +473,7 @@
 .global-stat-icon.vehicles { background: var(--primary-gradient); }
 .global-stat-icon.fills { background: var(--warning-gradient); }
 .global-stat-icon.pending { background: var(--danger-gradient); }
+.global-stat-icon.distance { background: linear-gradient(135deg, #06b6d4 0%, #0891b2 100%); }
 </style>
 
 <div class="fleet-container">
@@ -508,16 +509,13 @@
     </div>
     <div class="global-stat-card">
       <div class="global-stat-icon pending">⏳</div>
-      <div class="stat-value">
-        {% set pendingCount = 0 %}
-        {% for fill in fills %}
-          {% if fill.status == 'pending' %}
-            {% set pendingCount = pendingCount + 1 %}
-          {% endif %}
-        {% endfor %}
-        {{ pendingCount }}
-      </div>
+      <div class="stat-value">{{ globalStats.pendingCount }}</div>
       <div class="stat-label">En validation</div>
+    </div>
+    <div class="global-stat-card">
+      <div class="global-stat-icon distance">📏</div>
+      <div class="stat-value">{{ globalStats.totalDistance|number_format(0, ',', ' ') }} km</div>
+      <div class="stat-label">Distance parcourue</div>
     </div>
   </div>
 
@@ -533,7 +531,7 @@
   {% else %}
     {% for vehicle in vehicles %}
       {% set vehicleFills = [] %}
-      {% for fill in fills %}
+      {% for fill in fills.items %}
         {% if fill.vehicle.id == vehicle.id %}
           {% set vehicleFills = vehicleFills|merge([fill]) %}
         {% endif %}
@@ -554,31 +552,23 @@
             </div>
           </div>
 
-          {% if vehicleFills is not empty %}
+          {% if vehicleStats[vehicle.id] is defined and vehicleStats[vehicle.id].fillsCount > 0 %}
             <div class="vehicle-stats">
               <div class="stat-item">
-                <span class="stat-value">{{ vehicleFills|length }}</span>
+                <span class="stat-value">{{ vehicleStats[vehicle.id].fillsCount }}</span>
                 <div class="stat-label">Pleins</div>
               </div>
               <div class="stat-item">
-                <span class="stat-value">
-                  {% set totalLiters = 0 %}
-                  {% for fill in vehicleFills %}
-                    {% set totalLiters = totalLiters + fill.liters %}
-                  {% endfor %}
-                  {{ totalLiters|number_format(1) }} L
-                </span>
+                <span class="stat-value">{{ vehicleStats[vehicle.id].totalLiters|number_format(1) }} L</span>
                 <div class="stat-label">Carburant</div>
               </div>
               <div class="stat-item">
-                <span class="stat-value">
-                  {% set totalCost = 0 %}
-                  {% for fill in vehicleFills %}
-                    {% set totalCost = totalCost + fill.totalPrice %}
-                  {% endfor %}
-                  {{ totalCost|number_format(2) }} €
-                </span>
+                <span class="stat-value">{{ vehicleStats[vehicle.id].totalCost|number_format(2) }} €</span>
                 <div class="stat-label">Coût total</div>
+              </div>
+              <div class="stat-item">
+                <span class="stat-value">{{ vehicleStats[vehicle.id].totalDistance|number_format(0) }} km</span>
+                <div class="stat-label">Distance</div>
               </div>
             </div>
           {% endif %}
@@ -630,7 +620,7 @@
                       <span class="price-cell">{{ fill.totalPrice|number_format(2, ',', ' ') }} €</span>
                     </td>
                     <td>
-                      {% if fill.distanceKm is not null %}
+                      {% if fill.distanceKm is not null and fill.distanceKm > 0 %}
                         <span class="distance-badge">{{ fill.distanceKm|number_format(0, ',', ' ') }} km</span>
                       {% else %}
                         <span style="color: #9ca3af;">—</span>
@@ -705,11 +695,9 @@
     {% endfor %}
 
     <!-- Pagination globale -->
-    
-      <div class="pagination-container">
-        {{ knp_pagination_render(fills) }}
-      </div>
-  
+    <div class="pagination-container">
+      {{ knp_pagination_render(fills) }}
+    </div>
   {% endif %}
 </div>
 

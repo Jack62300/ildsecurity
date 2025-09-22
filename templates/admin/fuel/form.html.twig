@@ -582,58 +582,6 @@
             </div>
           </div>
 
-          {# Section Photo du ticket #}
-          <div class="form-section">
-            <div class="section-title">
-              <i class="bi bi-camera"></i>
-              Photo du ticket de caisse
-            </div>
-            
-            <div class="row g-4">
-              <div class="col-12">
-                <div class="form-group">
-                  <div class="photo-upload-section" id="photo-upload-zone">
-                    {# Input file caché #}
-                    {% if form.photoFile is defined %}
-                      {{ form_widget(form.photoFile, {'attr': {'class': 'photo-file-input', 'accept': 'image/*'}}) }}
-                    {% else %}
-                      <input type="file" name="photo" class="photo-file-input" accept="image/*" id="photo-input">
-                    {% endif %}
-                    
-                    <div class="upload-content">
-                      <div class="upload-icon">
-                        <i class="bi bi-camera"></i>
-                      </div>
-                      <div class="upload-text">Cliquez ou glissez une photo ici</div>
-                      <div class="upload-hint">JPG, PNG ou WEBP - Max 5MB</div>
-                    </div>
-                  </div>
-
-                  {# Prévisualisation de la photo #}
-                  <div class="photo-preview" id="photo-preview">
-                    <img id="preview-img" src="" alt="Aperçu">
-                    <div class="photo-actions">
-                      <button type="button" class="btn-photo btn-change" id="change-photo-btn">
-                        <i class="bi bi-arrow-repeat"></i> Changer
-                      </button>
-                      <button type="button" class="btn-photo btn-remove" id="remove-photo-btn">
-                        <i class="bi bi-trash"></i> Supprimer
-                      </button>
-                    </div>
-                  </div>
-
-                  <div class="form-help">
-                    <i class="bi bi-info-circle"></i>
-                    Photo optionnelle du ticket de caisse pour justificatif
-                  </div>
-                  
-                  {% if form.photoFile is defined %}
-                    {{ form_errors(form.photoFile) }}
-                  {% endif %}
-                </div>
-              </div>
-            </div>
-          </div>
 
           {# Section Kilométrage #}
           <div class="form-section">
@@ -890,7 +838,6 @@ document.addEventListener('DOMContentLoaded', function() {
   // ========== APERÇU VÉHICULE ========== 
   const selectVehicle = document.querySelector('select[name$="[vehicle]"]');
   const preview = document.getElementById('vehicle-preview');
-  const img = document.getElementById('vehicle-photo');
   const plate = document.getElementById('vehicle-plate');
 
   function refreshPreview() {
@@ -965,13 +912,6 @@ document.addEventListener('DOMContentLoaded', function() {
     }
   });
 
-  // ========== VÉRIFICATION INITIALE PHOTO ========== 
-  // Si une photo existe déjà (mode édition)
-  {% if fill.id and fill.photoPath %}
-    previewImg.src = '{{ asset('uploads/fuel_photos/' ~ fill.photoPath) }}';
-    photoPreview.classList.add('show');
-    photoUploadZone.style.display = 'none';
-  {% endif %}
-});
+ 
 </script>
 {% endblock %}
