@@ -182,107 +182,6 @@
       padding-left: 3rem;
     }
 
-    /* ========== UPLOAD PHOTO MODERNE ========== */
-    .photo-upload-section {
-      background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
-      border: 2px dashed #0ea5e9;
-      border-radius: var(--border-radius);
-      padding: 2rem;
-      text-align: center;
-      transition: var(--transition);
-      cursor: pointer;
-      position: relative;
-    }
-
-    .photo-upload-section:hover {
-      border-color: #0284c7;
-      background: linear-gradient(135deg, #e0f2fe 0%, #bae6fd 100%);
-    }
-
-    .photo-upload-section.dragover {
-      border-color: #0284c7;
-      background: linear-gradient(135deg, #dbeafe 0%, #93c5fd 100%);
-      transform: scale(1.02);
-    }
-
-    .upload-icon {
-      width: 60px;
-      height: 60px;
-      background: rgba(14, 165, 233, 0.1);
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      margin: 0 auto 1rem;
-      font-size: 1.5rem;
-      color: #0ea5e9;
-    }
-
-    .upload-text {
-      color: #0369a1;
-      font-weight: 600;
-      margin-bottom: 0.5rem;
-    }
-
-    .upload-hint {
-      color: #0ea5e9;
-      font-size: 0.875rem;
-    }
-
-    .photo-preview {
-      display: none;
-      margin-top: 1rem;
-      text-align: center;
-    }
-
-    .photo-preview.show {
-      display: block;
-      animation: slideInUp 0.3s ease-out;
-    }
-
-    .photo-preview img {
-      max-width: 200px;
-      max-height: 150px;
-      border-radius: var(--border-radius);
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-      border: 2px solid white;
-    }
-
-    .photo-actions {
-      margin-top: 1rem;
-      display: flex;
-      justify-content: center;
-      gap: 0.5rem;
-    }
-
-    .btn-photo {
-      padding: 0.5rem 1rem;
-      border-radius: var(--border-radius);
-      border: none;
-      font-size: 0.875rem;
-      font-weight: 600;
-      transition: var(--transition);
-      cursor: pointer;
-    }
-
-    .btn-change {
-      background: #0ea5e9;
-      color: white;
-    }
-
-    .btn-change:hover {
-      background: #0284c7;
-    }
-
-    .btn-remove {
-      background: #ef4444;
-      color: white;
-    }
-
-    .btn-remove:hover {
-      background: #dc2626;
-    }
-
     /* ========== PREVIEW VÉHICULE ========== */
     .vehicle-preview {
       background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
@@ -423,6 +322,38 @@
       background: #f0fdf4 !important;
     }
 
+    /* ========== AMÉLIORATIONS MOBILE ========== */
+    input[inputmode="numeric"], 
+    input[inputmode="decimal"] {
+      font-variant-numeric: tabular-nums;
+      text-align: right;
+      font-weight: 600;
+    }
+
+    /* Style spécial pour les champs de prix */
+    input[name*="price"], 
+    input[name*="liters"],
+    input[name*="odometer"] {
+      font-size: 18px; /* Évite le zoom automatique sur iOS */
+      font-weight: 600;
+    }
+
+    /* Feedback visuel pour le calcul automatique */
+    .calculation-highlight {
+      animation: highlightCalculation 0.6s ease-out;
+    }
+
+    @keyframes highlightCalculation {
+      0% { 
+        background-color: #fef3c7;
+        transform: scale(1.02);
+      }
+      100% { 
+        background-color: #f0fdf4;
+        transform: scale(1);
+      }
+    }
+
     /* ========== ANIMATIONS ========== */
     @keyframes slideInUp {
       from {
@@ -437,15 +368,6 @@
 
     .modern-form-card {
       animation: slideInUp 0.5s ease-out;
-    }
-
-    /* ========== MASQUER LE INPUT FILE NATIF ========== */
-    .photo-file-input {
-      position: absolute;
-      opacity: 0;
-      width: 100%;
-      height: 100%;
-      cursor: pointer;
     }
 
     /* ========== RESPONSIVE ========== */
@@ -474,11 +396,70 @@
       .btn-modern {
         justify-content: center;
         width: 100%;
+        min-height: 48px;
+        font-size: 16px;
       }
 
       .vehicle-preview {
         flex-direction: column;
         text-align: center;
+      }
+
+      /* Améliorer les selects sur mobile */
+      select.form-select {
+        font-size: 16px; /* Évite le zoom sur iOS */
+        appearance: none;
+        background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
+        background-position: right 0.5rem center;
+        background-repeat: no-repeat;
+        background-size: 1.5em 1.5em;
+        padding-right: 2.5rem;
+      }
+
+      /* Inputs plus grands sur mobile */
+      .form-control, .form-select {
+        min-height: 48px;
+        font-size: 16px;
+        border-radius: 8px;
+      }
+
+      .form-label {
+        margin-bottom: 8px;
+        font-size: 16px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .form-body {
+        padding: 1rem;
+      }
+
+      .page-header {
+        padding: 1rem;
+        margin-bottom: 1rem;
+      }
+
+      .page-header h1 {
+        font-size: 1.5rem;
+      }
+
+      .form-section {
+        padding: 1rem;
+        margin-bottom: 1rem;
+      }
+
+      .col-md-4 {
+        margin-bottom: 1rem;
+      }
+
+      .form-actions {
+        flex-direction: column;
+        gap: 0.75rem;
+      }
+
+      .btn-modern {
+        width: 100%;
+        justify-content: center;
       }
     }
   </style>
@@ -531,7 +512,7 @@
 
       {# Corps du formulaire #}
       <div class="form-body">
-        {{ form_start(form, {'attr': {'id': 'fuel-form', 'novalidate': 'novalidate', 'enctype': 'multipart/form-data'}}) }}
+        {{ form_start(form, {'attr': {'id': 'fuel-form', 'novalidate': 'novalidate'}}) }}
           
           {# Section Véhicule et Date #}
           <div class="form-section">
@@ -582,7 +563,6 @@
             </div>
           </div>
 
-
           {# Section Kilométrage #}
           <div class="form-section">
             <div class="section-title">
@@ -621,7 +601,7 @@
                   {{ form_label(form.pricePerLitre, 'Prix au litre (€)', {'label_attr': {'class': 'form-label'}}) }}
                   <div class="input-group-modern">
                     <i class="bi bi-currency-euro input-icon"></i>
-                    {{ form_widget(form.pricePerLitre, {'attr': {'class': 'form-control', 'placeholder': 'Ex: 1.45', 'step': '0.001'}}) }}
+                    {{ form_widget(form.pricePerLitre, {'attr': {'class': 'form-control', 'placeholder': 'Ex: 1.449', 'step': '0.001'}}) }}
                   </div>
                   <div class="form-help">
                     <i class="bi bi-info-circle"></i>
@@ -636,7 +616,7 @@
                   {{ form_label(form.liters, 'Quantité (L)', {'label_attr': {'class': 'form-label'}}) }}
                   <div class="input-group-modern">
                     <i class="bi bi-droplet input-icon"></i>
-                    {{ form_widget(form.liters, {'attr': {'class': 'form-control', 'placeholder': 'Ex: 45.2', 'step': '0.01'}}) }}
+                    {{ form_widget(form.liters, {'attr': {'class': 'form-control', 'placeholder': 'Ex: 45.25', 'step': '0.01'}}) }}
                   </div>
                   <div class="form-help">
                     <i class="bi bi-droplet"></i>
@@ -664,6 +644,33 @@
               </div>
             </div>
           </div>
+
+          {# Section Statut (si présent dans le form)
+          {% if form.status is defined %}
+          <div class="form-section">
+            <div class="section-title">
+              <i class="bi bi-check-circle"></i>
+              Statut
+            </div>
+            
+            <div class="row g-4">
+              <div class="col-md-6">
+                <div class="form-group">
+                  {{ form_label(form.status, 'Statut comptable', {'label_attr': {'class': 'form-label'}}) }}
+                  <div class="input-group-modern">
+                    <i class="bi bi-shield-check input-icon"></i>
+                    {{ form_widget(form.status, {'attr': {'class': 'form-select'}}) }}
+                  </div>
+                  <div class="form-help">
+                    <i class="bi bi-info-circle"></i>
+                    État de validation comptable
+                  </div>
+                  {{ form_errors(form.status) }}
+                </div>
+              </div>
+            </div>
+          </div>
+          {% endif %} #}
 
           {# Section Notes #}
           <div class="form-section">
@@ -709,209 +716,308 @@
   </div>
 </div>
 
-{# ========== JAVASCRIPT POUR UX AMÉLIORÉE ========== #}
+{# ========== JAVASCRIPT VANILLA POUR UX AMÉLIORÉE ========== #}
 <script>
 document.addEventListener('DOMContentLoaded', function() {
+  console.log('🚗 Initialisation du formulaire de plein...');
+
+  // ========== ÉLÉMENTS DU DOM ========== 
   const form = document.getElementById('fuel-form');
   const submitBtn = document.getElementById('submit-btn');
-  
-  // ========== GESTION UPLOAD PHOTO ========== 
-  const photoUploadZone = document.getElementById('photo-upload-zone');
-  const photoInput = photoUploadZone.querySelector('input[type="file"]');
-  const photoPreview = document.getElementById('photo-preview');
-  const previewImg = document.getElementById('preview-img');
-  const changePhotoBtn = document.getElementById('change-photo-btn');
-  const removePhotoBtn = document.getElementById('remove-photo-btn');
-
-  // Vérifier que les éléments existent
-  if (photoInput && photoUploadZone) {
-    console.log('Photo input trouvé:', photoInput);
-
-    // Clic sur la zone d'upload
-    photoUploadZone.addEventListener('click', function(e) {
-      if (e.target !== photoInput) {
-        e.preventDefault();
-        photoInput.click();
-      }
-    });
-
-    // Changement de fichier
-    photoInput.addEventListener('change', function(e) {
-      console.log('Fichier sélectionné:', e.target.files[0]);
-      handleFileSelect(e.target.files[0]);
-    });
-
-    // Drag & Drop
-    photoUploadZone.addEventListener('dragover', function(e) {
-      e.preventDefault();
-      photoUploadZone.classList.add('dragover');
-    });
-
-    photoUploadZone.addEventListener('dragleave', function(e) {
-      e.preventDefault();
-      photoUploadZone.classList.remove('dragover');
-    });
-
-    photoUploadZone.addEventListener('drop', function(e) {
-      e.preventDefault();
-      photoUploadZone.classList.remove('dragover');
-      const files = e.dataTransfer.files;
-      if (files.length > 0) {
-        console.log('Fichier déposé:', files[0]);
-        photoInput.files = files;
-        handleFileSelect(files[0]);
-      }
-    });
-
-    // Bouton changer photo
-    if (changePhotoBtn) {
-      changePhotoBtn.addEventListener('click', function(e) {
-        e.preventDefault();
-        photoInput.click();
-      });
-    }
-
-    // Bouton supprimer photo
-    if (removePhotoBtn) {
-      removePhotoBtn.addEventListener('click', function(e) {
-        e.preventDefault();
-        photoInput.value = '';
-        photoPreview.classList.remove('show');
-        photoUploadZone.style.display = 'block';
-      });
-    }
-  } else {
-    console.error('Éléments photo non trouvés:', {
-      photoInput: !!photoInput,
-      photoUploadZone: !!photoUploadZone
-    });
-  }
-
-  // Fonction pour gérer la sélection de fichier
-  function handleFileSelect(file) {
-    if (!file) return;
-
-    // Vérifier le type de fichier
-    if (!file.type.startsWith('image/')) {
-      alert('Veuillez sélectionner un fichier image (JPG, PNG, WEBP)');
-      return;
-    }
-
-    // Vérifier la taille (5MB max)
-    if (file.size > 5 * 1024 * 1024) {
-      alert('Le fichier est trop volumineux. Taille maximum : 5MB');
-      return;
-    }
-
-    // Créer l'aperçu
-    const reader = new FileReader();
-    reader.onload = function(e) {
-      previewImg.src = e.target.result;
-      photoPreview.classList.add('show');
-      photoUploadZone.style.display = 'none';
-    };
-    reader.readAsDataURL(file);
-  }
-
-  // ========== CALCUL AUTOMATIQUE DU TOTAL ========== 
-  const priceInput = document.querySelector('[name$="[pricePerLitre]"]');
-  const litersInput = document.querySelector('[name$="[liters]"]');
+  const priceInput = document.querySelector('input[name*="pricePerLitre"]');
+  const litersInput = document.querySelector('input[name*="liters"]');
   const totalInput = document.getElementById('total-field');
+  const vehicleSelect = document.querySelector('select[name*="vehicle"]');
+  const vehiclePreview = document.getElementById('vehicle-preview');
+  const vehiclePhoto = document.getElementById('vehicle-photo');
+  const vehiclePlate = document.getElementById('vehicle-plate');
 
-  function updateTotal() {
+  // ========== DÉTECTION MOBILE ========== 
+  const isMobile = /Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || window.innerWidth <= 768;
+  
+  console.log('📱 Mode mobile:', isMobile);
+
+  // ========== GESTION INTELLIGENTE DU CLAVIER VIRTUEL ========== 
+  if (isMobile) {
+    let initialViewportHeight = window.visualViewport ? window.visualViewport.height : window.innerHeight;
+    
+    function handleViewportChange() {
+      const currentHeight = window.visualViewport ? window.visualViewport.height : window.innerHeight;
+      const keyboardHeight = initialViewportHeight - currentHeight;
+      
+      if (keyboardHeight > 150) {
+        document.body.classList.add('keyboard-open');
+        const activeElement = document.activeElement;
+        if (activeElement && (activeElement.matches('input') || activeElement.matches('textarea'))) {
+          setTimeout(function() {
+            activeElement.scrollIntoView({ 
+              behavior: 'smooth', 
+              block: 'center',
+              inline: 'nearest' 
+            });
+          }, 300);
+        }
+      } else {
+        document.body.classList.remove('keyboard-open');
+      }
+    }
+
+    if (window.visualViewport) {
+      window.visualViewport.addEventListener('resize', handleViewportChange);
+    } else {
+      window.addEventListener('resize', handleViewportChange);
+    }
+  }
+
+  // ========== FORMATAGE INTELLIGENT DES NOMBRES ========== 
+  const numericInputs = document.querySelectorAll('input[inputmode="numeric"], input[inputmode="decimal"]');
+  
+  numericInputs.forEach(function(input) {
+    input.addEventListener('input', function(e) {
+      let value = e.target.value;
+      
+      if (input.getAttribute('inputmode') === 'decimal') {
+        value = value.replace(',', '.');
+        const parts = value.split('.');
+        if (parts.length > 2) {
+          value = parts[0] + '.' + parts.slice(1).join('');
+        }
+      } else {
+        value = value.replace(/[^\d]/g, '');
+      }
+      
+      e.target.value = value;
+      
+      if (input.name.includes('pricePerLitre') || input.name.includes('liters')) {
+        updateTotalWithAnimation();
+      }
+    });
+
+    input.addEventListener('blur', function(e) {
+      const value = parseFloat(e.target.value);
+      if (!isNaN(value)) {
+        if (e.target.name.includes('pricePerLitre')) {
+          e.target.value = value.toFixed(3);
+        } else if (e.target.name.includes('liters') || e.target.name.includes('totalPrice')) {
+          e.target.value = value.toFixed(2);
+        }
+      }
+      validateFieldEnhanced(e.target);
+    });
+  });
+
+  // ========== CALCUL AUTOMATIQUE AMÉLIORÉ ========== 
+  function updateTotalWithAnimation() {
+    if (!priceInput || !litersInput || !totalInput) return;
+    
     const price = parseFloat(priceInput.value.replace(',', '.')) || 0;
     const liters = parseFloat(litersInput.value.replace(',', '.')) || 0;
-    const total = (price * liters).toFixed(2);
-    totalInput.value = total;
+    const total = (price * liters);
     
-    // Animation visuelle du calcul
-    totalInput.style.background = '#f0fdf4';
-    setTimeout(() => {
-      totalInput.style.background = '#fafbfc';
-    }, 500);
-  }
-
-  if (priceInput) priceInput.addEventListener('input', updateTotal);
-  if (litersInput) litersInput.addEventListener('input', updateTotal);
-  updateTotal(); // Calcul initial
-
-  // ========== APERÇU VÉHICULE ========== 
-  const selectVehicle = document.querySelector('select[name$="[vehicle]"]');
-  const preview = document.getElementById('vehicle-preview');
-  const plate = document.getElementById('vehicle-plate');
-
-  function refreshPreview() {
-    if (!selectVehicle) return;
-    
-    const option = selectVehicle.options[selectVehicle.selectedIndex];
-    if (option && option.value && option.dataset.photo) {
-      img.src = option.dataset.photo;
-      plate.textContent = option.dataset.plaque || option.textContent;
-      preview.classList.add('show');
-    } else {
-      preview.classList.remove('show');
+    if (total > 0) {
+      totalInput.value = total.toFixed(2);
+      
+      totalInput.classList.add('calculation-highlight');
+      setTimeout(function() {
+        totalInput.classList.remove('calculation-highlight');
+      }, 600);
+      
+      if (isMobile && 'vibrate' in navigator) {
+        navigator.vibrate(50);
+      }
     }
   }
 
-  if (selectVehicle) {
-    selectVehicle.addEventListener('change', refreshPreview);
-    refreshPreview(); // Check initial
+  // ========== GESTION AMÉLIORÉE DE LA SÉLECTION DE VÉHICULE ========== 
+  function updateVehiclePreview() {
+    if (!vehicleSelect) return;
+    
+    const selectedOption = vehicleSelect.options[vehicleSelect.selectedIndex];
+    
+    if (selectedOption && selectedOption.value && selectedOption.dataset.photo) {
+      if (vehiclePhoto) vehiclePhoto.src = selectedOption.dataset.photo;
+      if (vehiclePlate) vehiclePlate.textContent = selectedOption.dataset.plaque || selectedOption.textContent;
+      if (vehiclePreview) {
+        vehiclePreview.classList.add('show');
+        if (isMobile && 'vibrate' in navigator) {
+          navigator.vibrate(30);
+        }
+      }
+    } else {
+      if (vehiclePreview) vehiclePreview.classList.remove('show');
+    }
   }
 
-  // ========== VALIDATION EN TEMPS RÉEL ========== 
-  const inputs = form.querySelectorAll('input[type="number"], input[type="text"], textarea');
+  if (vehicleSelect) {
+    vehicleSelect.addEventListener('change', updateVehiclePreview);
+    updateVehiclePreview();
+  }
+
+  // ========== VALIDATION TEMPS RÉEL AMÉLIORÉE ========== 
+  const formInputs = document.querySelectorAll('input[type="number"], input[inputmode], textarea');
   
-  inputs.forEach(input => {
-    input.addEventListener('blur', function() {
-      validateField(this);
+  formInputs.forEach(function(input) {
+    input.addEventListener('input', function() {
+      this.classList.remove('is-invalid', 'is-valid');
     });
     
-    input.addEventListener('input', function() {
-      this.classList.remove('is-invalid');
+    input.addEventListener('blur', function() {
+      validateFieldEnhanced(this);
     });
   });
 
-  function validateField(field) {
+  function validateFieldEnhanced(field) {
     const value = field.value.trim();
     let isValid = true;
+    let errorMessage = '';
 
-    // Validation spécifique selon le champ
-    if (field === priceInput || field === litersInput || field === totalInput) {
-      const numValue = parseFloat(value.replace(',', '.'));
-      isValid = !isNaN(numValue) && numValue > 0;
-    } else if (field.type === 'number') {
-      isValid = !isNaN(parseFloat(value)) && parseFloat(value) >= 0;
+    if (field.hasAttribute('inputmode')) {
+      const inputMode = field.getAttribute('inputmode');
+      
+      if (inputMode === 'numeric' || inputMode === 'decimal') {
+        const numValue = parseFloat(value.replace(',', '.'));
+        const min = parseFloat(field.getAttribute('min')) || 0;
+        const max = parseFloat(field.getAttribute('max')) || Infinity;
+        
+        if (value && (isNaN(numValue) || numValue < min || numValue > max)) {
+          isValid = false;
+          errorMessage = 'Valeur invalide (entre ' + min + ' et ' + (max === Infinity ? '∞' : max) + ')';
+        }
+      }
     }
 
-    // Appliquer les styles de validation
-    if (value && isValid) {
-      field.classList.remove('is-invalid');
-      field.classList.add('is-valid');
-    } else if (value && !isValid) {
-      field.classList.remove('is-valid');
-      field.classList.add('is-invalid');
+    if (value) {
+      if (isValid) {
+        field.classList.remove('is-invalid');
+        field.classList.add('is-valid');
+        removeFieldError(field);
+      } else {
+        field.classList.remove('is-valid');
+        field.classList.add('is-invalid');
+        showFieldError(field, errorMessage);
+      }
+    } else {
+      field.classList.remove('is-valid', 'is-invalid');
+      removeFieldError(field);
     }
   }
 
-  // ========== ANIMATION DE SOUMISSION ========== 
-  form.addEventListener('submit', function(e) {
-    submitBtn.disabled = true;
-    submitBtn.innerHTML = '<i class="bi bi-hourglass-split"></i> Enregistrement...';
-  });
+  function showFieldError(field, message) {
+    removeFieldError(field);
+    
+    const errorDiv = document.createElement('div');
+    errorDiv.className = 'invalid-feedback d-block';
+    errorDiv.textContent = message;
+    errorDiv.setAttribute('data-field-error', field.name || 'unknown');
+    
+    field.parentNode.appendChild(errorDiv);
+    
+    if (isMobile && 'vibrate' in navigator) {
+      navigator.vibrate([100, 50, 100]);
+    }
+  }
 
-  // ========== FORMATAGE DES NOMBRES ========== 
-  [priceInput, litersInput, totalInput].forEach(input => {
-    if (input) {
-      input.addEventListener('blur', function() {
-        // Format avec 2 décimales pour l'affichage
-        const value = parseFloat(this.value.replace(',', '.'));
-        if (!isNaN(value)) {
-          this.value = value.toFixed(2);
+  function removeFieldError(field) {
+    const fieldName = field.name || 'unknown';
+    const existingError = field.parentNode.querySelector('[data-field-error="' + fieldName + '"]');
+    if (existingError) {
+      existingError.remove();
+    }
+  }
+
+  // ========== GESTION AMÉLIORÉE DU FORMULAIRE ========== 
+  if (form) {
+    form.addEventListener('submit', function(e) {
+      if (submitBtn) {
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = '<i class="bi bi-hourglass-split"></i> Enregistrement...';
+        
+        if (isMobile && 'vibrate' in navigator) {
+          navigator.vibrate([50, 100, 50]);
         }
+      }
+      
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+  }
+
+  // ========== GESTION DU FOCUS INTELLIGENT ========== 
+  if (isMobile) {
+    const inputs = Array.from(document.querySelectorAll('input, select, textarea'));
+    
+    inputs.forEach(function(input, index) {
+      input.addEventListener('keydown', function(e) {
+        if (e.key === 'Enter' && input.type !== 'textarea') {
+          e.preventDefault();
+          const nextInput = inputs[index + 1];
+          if (nextInput) {
+            nextInput.focus();
+          } else {
+            if (submitBtn) {
+              submitBtn.focus();
+            }
+          }
+        }
+      });
+    });
+  }
+
+  // ========== ÉVÉNEMENTS DE CALCUL ========== 
+  if (priceInput) {
+    priceInput.addEventListener('input', updateTotalWithAnimation);
+    priceInput.addEventListener('blur', function() {
+      const value = parseFloat(this.value.replace(',', '.'));
+      if (!isNaN(value)) {
+        this.value = value.toFixed(3);
+      }
+      updateTotalWithAnimation();
+    });
+  }
+
+  if (litersInput) {
+    litersInput.addEventListener('input', updateTotalWithAnimation);
+    litersInput.addEventListener('blur', function() {
+      const value = parseFloat(this.value.replace(',', '.'));
+      if (!isNaN(value)) {
+        this.value = value.toFixed(2);
+      }
+      updateTotalWithAnimation();
+    });
+  }
+
+  // ========== FORMATAGE DES NOMBRES AU FOCUS ========== 
+  const numberFields = [priceInput, litersInput, totalInput];
+  numberFields.forEach(function(input) {
+    if (input) {
+      input.addEventListener('focus', function() {
+        // Sélectionner tout le texte au focus pour faciliter la saisie
+        setTimeout(function() {
+          input.select();
+        }, 100);
       });
     }
   });
 
- 
+  // ========== INITIALISATION FINALE ========== 
+  console.log('✅ Formulaire de plein initialisé avec succès');
+  
+  // Calcul initial si les champs ont des valeurs
+  updateTotalWithAnimation();
+  
+  // Vérification initiale du véhicule
+  updateVehiclePreview();
+  
+  // Log des éléments trouvés pour debug
+  console.log('🔍 Éléments détectés:', {
+    form: !!form,
+    submitBtn: !!submitBtn,
+    priceInput: !!priceInput,
+    litersInput: !!litersInput,
+    totalInput: !!totalInput,
+    vehicleSelect: !!vehicleSelect,
+    vehiclePreview: !!vehiclePreview,
+    isMobile: isMobile
+  });
+});
 </script>
 {% endblock %}

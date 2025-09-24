@@ -133,6 +133,7 @@ class FuelAdminController extends AbstractController
                 if ($prev && $fill->getOdometer() > $prev->getOdometer()) {
                     $distance = $fill->getOdometer() - $prev->getOdometer();
                     $fill->setDistanceKm($distance);
+                    $fill->setStatus('pending'); // Valeur par défaut
 
                     $this->addFlash('info', sprintf(
                         "Distance calculée : %d km (de %d à %d km)",
