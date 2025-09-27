@@ -1,0 +1,432 @@
+/* Extracted from templates/email/trusted_device_approval.html.twig on 2025-09-27T00:36:11.108Z */
+
+/* ========== RESET & BASE ========== */
+    * { box-sizing: border-box; }
+    body { 
+      margin: 0; 
+      padding: 0; 
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+      -webkit-text-size-adjust: 100%; 
+      line-height: 1.6;
+    }
+    table { border-collapse: collapse; width: 100%; }
+    img { border: 0; outline: none; text-decoration: none; display: block; max-width: 100%; }
+    a { text-decoration: none; }
+
+    /* ========== CONTAINER PRINCIPAL ========== */
+    .email-wrapper {
+      width: 100%;
+      min-height: 100vh;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      padding: 40px 20px;
+      display: table;
+    }
+
+    .email-container {
+      max-width: 600px;
+      margin: 0 auto;
+      background: #ffffff;
+      border-radius: 20px;
+      overflow: hidden;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+      position: relative;
+    }
+
+    /* ========== HEADER MODERNE ========== */
+    .email-header {
+      background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+      padding: 30px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .email-header::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      right: 0;
+      width: 100px;
+      height: 100px;
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 50%;
+      transform: translate(30px, -30px);
+    }
+
+    .brand-section {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      position: relative;
+      z-index: 2;
+    }
+
+    .brand-logo {
+      width: 50px;
+      height: 50px;
+      border-radius: 12px;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    }
+
+    .brand-info h1 {
+      margin: 0;
+      color: #ffffff;
+      font-size: 24px;
+      font-weight: 700;
+      letter-spacing: -0.5px;
+    }
+
+    .brand-subtitle {
+      margin: 5px 0 0;
+      color: rgba(255, 255, 255, 0.8);
+      font-size: 14px;
+      font-weight: 500;
+    }
+
+    /* ========== CONTENU PRINCIPAL ========== */
+    .email-content {
+      padding: 40px 30px;
+      background: #ffffff;
+    }
+
+    .security-alert {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+
+    .alert-icon {
+      width: 80px;
+      height: 80px;
+      margin: 0 auto 20px;
+      background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 8px 25px rgba(251, 191, 36, 0.3);
+    }
+
+    .alert-icon::before {
+      content: '🛡️';
+      font-size: 32px;
+    }
+
+    .main-title {
+      font-size: 28px;
+      font-weight: 800;
+      color: #1e293b;
+      margin: 0 0 15px;
+      text-align: center;
+      line-height: 1.2;
+    }
+
+    .main-description {
+      font-size: 16px;
+      color: #475569;
+      text-align: center;
+      margin-bottom: 30px;
+      line-height: 1.6;
+    }
+
+    .user-highlight {
+      color: #2563eb;
+      font-weight: 600;
+      background: rgba(37, 99, 235, 0.1);
+      padding: 2px 8px;
+      border-radius: 6px;
+    }
+
+    /* ========== DONNÉES TECHNIQUES ========== */
+    .device-info {
+      background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+      border: 2px solid #e2e8f0;
+      border-radius: 16px;
+      padding: 25px;
+      margin: 30px 0;
+      position: relative;
+    }
+
+    .device-info::before {
+      content: '🖥️';
+      position: absolute;
+      top: -15px;
+      left: 25px;
+      background: #ffffff;
+      padding: 8px 12px;
+      border-radius: 8px;
+      font-size: 20px;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    }
+
+    .info-title {
+      font-size: 18px;
+      font-weight: 700;
+      color: #1e293b;
+      margin: 0 0 20px;
+      padding-left: 20px;
+    }
+
+    .info-grid {
+      display: grid;
+      gap: 15px;
+    }
+
+    .info-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      padding: 15px;
+      background: #ffffff;
+      border-radius: 12px;
+      border-left: 4px solid #3b82f6;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+    }
+
+    .info-icon {
+      width: 24px;
+      height: 24px;
+      background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 12px;
+      font-weight: bold;
+      flex-shrink: 0;
+    }
+
+    .info-content {
+      flex: 1;
+    }
+
+    .info-label {
+      font-size: 12px;
+      font-weight: 600;
+      color: #64748b;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 5px;
+    }
+
+    .info-value {
+      font-size: 14px;
+      color: #1e293b;
+      font-weight: 500;
+      font-family: 'SF Mono', Monaco, 'Cascadia Code', 'Roboto Mono', Consolas, monospace;
+      word-break: break-all;
+    }
+
+    /* ========== BOUTONS D'ACTION ========== */
+    .action-section {
+      text-align: center;
+      margin: 40px 0;
+    }
+
+    .action-description {
+      font-size: 16px;
+      color: #475569;
+      margin-bottom: 25px;
+    }
+
+    .btn-container {
+      margin: 25px 0;
+    }
+
+    .btn-primary {
+      display: inline-block;
+      padding: 16px 32px;
+      background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+      color: #ffffff;
+      font-size: 16px;
+      font-weight: 600;
+      border-radius: 12px;
+      box-shadow: 0 8px 25px rgba(16, 185, 129, 0.3);
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .btn-primary:visited { color: #ffffff; }
+
+    .btn-primary::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+      transition: left 0.5s;
+    }
+
+    .btn-primary:hover::before {
+      left: 100%;
+    }
+
+    .btn-text {
+      position: relative;
+      z-index: 2;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      justify-content: center;
+    }
+
+    .btn-icon::before {
+      content: '✓';
+      font-weight: bold;
+    }
+
+    /* ========== AVERTISSEMENT SÉCURITÉ ========== */
+    .security-warning {
+      background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+      border: 2px solid #f59e0b;
+      border-radius: 16px;
+      padding: 25px;
+      margin: 30px 0;
+      position: relative;
+    }
+
+    .security-warning::before {
+      content: '⚠️';
+      position: absolute;
+      top: -15px;
+      left: 25px;
+      background: #ffffff;
+      padding: 8px 12px;
+      border-radius: 8px;
+      font-size: 20px;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    }
+
+    .warning-text {
+      color: #92400e;
+      font-size: 15px;
+      font-weight: 500;
+      margin: 0;
+      padding-left: 20px;
+      line-height: 1.6;
+    }
+
+    /* ========== FOOTER ========== */
+    .email-footer {
+      background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+      padding: 30px;
+      text-align: center;
+      border-top: 1px solid #e2e8f0;
+    }
+
+    .footer-content {
+      color: #64748b;
+      font-size: 14px;
+      line-height: 1.6;
+    }
+
+    .footer-content strong {
+      color: #1e293b;
+    }
+
+    .support-link {
+      color: #2563eb;
+      font-weight: 600;
+      text-decoration: underline;
+    }
+
+    .footer-note {
+      margin-top: 20px;
+      padding-top: 20px;
+      border-top: 1px solid #cbd5e1;
+      font-size: 12px;
+      color: #94a3b8;
+    }
+
+    /* ========== RESPONSIVE ========== */
+    @media (max-width: 480px) {
+      .email-wrapper {
+        padding: 20px 10px;
+      }
+      
+      .email-header,
+      .email-content {
+        padding: 25px 20px;
+      }
+
+      .main-title {
+        font-size: 24px;
+      }
+
+      .brand-info h1 {
+        font-size: 20px;
+      }
+
+      .btn-primary {
+        padding: 14px 24px;
+        font-size: 15px;
+        width: 100%;
+      }
+
+      .info-grid {
+        gap: 12px;
+      }
+
+      .device-info,
+      .security-warning {
+        padding: 20px 15px;
+      }
+    }
+
+    /* ========== DARK MODE ========== */
+    @media (prefers-color-scheme: dark) {
+      .email-container {
+        background: #0f172a;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
+      }
+
+      .email-content {
+        background: #0f172a;
+      }
+
+      .main-title {
+        color: #f1f5f9;
+      }
+
+      .main-description {
+        color: #cbd5e1;
+      }
+
+      .device-info {
+        background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+        border-color: #475569;
+      }
+
+      .info-item {
+        background: #1e293b;
+        border-left-color: #60a5fa;
+      }
+
+      .info-title {
+        color: #f1f5f9;
+      }
+
+      .info-value {
+        color: #e2e8f0;
+      }
+
+      .action-description {
+        color: #cbd5e1;
+      }
+
+      .email-footer {
+        background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+        border-top-color: #475569;
+      }
+
+      .footer-content {
+        color: #94a3b8;
+      }
+
+      .footer-content strong {
+        color: #f1f5f9;
+      }
+    }

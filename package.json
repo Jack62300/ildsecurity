@@ -1,0 +1,12 @@
+{
+  "devDependencies": {
+    "chokidar": "^4.0.3",
+    "cross-env": "^10.0.0"
+  },
+  "scripts": {
+    "styles:extract": "node scripts\\extract-styles-from-twig.mjs",
+    "styles:extract:overwrite": "cross-env MODE=overwrite node scripts\\extract-styles-from-twig.mjs",
+    "styles:extract:dry": "cross-env DRY_RUN=1 node scripts\\extract-styles-from-twig.mjs",
+    "styles:extract:template-folders": "cross-env TEMPLATES_DIR=templates PUBLIC_DIR=public CSS_ROOT=assets/css node scripts\\extract-styles-from-twig.mjs"
+  }
+}

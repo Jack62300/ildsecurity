@@ -1,0 +1,221 @@
+{# templates/intervention/print.html.twig #}
+{% import _self as ui %}
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>Bon d’intervention n° {{ intervention.bonNumero ?: intervention.id }}</title>
+<link rel="stylesheet" href="{{ asset('assets/css/intervention/print.css') }}">
+
+</head>
+<body>
+<button class="btn-print" onclick="window.print()"><b>Imprimer</b></button>
+
+<div class="container">
+  <div class="logo-line">
+    <img src="{{ asset('assets/images/logo.png') }}" alt="logo">
+    <div class="title">Bon d'intervention n° {{ intervention.bonNumero ?: intervention.id }}</div>
+  </div>
+
+  <div class="header-row">
+    <div class="box"></div>
+    <div class="box"></div>
+  </div>
+
+  <div class="row">
+    <div><div class="label">Client</div><div class="line">{{ intervention.client }}</div></div>
+    <div><div class="label">Adresse</div><div class="line">{{ intervention.adresse }}</div></div>
+    <div><div class="label">Ville</div><div class="line">{{ intervention.ville }}</div></div>
+  </div>
+
+  <div class="grid-veil">
+    <div class="option">{{ ui.cb(intervention.vIntrusion, 'Intrusion') }}</div>
+    <div class="option">{{ ui.cb(intervention.vIncendie, 'Incendie') }}</div>
+    <div class="option">{{ ui.cb(intervention.vAgression, 'Agression') }}</div>
+    <div class="option">{{ ui.cb(intervention.vDefautSecteur, 'Défaut secteur') }}</div>
+    <div class="option">{{ ui.cb(intervention.vDefautBatterie, 'Défaut batterie') }}</div>
+    <div class="option">{{ ui.cb(intervention.vAbsTest, 'ABS test') }}</div>
+    <div class="option">{{ ui.cb(intervention.vAbsMes, 'ABS MES') }}</div>
+    <div class="option">{{ ui.cb(intervention.vMhsNonAutorisee, 'MHS non autorisée') }}</div>
+    <div class="option">{{ ui.cb(intervention.vMaintenance, 'Maintenance') }}</div>
+    <div class="option">{{ ui.cb(intervention.vTechnique, 'Technique') }}</div>
+    <div class="option">{{ ui.cb(intervention.vAscenseur, 'Ascenseur') }}</div>
+    <div class="option">{{ ui.cb(intervention.vAutre, 'Autre') }}</div>
+  </div>
+
+  <div class="bar">COMPTE RENDU</div>
+
+  <div class="cr">
+    <div>
+      {{ ui.rd(intervention.compteRendu, 'intervention', 'Intervention') }}
+      {{ ui.rd(intervention.compteRendu, 'ronde', 'Ronde') }}
+      {{ ui.rd(intervention.compteRendu, 'gardiennage', 'Gardiennage') }}
+    </div>
+    <div>
+      <div class="label small">Avec moyen d'accès</div>
+      {{ ui.rd(intervention.avecMoyenAcces ? '1' : '0', '1', 'Oui') }}
+      {{ ui.rd(intervention.avecMoyenAcces ? '1' : '0', '0', 'Non') }}
+    </div>
+    <div>
+      <div class="label small">DATE</div>
+      <div class="line">{{ intervention.dateBon ? intervention.dateBon|date('d/m/Y') : '' }}</div>
+    </div>
+  </div>
+
+  <div class="hgrid">
+    <div class="hcell"><div class="h">H</div><div>Heure d'appel</div><div>{{ intervention.heureAppel ? intervention.heureAppel|date('H:i') : '' }}</div></div>
+    <div class="hcell"><div class="h">H</div><div>Heure d'arrivée</div><div>{{ intervention.heureArrivee ? intervention.heureArrivee|date('H:i') : '' }}</div></div>
+    <div class="hcell"><div class="h">H</div><div>Heure de départ</div><div>{{ intervention.heureDepart ? intervention.heureDepart|date('H:i') : '' }}</div></div>
+  </div>
+
+  <div class="bar">DÉTAIL DE LA PRESTATION</div>
+
+  <div class="table">
+    <div class="tr"><div>Constat météo</div><div>
+      {{ ui.rd(intervention.constatMeteo, 'vent_fort', 'Vent fort') }}
+      {{ ui.rd(intervention.constatMeteo, 'pluie', 'Pluie') }}
+      {{ ui.rd(intervention.constatMeteo, 'orage', 'Orage') }}
+      {{ ui.rd(intervention.constatMeteo, 'brouillard', 'Brouillard') }}
+      {{ ui.rd(intervention.constatMeteo, 'neige', 'Neige') }}
+    </div></div>
+
+    <div class="tr"><div>Circulation</div><div>
+      {{ ui.rd(intervention.circulation, 'bonne', 'Bonne') }}
+      {{ ui.rd(intervention.circulation, 'mauvaise', 'Mauvaise') }}
+      {% if intervention.circulation == 'mauvaise' and intervention.circulationMotif %}
+        <span class="right-dots">{{ intervention.circulationMotif }}</span>
+      {% endif %}
+    </div></div>
+
+    <div class="tr"><div>Circuit de vérification</div><div>
+      {{ ui.cb_in(intervention.circuitVerification, 'interieur', 'Intérieur') }}
+      {{ ui.cb_in(intervention.circuitVerification, 'exterieur', 'Extérieur') }}
+      {% if intervention.circuitVerification is iterable and ('exterieur' in intervention.circuitVerification) and intervention.circuitPoints %}
+        <span class="right-dots">{{ intervention.circuitPoints }}</span>
+      {% endif %}
+    </div></div>
+
+    <div class="tr"><div>Lumière allumée</div><div>
+      {{ ui.rd(intervention.lumiereAllumee, 'non', 'Non') }}
+      {{ ui.rd(intervention.lumiereAllumee, 'oui', 'Oui') }}
+      {% if intervention.lumiereAllumee == 'oui' and intervention.lumierePiece %}
+        <span class="right-dots">{{ intervention.lumierePiece }}</span>
+      {% endif %}
+    </div></div>
+
+    <div class="tr"><div>Issue(s) ouverte(s)</div><div>
+      {{ ui.rd(intervention.issuesOuvertes, 'non', 'Non') }}
+      {{ ui.rd(intervention.issuesOuvertes, 'oui', 'Oui') }}
+      {% if intervention.issuesOuvertes == 'oui' and intervention.issuesLesquelles %}
+        <span class="right-dots">{{ intervention.issuesLesquelles }}</span>
+      {% endif %}
+    </div></div>
+
+    <div class="tr"><div>Sirène en fonction</div><div>
+      {{ ui.rd(intervention.sireneEnFonction, 'non', 'Non') }}
+      {{ ui.rd(intervention.sireneEnFonction, 'oui', 'Oui') }}
+    </div></div>
+
+    <div class="tr"><div>Système</div><div>
+      {{ ui.rd(intervention.systemeEtat, 'en_service', 'En service') }}
+      {{ ui.rd(intervention.systemeEtat, 'hors_service', 'Hors service') }}
+    </div></div>
+
+    <div class="tr"><div>Remise en service du système</div><div>
+      {{ ui.rd(intervention.remiseEnService, 'non', 'Non') }}
+      {{ ui.rd(intervention.remiseEnService, 'oui', 'Oui') }}
+    </div></div>
+
+    <div class="tr"><div>Zones</div><div>
+      {{ ui.rd(intervention.zones, 'anomalies', 'Zone(s) en anomalies') }}
+      {{ ui.rd(intervention.zones, 'zones_isolees', 'Zones isolées') }}
+    </div></div>
+
+    <div class="tr"><div>Effraction constatée</div><div>
+      {{ ui.rd(intervention.effraction, 'non', 'Non') }}
+      {{ ui.rd(intervention.effraction, 'oui', 'Oui') }}
+    </div></div>
+
+    <div class="tr"><div>Présence</div><div>
+      {{ ui.cb_in(intervention.presence, 'client', 'Client') }}
+      {{ ui.cb_in(intervention.presence, 'police', 'Police') }}
+      {{ ui.cb_in(intervention.presence, 'gendarmerie', 'Gendarmerie') }}
+      {{ ui.cb_in(intervention.presence, 'pompiers', 'Pompiers') }}
+    </div></div>
+
+    <div class="tr"><div>Mise en place de</div><div>
+      {{ ui.rd(intervention.miseEnPlace, 'ads', 'ADS') }}
+      {{ ui.rd(intervention.miseEnPlace, 'maitre_chien', 'Maître chien') }}
+      {% if intervention.demandePar %} — demandé par <span class="right-dots">{{ intervention.demandePar }}</span>{% endif %}
+    </div></div>
+
+    <div class="tr"><div>Personnel sur place</div><div>
+      {{ ui.rd(intervention.personnelSurPlace, 'non', 'Non') }}
+      {{ ui.rd(intervention.personnelSurPlace, 'oui', 'Oui') }}
+      {% if intervention.personnelSurPlace == 'oui' and intervention.personnelNote %}
+        <span class="right-dots">{{ intervention.personnelNote }}</span>
+      {% endif %}
+    </div></div>
+
+    <div class="tr"><div>Véhicule sur place</div><div>
+      {{ ui.rd(intervention.vehiculeSurPlace, 'non', 'Non') }}
+      {{ ui.rd(intervention.vehiculeSurPlace, 'oui', 'Oui') }}
+      {% if intervention.vehiculeSurPlace == 'oui' %}
+        <span class="right-dots">{{ intervention.vehiculeMarque }}</span>
+        <span class="right-dots">{{ intervention.vehiculeNumero }}</span>
+      {% endif %}
+    </div></div>
+
+    <div class="tr"><div>Présence d’animaux</div><div>
+      {{ ui.rd(intervention.animaux, 'non', 'Non') }}
+      {{ ui.rd(intervention.animaux, 'oui', 'Oui') }}
+      {% if intervention.animaux == 'oui' and intervention.animauxEspece %}
+        <span class="right-dots">{{ intervention.animauxEspece }}</span>
+      {% endif %}
+    </div></div>
+  </div>
+
+  <div class="label" style="margin-top:4mm">Commentaires de l’intervenant</div>
+  <div class="comment">{{ intervention.commentaires }}</div>
+
+  <div class="foot-row">
+    <div><b>Bon d’intervention déposé</b></div>
+    <div>
+      {{ ui.rd(intervention.bonDepose, 'boite_lettres', 'Boîte à lettres') }}
+      {{ ui.rd(intervention.bonDepose, 'bureau', 'Bureau') }}
+      {{ ui.rd(intervention.bonDepose, 'autre', 'Autre') }}
+      {% if intervention.bonDepose =='autre' and intervention.bonDeposePrecision %}
+        <span class="right-dots">{{ intervention.bonDeposePrecision }}</span>
+      {% endif %}
+      <span style="float:right"><strong>BON N°</strong> {{ intervention.bonNumero }}</span>
+    </div>
+  </div>
+
+  <div class="footer">
+    <div>
+      <div class="label">Intervenant</div>
+      <div class="sigbox">{{ intervention.intervenant }}</div>
+    </div>
+    <div>
+      <div class="label">Entreprise</div>
+      <div class="sigbox">{{ intervention.entreprise }}</div>
+    </div>
+    <div>
+      <div class="label">Signature</div>
+      <div class="sigbox">
+        {% if intervention.signaturePath %}
+          <img src="{{ asset(intervention.signaturePath) }}" style="max-height:22mm; max-width:100%;">
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>if (window.matchMedia) setTimeout(()=>window.print(), 300);</script>
+</body>
+</html>
+
+{# ==== Macros pour cases/radios imprimables ==== #}
+{% macro cb(cond, label) %}<span class="cb {{ cond ? 'on' : '' }}"></span><span class="lbl">{{ label }}</span>{% endmacro %}
+{% macro rd(selected, value, label) %}<span class="cb {{ selected == value ? 'on' : '' }}"></span><span class="lbl">{{ label }}</span>{% endmacro %}
+{% macro cb_in(arr, value, label) %}{% set on = arr is iterable and (value in arr) %}<span class="cb {{ on ? 'on' : '' }}"></span><span class="lbl">{{ label }}</span>{% endmacro %}

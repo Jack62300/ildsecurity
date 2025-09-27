@@ -1,0 +1,107 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Liste des numéros{% endblock %}
+
+{% block stylesheets %}
+<link rel="stylesheet" href="{{ asset('assets/css/phone_number/index.css') }}">
+{% endblock %}
+
+{% block body %}
+<div class="page-container">
+  <div class="content-wrapper">
+    <div class="page-header">
+      <div class="header-content">
+        <h1 class="page-title">
+          <span class="title-icon">📞</span>
+          Liste des numéros
+        </h1>
+        <div class="action-buttons">
+          <a class="btn-pro btn-primary-pro" href="{{ path('phone_number_new') }}">
+            ➕ Ajouter un numéro
+          </a>
+          <a class="btn-pro btn-secondary-pro" href="{{ path('phone_category_index') }}">
+            🗂️ Gérer les catégories
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <div class="categories-grid">
+      {% for cat in categories %}
+        <div class="category-card">
+          <div class="category-header">
+            <h2 class="category-title">
+              <span class="category-icon">🗂️</span>
+              {{ cat.name }}
+            </h2>
+            {% if cat.description %}
+              <p class="category-description">{{ cat.description }}</p>
+            {% endif %}
+          </div>
+
+          {% if cat.numbers|length > 0 %}
+            <table class="numbers-table">
+              <thead class="table-header">
+                <tr>
+                  <th style="width:30%;">Nom / Service</th>
+                  <th style="width:25%;">Numéro</th>
+                  <th style="width:25%;">Notes</th>
+                  <th style="width:20%;">Actions</th>
+                </tr>
+              </thead>
+              <tbody class="table-body">
+                {% for n in cat.numbers %}
+                  <tr class="table-row">
+                    <td data-label="Service">
+                      <div class="service-name">{{ n.name }}</div>
+                    </td>
+                    <td data-label="Numéro">
+                      <a class="phone-number" href="tel:{{ n.number|replace({' ':''}) }}">
+                        <span class="phone-icon">📞</span>
+                        {{ n.number }}
+                      </a>
+                    </td>
+                    <td data-label="Notes">
+                      <span class="notes">{{ n.notes ?: '—' }}</span>
+                    </td>
+                    <td data-label="Actions">
+                      <div class="actions-group">
+                        <a class="btn-sm-pro btn-edit-pro" href="{{ path('phone_number_edit', {id: n.id}) }}">
+                          ✏️ Modifier
+                        </a>
+                        <form method="post" action="{{ path('phone_number_delete', {id: n.id}) }}" style="display:inline;" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer ce numéro ?');">
+                          <input type="hidden" name="_token" value="{{ csrf_token('delete_number_' ~ n.id) }}">
+                          <button class="btn-sm-pro btn-delete-pro" type="submit">
+                            🗑️ Supprimer
+                          </button>
+                        </form>
+                      </div>
+                    </td>
+                  </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          {% else %}
+            <div class="empty-state">
+              <span class="empty-icon">📵</span>
+              <div class="empty-title">Aucun numéro</div>
+              <div class="empty-description">Cette catégorie ne contient aucun numéro pour le moment.</div>
+            </div>
+          {% endif %}
+        </div>
+      {% else %}
+        <div class="no-categories">
+          <span class="no-categories-icon">🚀</span>
+          <h2 class="no-categories-title">Commencez votre organisation</h2>
+          <p class="no-categories-description">
+            Créez votre première catégorie pour organiser vos numéros de téléphone de manière professionnelle et efficace.
+          </p>
+          <a class="no-categories-cta" href="{{ path('phone_category_index') }}">
+            🗂️ Créer une catégorie
+          </a>
+        </div>
+      {% endfor %}
+    </div>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,100 @@
+
+
+
+
+
+<div class="container-fluid px-4 py-3">
+
+  {# ========== HEADER ========== #}
+  <div class="page-header">
+    <div class="d-flex justify-content-between align-items-center">
+      <div>
+        <h1>
+          {{ mode is defined and mode == 'edit' ? 'Modifier un numéro utile' : 'Nouveau numéro utile' }}
+        </h1>
+        <p class="subtitle mb-0">
+          {{ mode is defined and mode == 'edit'
+            ? 'Mettez à jour les informations de ce numéro'
+            : 'Ajoutez un numéro organisé par catégorie (Administration, Télésurveillance, Astreinte, Gardiennage, Autre)'
+          }}
+        </p>
+      </div>
+      <a href="{{ path('phone_number_index') }}" class="btn btn-return-list">
+        <i class="bi bi-arrow-left me-2"></i>Retour à la liste
+      </a>
+    </div>
+  </div>
+
+  {# ========== FORMULAIRE ========== #}
+  <div class="row justify-content-center">
+    <div class="col-12 col-lg-8 col-xl-6">
+      <div class="form-container">
+        
+        <div class="form-header">
+          <h2>
+            <span class="form-icon">
+              <i class="bi bi-{{ mode is defined and mode == 'edit' ? 'pencil-square' : 'plus-circle' }}"></i>
+            </span>
+            {{ mode is defined and mode == 'edit' ? 'Informations du numéro' : 'Créer un numéro utile' }}
+          </h2>
+        </div>
+
+        <div class="form-body">
+          {{ form_start(form, {'attr': {'novalidate': 'novalidate'}}) }}
+
+          <div class="form-group">
+            {{ form_label(form.category, 'Catégorie', {'label_attr': {'class': 'form-label'}}) }}
+            {{ form_widget(form.category, {'attr': {'class': 'form-control'}}) }}
+            {{ form_errors(form.category) }}
+          </div>
+
+          <div class="form-group">
+            {{ form_label(form.name, 'Nom / Service', {'label_attr': {'class': 'form-label'}}) }}
+            {{ form_widget(form.name, {
+              'attr': {
+                'class': 'form-control',
+                'placeholder': 'Ex. : Astreinte technique, Sécurité site X…'
+              }
+            }) }}
+            {{ form_errors(form.name) }}
+          </div>
+
+          <div class="form-group">
+            {{ form_label(form.number, 'Numéro de téléphone', {'label_attr': {'class': 'form-label'}}) }}
+            {{ form_widget(form.number, {
+              'attr': {
+                'class': 'form-control',
+                'placeholder': 'Ex. : 01 23 45 67 89'
+              }
+            }) }}
+            {{ form_errors(form.number) }}
+          </div>
+
+          <div class="form-group">
+            {{ form_label(form.notes, 'Notes', {'label_attr': {'class': 'form-label'}}) }}
+            {{ form_widget(form.notes, {
+              'attr': {
+                'class': 'form-control',
+                'rows': 4,
+                'placeholder': 'Informations complémentaires (horaires, consignes, identifiant, etc.)'
+              }
+            }) }}
+            {{ form_errors(form.notes) }}
+          </div>
+
+          <div class="btn-actions">
+            <a class="btn btn-secondary-modern" href="{{ path('phone_number_index') }}">
+              <i class="bi bi-x-lg"></i> Annuler
+            </a>
+            <button class="btn btn-primary-modern" type="submit">
+              <i class="bi bi-{{ mode is defined and mode == 'edit' ? 'check-lg' : 'save' }}"></i>
+              {{ mode is defined and mode == 'edit' ? 'Enregistrer les modifications' : 'Enregistrer' }}
+            </button>
+          </div>
+
+          {{ form_end(form) }}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

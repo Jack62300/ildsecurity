@@ -1,0 +1,601 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Utilisateurs{% endblock %}
+
+{% block stylesheets %}
+  {{ parent() }}
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+
+  <style>
+    /* ========== VARIABLES CSS MODERNES ========== */
+    :root {
+      --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      --card-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+      --card-shadow-hover: 0 15px 40px rgba(0, 0, 0, 0.12);
+      --border-radius: 12px;
+      --border-radius-lg: 16px;
+      --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    /* ========== HEADER SECTION ========== */
+    .page-header {
+      background: var(--primary-gradient);
+      border-radius: var(--border-radius-lg);
+      color: white;
+      padding: 2rem;
+      margin-bottom: 2rem;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .page-header::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      right: 0;
+      width: 100%;
+      height: 100%;
+      background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="80" cy="20" r="20" fill="rgba(255,255,255,0.1)"/><circle cx="90" cy="60" r="15" fill="rgba(255,255,255,0.08)"/><circle cx="70" cy="80" r="10" fill="rgba(255,255,255,0.06)"/></svg>');
+      background-size: 200px 200px;
+      opacity: 0.3;
+    }
+
+    .page-header h1 {
+      font-size: 2.5rem;
+      font-weight: 700;
+      margin-bottom: 0.5rem;
+      position: relative;
+      z-index: 1;
+    }
+
+    .page-header .subtitle {
+      opacity: 0.9;
+      font-size: 1.1rem;
+      position: relative;
+      z-index: 1;
+    }
+
+    .btn-new-user {
+      position: relative;
+      z-index: 1;
+      background: rgba(255, 255, 255, 0.15);
+      border: 2px solid rgba(255, 255, 255, 0.3);
+      color: white;
+      font-weight: 600;
+      border-radius: var(--border-radius);
+      backdrop-filter: blur(10px);
+      transition: var(--transition);
+    }
+
+    .btn-new-user:hover {
+      background: rgba(255, 255, 255, 0.25);
+      border-color: rgba(255, 255, 255, 0.5);
+      color: white;
+      transform: translateY(-2px);
+    }
+
+    /* ========== TABLEAU MODERNE (Desktop) ========== */
+    .modern-table-container {
+      background: white;
+      border-radius: var(--border-radius-lg);
+      box-shadow: var(--card-shadow);
+      /* FIX PRINCIPAL: Supprimer overflow: hidden qui coupe les dropdowns */
+      overflow: visible !important;
+      margin-bottom: 2rem;
+      /* Ajouter un padding en bas pour éviter que les dropdowns touchent le bord */
+      padding-bottom: 10px;
+    }
+
+    .modern-table {
+      margin: 0;
+      border: none;
+      /* Assurer que le tableau lui-même ne coupe pas les dropdowns */
+      overflow: visible;
+    }
+
+    .modern-table thead th {
+      background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+      color: #2d3748;
+      font-weight: 700;
+      font-size: 0.9rem;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      border: none;
+      padding: 1.25rem 1rem;
+    }
+
+    .modern-table tbody tr {
+      transition: var(--transition);
+      border: none;
+      /* FIX: Donner une position relative aux lignes pour les dropdowns */
+      position: relative;
+    }
+
+    .modern-table tbody tr:hover {
+      background: #f8fafc;
+      /* Supprimer le scale qui peut causer des problèmes */
+      transform: none;
+    }
+
+    .modern-table tbody td {
+      padding: 1rem;
+      border-top: 1px solid rgba(0, 0, 0, 0.05);
+      vertical-align: middle;
+      /* Assurer la visibilité des dropdowns */
+      overflow: visible;
+    }
+
+    .user-avatar {
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      background: var(--primary-gradient);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-weight: 700;
+      font-size: 1.2rem;
+      transition: var(--transition);
+    }
+
+    .user-avatar:hover {
+      transform: scale(1.1);
+    }
+
+    .user-name {
+      font-weight: 600;
+      font-size: 1.1rem;
+      color: #2d3748;
+    }
+
+    .user-id {
+      font-size: 0.8rem;
+      color: #6c757d;
+      font-weight: 500;
+    }
+
+    /* ========== BADGES RÔLES MODERNES ========== */
+    .role-badge {
+      font-weight: 600;
+      font-size: 0.75rem;
+      padding: 0.35rem 0.75rem;
+      border-radius: 50px;
+      border: none;
+      letter-spacing: 0.3px;
+      margin: 0.1rem;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .role-badge::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+      transition: left 0.5s;
+    }
+
+    .role-badge:hover::before {
+      left: 100%;
+    }
+
+    /* Couleurs spécifiques par rôle */
+    .role-admin { background: #dc2626; color: white; }
+    .role-dev { background: #0ea5e9; color: white; }
+    .role-support { background: #8b5cf6; color: white; }
+    .role-operateur { background: #10b981; color: white; }
+    .role-user { background: #6b7280; color: white; }
+
+    /* ========== ACTIONS DROPDOWN - FIX PRINCIPAL ========== */
+    .actions-dropdown {
+      position: relative;
+      /* Assurer que le dropdown reste au-dessus */
+      z-index: 100;
+    }
+
+    .actions-dropdown .dropdown-toggle {
+      border-radius: var(--border-radius);
+      border: 2px solid #e2e8f0;
+      background: white;
+      color: #4a5568;
+      font-weight: 600;
+      transition: var(--transition);
+      position: relative;
+      z-index: 101;
+    }
+
+    .actions-dropdown .dropdown-toggle:hover {
+      border-color: #667eea;
+      color: #667eea;
+      transform: translateY(-2px);
+    }
+
+    /* FIX: Dropdown menu avec z-index très élevé */
+    .dropdown-menu {
+      border: none;
+      border-radius: var(--border-radius);
+      box-shadow: var(--card-shadow-hover);
+      padding: 0.5rem 0;
+      /* Z-index très élevé pour passer au-dessus de tout */
+      z-index: 9999 !important;
+      position: absolute !important;
+      /* Assurer que le menu ne soit jamais coupé */
+      overflow: visible !important;
+    }
+
+    /* FIX: Pour les dernières lignes, ajuster la position */
+    .actions-dropdown:hover .dropdown-menu,
+    .actions-dropdown .dropdown-menu.show {
+      /* Position dynamique selon l'espace disponible */
+      max-height: none !important;
+      overflow: visible !important;
+    }
+
+    /* Gestion spéciale pour les dernières lignes du tableau */
+    .modern-table tbody tr:nth-last-child(-n+2) .dropdown-menu {
+      /* Forcer l'affichage vers le haut pour les 2 dernières lignes */
+      top: auto !important;
+      bottom: 100% !important;
+      transform: translateY(-5px) !important;
+    }
+
+    .dropdown-item {
+      padding: 0.75rem 1.5rem;
+      font-weight: 500;
+      transition: var(--transition);
+    }
+
+    .dropdown-item:hover {
+      background: #f8fafc;
+      color: #667eea;
+      transform: translateX(5px);
+    }
+
+    .dropdown-item.text-danger:hover {
+      background: #fef2f2;
+      color: #dc2626;
+    }
+
+    /* ========== CARTES MOBILES ========== */
+    .user-card {
+      background: white;
+      border-radius: var(--border-radius-lg);
+      box-shadow: var(--card-shadow);
+      margin-bottom: 1.5rem;
+      overflow: hidden;
+      transition: var(--transition);
+    }
+
+    .user-card:hover {
+      box-shadow: var(--card-shadow-hover);
+      transform: translateY(-5px);
+    }
+
+    .user-card-header {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      padding: 1.5rem;
+      border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+    }
+
+    .user-card-info h5 {
+      margin: 0 0 0.25rem 0;
+      font-weight: 700;
+      color: #2d3748;
+    }
+
+    .user-card-actions {
+      display: flex;
+      gap: 0.5rem;
+      padding: 1rem 1.5rem;
+    }
+
+    .btn-card-action {
+      flex: 1;
+      border-radius: var(--border-radius);
+      font-weight: 600;
+      transition: var(--transition);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+    }
+
+    .btn-card-action:hover {
+      transform: translateY(-2px);
+    }
+
+    /* ========== ÉTAT VIDE ========== */
+    .empty-state {
+      text-align: center;
+      padding: 4rem 2rem;
+      background: white;
+      border-radius: var(--border-radius-lg);
+      box-shadow: var(--card-shadow);
+    }
+
+    .empty-state-icon {
+      font-size: 4rem;
+      color: #a0aec0;
+      margin-bottom: 1rem;
+    }
+
+    .empty-state h4 {
+      color: #2d3748;
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+    }
+
+    .empty-state p {
+      color: #6c757d;
+      margin-bottom: 0;
+    }
+
+    /* ========== RESPONSIVE ========== */
+    @media (max-width: 768px) {
+      .page-header {
+        padding: 1.5rem;
+        text-align: center;
+      }
+
+      .page-header h1 {
+        font-size: 2rem;
+      }
+
+      .modern-table-container {
+        display: none;
+      }
+    }
+
+    @media (min-width: 769px) {
+      .mobile-cards {
+        display: none;
+      }
+    }
+
+    /* ========== ANIMATIONS ========== */
+    @keyframes slideInUp {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .user-card, .modern-table-container {
+      animation: slideInUp 0.5s ease-out;
+    }
+
+    /* ========== FIX SUPPLÉMENTAIRE POUR BOOTSTRAP ========== */
+    .table-responsive {
+      /* Si vous utilisez table-responsive, s'assurer qu'elle ne coupe pas */
+      overflow: visible !important;
+    }
+
+    /* Backdrop du dropdown pour éviter les interactions indésirables */
+    .dropdown-backdrop {
+      position: fixed;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      left: 0;
+      z-index: 1040;
+    }
+  </style>
+{% endblock %}
+
+{% block body %}
+<div class="container-fluid px-4 py-3">
+
+  {# ========== HEADER MODERNE ========== #}
+  <div class="page-header">
+    <div class="d-flex justify-content-between align-items-center">
+      <div>
+        <h1>Gestion des Utilisateurs</h1>
+        <p class="subtitle mb-0">{{ users|length }} utilisateur{{ users|length > 1 ? 's' : '' }} enregistré{{ users|length > 1 ? 's' : '' }}</p>
+      </div>
+      <a href="{{ path('users_new') }}" class="btn btn-new-user">
+        <i class="bi bi-plus-lg me-2"></i>Nouvel Utilisateur
+      </a>
+    </div>
+  </div>
+
+  {% if users is empty %}
+    {# ========== ÉTAT VIDE ========== #}
+    <div class="empty-state">
+      <i class="bi bi-people empty-state-icon"></i>
+      <h4>Aucun utilisateur trouvé</h4>
+      <p>Commencez par ajouter votre premier utilisateur pour voir la liste ici</p>
+    </div>
+  {% else %}
+
+    {# ========== TABLEAU MODERNE (Desktop) ========== #}
+    <div class="modern-table-container">
+      <table class="table modern-table">
+        <thead>
+          <tr>
+            <th style="width: 60px;"></th>
+            <th>Utilisateur</th>
+            <th>Email</th>
+            <th>Agence</th>
+            <th>Rôles</th>
+            <th style="width: 120px;" class="text-center">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+        {% for u in users %}
+          <tr>
+            <td>
+              <div class="user-avatar">
+                {{ u.username|slice(0, 1)|upper }}
+              </div>
+            </td>
+            <td>
+              <div class="user-name">{{ u.username }}</div>
+              <div class="user-id">#{{ u.id }}</div>
+            </td>
+            <td>
+              <i class="bi bi-envelope text-muted me-2"></i>{{ u.email }}
+            </td>
+            <td>
+              {% if u.agence %}
+                <i class="bi bi-building text-muted me-2"></i>{{ u.agence }}
+              {% else %}
+                <span class="text-muted fst-italic">Non assignée</span>
+              {% endif %}
+            </td>
+            <td>
+              {% set roleLabels = {
+                'ROLE_ADMIN': 'Responsable',
+                'ROLE_DEV': 'Développeur',
+                'ROLE_SUPPORT': 'Administrateur',
+                'ROLE_OPERATEUR': 'Agent Mobile',
+                'ROLE_USER': 'Utilisateur'
+              } %}
+              {% set roleClasses = {
+                'ROLE_ADMIN': 'role-admin',
+                'ROLE_DEV': 'role-dev',
+                'ROLE_SUPPORT': 'role-support',
+                'ROLE_OPERATEUR': 'role-operateur',
+                'ROLE_USER': 'role-user'
+              } %}
+              {% for role in u.roles %}
+                <span class="role-badge {{ roleClasses[role] ?? 'role-user' }}">
+                  {{ roleLabels[role] ?? role }}
+                </span>
+              {% endfor %}
+            </td>
+            <td class="text-center">
+              <div class="dropdown actions-dropdown">
+                <button class="btn btn-sm dropdown-toggle" 
+                        type="button" 
+                        data-bs-toggle="dropdown"
+                        data-bs-auto-close="true"
+                        data-bs-boundary="viewport">
+                  <i class="bi bi-three-dots"></i>
+                </button>
+                <ul class="dropdown-menu dropdown-menu-end">
+                  <li>
+                    <a class="dropdown-item" href="{{ path('users_edit', {id: u.id}) }}">
+                      <i class="bi bi-pencil me-2"></i>Modifier
+                    </a>
+                  </li>
+                  <li><hr class="dropdown-divider"></li>
+                  <li>
+                    <form method="post" action="{{ path('users_delete', {id: u.id}) }}"
+                          onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer cet utilisateur ?');">
+                      <input type="hidden" name="_token" value="{{ csrf_token('delete_user_' ~ u.id) }}">
+                      <button class="dropdown-item text-danger" type="submit">
+                        <i class="bi bi-trash me-2"></i>Supprimer
+                      </button>
+                    </form>
+                  </li>
+                </ul>
+              </div>
+            </td>
+          </tr>
+        {% endfor %}
+        </tbody>
+      </table>
+    </div>
+
+    {# ========== CARTES MOBILES ========== #}
+    <div class="mobile-cards">
+      {% for u in users %}
+        <div class="user-card">
+          <div class="user-card-header">
+            <div class="user-avatar">
+              {{ u.username|slice(0, 1)|upper }}
+            </div>
+            <div class="user-card-info flex-grow-1">
+              <h5>{{ u.username }}</h5>
+              <p class="text-muted small mb-2">
+                <i class="bi bi-envelope me-1"></i>{{ u.email }}
+              </p>
+              {% if u.agence %}
+                <p class="text-muted small mb-2">
+                  <i class="bi bi-building me-1"></i>{{ u.agence }}
+                </p>
+              {% endif %}
+              <div class="mb-0">
+                {% set roleLabels = {
+                  'ROLE_ADMIN': 'Responsable',
+                  'ROLE_DEV': 'Développeur', 
+                  'ROLE_SUPPORT': 'Administrateur',
+                  'ROLE_OPERATEUR': 'Agent Mobile',
+                  'ROLE_USER': 'Utilisateur'
+                } %}
+                {% set roleClasses = {
+                  'ROLE_ADMIN': 'role-admin',
+                  'ROLE_DEV': 'role-dev',
+                  'ROLE_SUPPORT': 'role-support',
+                  'ROLE_OPERATEUR': 'role-operateur',
+                  'ROLE_USER': 'role-user'
+                } %}
+                {% for role in u.roles %}
+                  <span class="role-badge {{ roleClasses[role] ?? 'role-user' }}">
+                    {{ roleLabels[role] ?? role }}
+                  </span>
+                {% endfor %}
+              </div>
+            </div>
+          </div>
+          
+          <div class="user-card-actions">
+            <a href="{{ path('users_edit', {id: u.id}) }}" 
+               class="btn btn-primary btn-card-action">
+              <i class="bi bi-pencil"></i>Modifier
+            </a>
+            <form method="post" 
+                  action="{{ path('users_delete', {id: u.id}) }}"
+                  onsubmit="return confirm('Supprimer cet utilisateur ?');"
+                  class="d-inline flex-fill">
+              <input type="hidden" name="_token" value="{{ csrf_token('delete_user_' ~ u.id) }}">
+              <button class="btn btn-outline-danger btn-card-action w-100">
+                <i class="bi bi-trash"></i>Supprimer
+              </button>
+            </form>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+
+  {% endif %}
+</div>
+
+{# ========== JAVASCRIPT POUR GESTION DROPDOWNS ========== #}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  // Gestion intelligente de la position des dropdowns
+  const dropdowns = document.querySelectorAll('.actions-dropdown');
+  
+  dropdowns.forEach(dropdown => {
+    const toggle = dropdown.querySelector('.dropdown-toggle');
+    const menu = dropdown.querySelector('.dropdown-menu');
+    
+    toggle.addEventListener('click', function() {
+      // Calculer la position et ajuster si nécessaire
+      setTimeout(() => {
+        const rect = menu.getBoundingClientRect();
+        const windowHeight = window.innerHeight;
+        
+        // Si le menu dépasse en bas de l'écran
+        if (rect.bottom > windowHeight - 20) {
+          menu.style.top = 'auto';
+          menu.style.bottom = '100%';
+          menu.style.transform = 'translateY(-5px)';
+        }
+      }, 10);
+    });
+  });
+});
+</script>
+{% endblock %}

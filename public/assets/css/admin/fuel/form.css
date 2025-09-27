@@ -1,0 +1,456 @@
+/* Extracted from templates/admin/fuel/form.html.twig on 2025-09-27T00:36:11.085Z */
+
+/* ========== VARIABLES CSS MODERNES ========== */
+    :root {
+      --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      --card-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+      --card-shadow-hover: 0 15px 40px rgba(0, 0, 0, 0.12);
+      --border-radius: 12px;
+      --border-radius-lg: 16px;
+      --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    /* ========== HEADER SECTION ========== */
+    .page-header {
+      background: var(--primary-gradient);
+      border-radius: var(--border-radius-lg);
+      color: white;
+      padding: 2rem;
+      margin-bottom: 2rem;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .page-header::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      right: 0;
+      width: 100%;
+      height: 100%;
+      background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="80" cy="20" r="20" fill="rgba(255,255,255,0.1)"/><circle cx="90" cy="60" r="15" fill="rgba(255,255,255,0.08)"/><circle cx="70" cy="80" r="10" fill="rgba(255,255,255,0.06)"/></svg>');
+      background-size: 200px 200px;
+      opacity: 0.3;
+    }
+
+    .page-header h1 {
+      font-size: 2.2rem;
+      font-weight: 700;
+      margin-bottom: 0.5rem;
+      position: relative;
+      z-index: 1;
+    }
+
+    .page-header .subtitle {
+      opacity: 0.9;
+      font-size: 1.1rem;
+      position: relative;
+      z-index: 1;
+    }
+
+    .breadcrumb-nav {
+      position: relative;
+      z-index: 1;
+      margin-top: 1rem;
+    }
+
+    .breadcrumb-nav a {
+      color: rgba(255, 255, 255, 0.8);
+      text-decoration: none;
+      transition: var(--transition);
+    }
+
+    .breadcrumb-nav a:hover {
+      color: white;
+    }
+
+    .breadcrumb-nav .separator {
+      color: rgba(255, 255, 255, 0.6);
+      margin: 0 0.5rem;
+    }
+
+    /* ========== FORMULAIRE MODERNE ========== */
+    .form-container {
+      max-width: 900px;
+      margin: 0 auto;
+    }
+
+    .modern-form-card {
+      background: white;
+      border-radius: var(--border-radius-lg);
+      box-shadow: var(--card-shadow);
+      overflow: hidden;
+      transition: var(--transition);
+    }
+
+    .modern-form-card:hover {
+      box-shadow: var(--card-shadow-hover);
+    }
+
+    .form-header {
+      background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+      padding: 1.5rem 2rem;
+      border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+    }
+
+    .form-header h2 {
+      margin: 0;
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: #2d3748;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .form-icon {
+      width: 40px;
+      height: 40px;
+      background: var(--primary-gradient);
+      border-radius: var(--border-radius);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 1.2rem;
+    }
+
+    .form-body {
+      padding: 2rem;
+    }
+
+    /* ========== CHAMPS DE FORMULAIRE MODERNES ========== */
+    .form-group {
+      margin-bottom: 1.5rem;
+    }
+
+    .form-label {
+      font-weight: 600;
+      color: #2d3748;
+      margin-bottom: 0.5rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .form-control, .form-select {
+      border: 2px solid #e2e8f0;
+      border-radius: var(--border-radius);
+      padding: 0.875rem 1rem;
+      font-size: 1rem;
+      transition: var(--transition);
+      background: #fafbfc;
+    }
+
+    .form-control:focus, .form-select:focus {
+      border-color: #667eea;
+      background: white;
+      box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+      outline: none;
+    }
+
+    .form-control:hover:not(:focus), .form-select:hover:not(:focus) {
+      border-color: #cbd5e0;
+      background: white;
+    }
+
+    /* ========== INPUT AVEC ICÔNES ========== */
+    .input-group-modern {
+      position: relative;
+    }
+
+    .input-icon {
+      position: absolute;
+      left: 1rem;
+      top: 50%;
+      transform: translateY(-50%);
+      color: #6c757d;
+      font-size: 1.1rem;
+      z-index: 2;
+    }
+
+    .input-group-modern .form-control,
+    .input-group-modern .form-select {
+      padding-left: 3rem;
+    }
+
+    /* ========== PREVIEW VÉHICULE ========== */
+    .vehicle-preview {
+      background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+      border: 2px solid #0ea5e9;
+      border-radius: var(--border-radius);
+      padding: 1rem;
+      margin-top: 1rem;
+      display: none;
+      transition: var(--transition);
+    }
+
+    .vehicle-preview.show {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      animation: slideInUp 0.3s ease-out;
+    }
+
+    .vehicle-preview img {
+      width: 80px;
+      height: 60px;
+      object-fit: cover;
+      border-radius: var(--border-radius);
+      border: 2px solid rgba(255, 255, 255, 0.8);
+    }
+
+    .vehicle-info h6 {
+      margin: 0;
+      color: #0369a1;
+      font-weight: 600;
+    }
+
+    .vehicle-info .text-muted {
+      color: #0ea5e9 !important;
+      font-size: 0.875rem;
+    }
+
+    /* ========== CALCUL AUTOMATIQUE ========== */
+    .calculation-section {
+      background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+      border: 2px solid #f59e0b;
+      border-radius: var(--border-radius);
+      padding: 1rem;
+      margin-top: 1rem;
+    }
+
+    .calculation-info {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      color: #92400e;
+      font-weight: 500;
+      font-size: 0.875rem;
+    }
+
+    /* ========== SECTIONS ORGANISÉES ========== */
+    .form-section {
+      background: #f8fafc;
+      border-radius: var(--border-radius);
+      padding: 1.5rem;
+      margin-bottom: 1.5rem;
+      border-left: 4px solid #667eea;
+    }
+
+    .section-title {
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: #2d3748;
+      margin-bottom: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    /* ========== BOUTONS MODERNES ========== */
+    .form-actions {
+      display: flex;
+      gap: 1rem;
+      margin-top: 2rem;
+      padding-top: 1.5rem;
+      border-top: 1px solid rgba(0, 0, 0, 0.05);
+    }
+
+    .btn-modern {
+      padding: 0.875rem 2rem;
+      font-weight: 600;
+      border-radius: var(--border-radius);
+      transition: var(--transition);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      min-height: 48px;
+    }
+
+    .btn-primary-modern {
+      background: var(--primary-gradient);
+      border: none;
+      color: white;
+    }
+
+    .btn-primary-modern:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
+      color: white;
+    }
+
+    .btn-secondary-modern {
+      background: white;
+      border: 2px solid #e2e8f0;
+      color: #4a5568;
+    }
+
+    .btn-secondary-modern:hover {
+      border-color: #cbd5e0;
+      background: #f7fafc;
+      transform: translateY(-1px);
+      color: #4a5568;
+    }
+
+    /* ========== MESSAGES D'AIDE ========== */
+    .form-help {
+      font-size: 0.875rem;
+      color: #6c757d;
+      margin-top: 0.5rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    /* ========== VALIDATION ÉTATS ========== */
+    .is-invalid {
+      border-color: #dc2626 !important;
+      background: #fef2f2 !important;
+    }
+
+    .is-valid {
+      border-color: #10b981 !important;
+      background: #f0fdf4 !important;
+    }
+
+    /* ========== AMÉLIORATIONS MOBILE ========== */
+    input[inputmode="numeric"], 
+    input[inputmode="decimal"] {
+      font-variant-numeric: tabular-nums;
+      text-align: right;
+      font-weight: 600;
+    }
+
+    /* Style spécial pour les champs de prix */
+    input[name*="price"], 
+    input[name*="liters"],
+    input[name*="odometer"] {
+      font-size: 18px; /* Évite le zoom automatique sur iOS */
+      font-weight: 600;
+    }
+
+    /* Feedback visuel pour le calcul automatique */
+    .calculation-highlight {
+      animation: highlightCalculation 0.6s ease-out;
+    }
+
+    @keyframes highlightCalculation {
+      0% { 
+        background-color: #fef3c7;
+        transform: scale(1.02);
+      }
+      100% { 
+        background-color: #f0fdf4;
+        transform: scale(1);
+      }
+    }
+
+    /* ========== ANIMATIONS ========== */
+    @keyframes slideInUp {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .modern-form-card {
+      animation: slideInUp 0.5s ease-out;
+    }
+
+    /* ========== RESPONSIVE ========== */
+    @media (max-width: 768px) {
+      .page-header {
+        padding: 1.5rem;
+        text-align: center;
+      }
+
+      .page-header h1 {
+        font-size: 1.8rem;
+      }
+
+      .form-container {
+        margin: 0 1rem;
+      }
+
+      .form-body {
+        padding: 1.5rem;
+      }
+
+      .form-actions {
+        flex-direction: column;
+      }
+
+      .btn-modern {
+        justify-content: center;
+        width: 100%;
+        min-height: 48px;
+        font-size: 16px;
+      }
+
+      .vehicle-preview {
+        flex-direction: column;
+        text-align: center;
+      }
+
+      /* Améliorer les selects sur mobile */
+      select.form-select {
+        font-size: 16px; /* Évite le zoom sur iOS */
+        appearance: none;
+        background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
+        background-position: right 0.5rem center;
+        background-repeat: no-repeat;
+        background-size: 1.5em 1.5em;
+        padding-right: 2.5rem;
+      }
+
+      /* Inputs plus grands sur mobile */
+      .form-control, .form-select {
+        min-height: 48px;
+        font-size: 16px;
+        border-radius: 8px;
+      }
+
+      .form-label {
+        margin-bottom: 8px;
+        font-size: 16px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .form-body {
+        padding: 1rem;
+      }
+
+      .page-header {
+        padding: 1rem;
+        margin-bottom: 1rem;
+      }
+
+      .page-header h1 {
+        font-size: 1.5rem;
+      }
+
+      .form-section {
+        padding: 1rem;
+        margin-bottom: 1rem;
+      }
+
+      .col-md-4 {
+        margin-bottom: 1rem;
+      }
+
+      .form-actions {
+        flex-direction: column;
+        gap: 0.75rem;
+      }
+
+      .btn-modern {
+        width: 100%;
+        justify-content: center;
+      }
+    }

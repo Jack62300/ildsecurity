@@ -1,0 +1,8 @@
+{% extends 'base.html.twig' %}
+{% block title %}Modifier la catégorie{% endblock %}
+{% block body %}
+<div class="container py-4">
+  <h1>Modifier la catégorie</h1>
+  {% include 'phone_category/_form.html.twig' with {form: form} %}
+</div>
+{% endblock %}

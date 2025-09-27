@@ -1,0 +1,870 @@
+{% extends 'base.html.twig' %}
+{% block title %}Interventions{% endblock %}
+
+{% block stylesheets %}
+  {{ parent() }}
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  
+  <link rel="stylesheet" href="{{ asset('assets/css/intervention/index.css') }}">
+{% endblock %}
+
+{% block body %}
+<div class="container-fluid px-3 px-md-4 py-3">
+
+  {# ========== HEADER MODERNE ========== #}
+  <div class="page-header">
+    <div class="header-content">
+      <div class="header-info">
+        <h1 class="page-title">
+          <i class="bi bi-tools me-3 title-icon"></i>
+          Interventions
+        </h1>
+        <p class="page-subtitle">
+          <span class="counter-badge" id="intervention-counter">{{ interventions|length }}</span>
+          intervention{{ interventions|length > 1 ? 's' : '' }} enregistrée{{ interventions|length > 1 ? 's' : '' }}
+        </p>
+      </div>
+      <div class="header-actions">
+        <a href="{{ path('app_intervention_new') }}" class="btn-new-intervention">
+          <i class="bi bi-plus-circle-fill me-2"></i>
+          <span class="btn-text">Nouvelle Intervention</span>
+          <span class="btn-text-mobile">Ajouter</span>
+        </a>
+      </div>
+    </div>
+  </div>
+
+  {# ========== FILTRES ET RECHERCHE (Mobile First) ========== #}
+  <div class="filters-container">
+    <div class="search-box">
+      <i class="bi bi-search search-icon"></i>
+      <input type="text" class="form-control search-input" placeholder="Rechercher par client, ville, n° bon..." 
+             aria-label="Rechercher des interventions" id="search-input">
+    </div>
+    <div class="filter-tabs">
+      <button class="filter-tab active" data-filter="all" aria-pressed="true" id="filter-all">
+        Toutes <span class="tab-count">{{ interventions|length }}</span>
+      </button>
+      <button class="filter-tab" data-filter="recent" aria-pressed="false" id="filter-recent">
+        Récentes <span class="tab-count">0</span>
+      </button>
+      <div class="filter-actions">
+        <button class="btn-filter-action" onclick="exportInterventions()" title="Exporter en CSV">
+          <i class="bi bi-download"></i>
+        </button>
+        <button class="btn-filter-action" onclick="printInterventions()" title="Imprimer">
+          <i class="bi bi-printer"></i>
+        </button>
+        <button class="btn-filter-action" onclick="refreshInterventions()" title="Actualiser">
+          <i class="bi bi-arrow-clockwise"></i>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  {% if interventions is empty %}
+    {# ========== ÉTAT VIDE ========== #}
+    <div class="empty-state">
+      <div class="empty-state-content">
+        <div class="empty-state-icon">
+          <i class="bi bi-tools"></i>
+        </div>
+        <h3 class="empty-state-title">Aucune intervention trouvée</h3>
+        <p class="empty-state-text">Commencez par ajouter votre première intervention pour voir la liste ici</p>
+        <a href="{{ path('app_intervention_new') }}" class="btn-empty-action">
+          <i class="bi bi-plus-lg me-2"></i>
+          Créer ma première intervention
+        </a>
+      </div>
+    </div>
+  {% else %}
+
+    {# ========== TABLEAU DESKTOP (768px+) ========== #}
+    <div class="desktop-table-container">
+      <div class="table-wrapper">
+        <table class="interventions-table">
+          <thead>
+            <tr>
+              <th class="sortable" data-sort="bonNumero">
+                <span class="th-content">
+                  <i class="bi bi-hash me-2"></i>N° Bon
+                  <i class="bi bi-chevron-up sort-icon"></i>
+                </span>
+              </th>
+              <th class="sortable" data-sort="client">
+                <span class="th-content">
+                  <i class="bi bi-person me-2"></i>Client
+                  <i class="bi bi-chevron-up sort-icon"></i>
+                </span>
+              </th>
+              <th class="sortable" data-sort="ville">
+                <span class="th-content">
+                  <i class="bi bi-geo-alt me-2"></i>Ville
+                  <i class="bi bi-chevron-up sort-icon"></i>
+                </span>
+              </th>
+              <th class="sortable" data-sort="date">
+                <span class="th-content">
+                  <i class="bi bi-calendar me-2"></i>Date
+                  <i class="bi bi-chevron-up sort-icon"></i>
+                </span>
+              </th>
+              <th>
+                <span class="th-content">
+                  <i class="bi bi-file-text me-2"></i>Type
+                </span>
+              </th>
+              <th class="actions-column">
+                <span class="th-content">
+                  <i class="bi bi-gear me-2"></i>Actions
+                </span>
+              </th>
+            </tr>
+          </thead>
+          <tbody id="table-body">
+            {% for intervention in interventions %}
+              <tr class="intervention-row" data-intervention-id="{{ intervention.id }}" 
+                  data-bon-numero="{{ intervention.bonNumero }}"
+                  data-client="{{ intervention.client }}"
+                  data-ville="{{ intervention.ville }}"
+                  data-date="{{ intervention.dateBon ? intervention.dateBon|date('Y-m-d') : '' }}"
+                  data-type="{{ intervention.compteRendu }}">
+                <td class="bon-numero">
+                  <span class="cell-value">{{ intervention.bonNumero }}</span>
+                </td>
+                <td class="client-name">
+                  <div class="client-info">
+                    <div class="client-avatar">
+                      {{ intervention.client|first|upper }}
+                    </div>
+                    <span class="cell-value">{{ intervention.client }}</span>
+                  </div>
+                </td>
+                <td class="ville">
+                  <div class="location-info">
+                    <i class="bi bi-geo-alt-fill location-icon"></i>
+                    <span class="cell-value">{{ intervention.ville }}</span>
+                  </div>
+                </td>
+                <td class="date-intervention">
+                  <div class="date-info">
+                    <span class="cell-value">{{ intervention.dateBon ? intervention.dateBon|date('d/m/Y') : 'Non définie' }}</span>
+                    {% if intervention.dateBon %}
+                      <small class="date-relative">{{ intervention.dateBon|date('D') }}</small>
+                    {% endif %}
+                  </div>
+                </td>
+                <td class="type-intervention">
+                  <span class="type-badge">
+                    {{ intervention.compteRendu|length > 20 ? intervention.compteRendu|slice(0, 20) ~ '...' : intervention.compteRendu }}
+                  </span>
+                </td>
+                <td class="actions-cell">
+                  <div class="action-buttons">
+                    <a href="{{ path('app_intervention_show', {id: intervention.id}) }}" 
+                       class="btn-action btn-view" 
+                       data-bs-toggle="tooltip" 
+                       title="Voir les détails">
+                      <i class="bi bi-eye"></i>
+                    </a>
+                    <a href="{{ path('app_intervention_edit', {id: intervention.id}) }}" 
+                       class="btn-action btn-edit"
+                       data-bs-toggle="tooltip" 
+                       title="Modifier">
+                      <i class="bi bi-pencil"></i>
+                    </a>
+                    <div class="btn-action btn-delete" onclick="return confirmDelete('{{ intervention.id }}', '{{ intervention.bonNumero }}')">
+                      <i class="bi bi-trash"></i>
+                    </div>
+                  </div>
+                </td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    {# ========== CARTES MOBILES (767px-) ========== #}
+    <div class="mobile-cards-container" id="cards-container">
+      {% for intervention in interventions %}
+        <div class="intervention-card" data-intervention-id="{{ intervention.id }}"
+             data-bon-numero="{{ intervention.bonNumero }}"
+             data-client="{{ intervention.client }}"
+             data-ville="{{ intervention.ville }}"
+             data-date="{{ intervention.dateBon ? intervention.dateBon|date('Y-m-d') : '' }}"
+             data-type="{{ intervention.compteRendu }}">
+          
+          {# Header de la carte #}
+          <div class="card-header">
+            <div class="card-avatar">
+              {{ intervention.client|first|upper }}
+            </div>
+            <div class="card-header-info">
+              <h3 class="card-title">{{ intervention.bonNumero }}</h3>
+              <div class="card-subtitle">
+                <i class="bi bi-person me-1"></i>
+                {{ intervention.client }}
+              </div>
+            </div>
+            <div class="card-status">
+              <div class="status-dot status-active"></div>
+            </div>
+          </div>
+
+          {# Contenu de la carte #}
+          <div class="card-body">
+            <div class="card-details">
+              <div class="detail-item">
+                <div class="detail-icon">
+                  <i class="bi bi-geo-alt-fill"></i>
+                </div>
+                <div class="detail-content">
+                  <span class="detail-label">Ville</span>
+                  <span class="detail-value">{{ intervention.ville }}</span>
+                </div>
+              </div>
+
+              <div class="detail-item">
+                <div class="detail-icon">
+                  <i class="bi bi-calendar3"></i>
+                </div>
+                <div class="detail-content">
+                  <span class="detail-label">Date</span>
+                  <span class="detail-value">
+                    {{ intervention.dateBon ? intervention.dateBon|date('d/m/Y') : 'Non définie' }}
+                  </span>
+                </div>
+              </div>
+
+              <div class="detail-item detail-full">
+                <div class="detail-icon">
+                  <i class="bi bi-file-text"></i>
+                </div>
+                <div class="detail-content">
+                  <span class="detail-label">Type d'intervention</span>
+                  <span class="detail-value detail-description">
+                    {{ intervention.compteRendu }}
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {# Actions de la carte #}
+          <div class="card-actions">
+            <a href="{{ path('app_intervention_show', {id: intervention.id}) }}" class="btn-card-action btn-card-primary">
+              <i class="bi bi-eye me-2"></i>
+              <span>Voir</span>
+            </a>
+            <a href="{{ path('app_intervention_edit', {id: intervention.id}) }}" class="btn-card-action btn-card-secondary">
+              <i class="bi bi-pencil me-2"></i>
+              <span>Modifier</span>
+            </a>
+            <button class="btn-card-action btn-card-danger" onclick="return confirmDelete('{{ intervention.id }}', '{{ intervention.bonNumero }}')">
+              <i class="bi bi-trash me-2"></i>
+              <span>Supprimer</span>
+            </button>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+
+  {% endif %}
+
+</div>
+
+<script>
+// ========== GESTION DES INTERVENTIONS - JAVASCRIPT ========== //
+
+document.addEventListener('DOMContentLoaded', function() {
+    
+    // ========== VARIABLES GLOBALES ========== //
+    const searchInput = document.getElementById('search-input');
+    const filterTabs = document.querySelectorAll('.filter-tab');
+    const interventionCards = document.querySelectorAll('.intervention-card');
+    const interventionRows = document.querySelectorAll('.intervention-row');
+    const sortableHeaders = document.querySelectorAll('.sortable');
+    const counter = document.getElementById('intervention-counter');
+    
+    let currentFilter = 'all';
+    let currentSort = { column: 'bonNumero', direction: 'asc' };
+    let interventions = [];
+
+    // ========== INITIALISATION ========== //
+    function init() {
+        loadInterventions();
+        initSearchFunctionality();
+        initFilterTabs();
+        initSortFunctionality();
+        initAnimations();
+        updateCounters();
+        
+        console.log('✅ Gestionnaire d\'interventions initialisé');
+    }
+
+    // ========== CHARGEMENT DES DONNÉES ========== //
+    function loadInterventions() {
+        // Charger depuis les cartes mobiles
+        interventions = Array.from(interventionCards).map(card => {
+            return {
+                id: card.dataset.interventionId,
+                bonNumero: card.dataset.bonNumero,
+                client: card.dataset.client,
+                ville: card.dataset.ville,
+                date: card.dataset.date,
+                type: card.dataset.type,
+                cardElement: card,
+                rowElement: document.querySelector(`[data-intervention-id="${card.dataset.interventionId}"].intervention-row`)
+            };
+        });
+
+        // Si pas de cartes, charger depuis les lignes de tableau
+        if (interventions.length === 0) {
+            interventions = Array.from(interventionRows).map(row => {
+                return {
+                    id: row.dataset.interventionId,
+                    bonNumero: row.dataset.bonNumero,
+                    client: row.dataset.client,
+                    ville: row.dataset.ville,
+                    date: row.dataset.date,
+                    type: row.dataset.type,
+                    rowElement: row,
+                    cardElement: null
+                };
+            });
+        }
+    }
+
+    // ========== FONCTIONNALITÉ DE RECHERCHE ========== //
+    function initSearchFunctionality() {
+        if (!searchInput) return;
+
+        let searchTimeout;
+        
+        searchInput.addEventListener('input', function(e) {
+            clearTimeout(searchTimeout);
+            
+            searchTimeout = setTimeout(() => {
+                const query = e.target.value.toLowerCase().trim();
+                filterInterventions(query);
+            }, 300);
+        });
+
+        searchInput.addEventListener('focus', function() {
+            this.parentElement.classList.add('search-focused');
+        });
+
+        searchInput.addEventListener('blur', function() {
+            this.parentElement.classList.remove('search-focused');
+        });
+    }
+
+    function filterInterventions(query) {
+        let visibleCount = 0;
+        
+        interventions.forEach(intervention => {
+            const searchText = [
+                intervention.bonNumero,
+                intervention.client,
+                intervention.ville,
+                intervention.type
+            ].join(' ').toLowerCase();
+
+            const matches = query === '' || searchText.includes(query);
+            const passesFilter = matchesCurrentFilter(intervention);
+            const shouldShow = matches && passesFilter;
+            
+            if (shouldShow) {
+                showIntervention(intervention);
+                visibleCount++;
+            } else {
+                hideIntervention(intervention);
+            }
+        });
+
+        updateCounters();
+        showNoResultsMessage(visibleCount === 0 && interventions.length > 0);
+    }
+
+    function showIntervention(intervention) {
+        if (intervention.cardElement) {
+            intervention.cardElement.classList.remove('hidden');
+            intervention.cardElement.style.animation = 'fadeInUp 0.3s ease-out';
+        }
+        if (intervention.rowElement) {
+            intervention.rowElement.classList.remove('hidden');
+            intervention.rowElement.style.animation = 'slideInLeft 0.3s ease-out';
+        }
+    }
+
+    function hideIntervention(intervention) {
+        if (intervention.cardElement) {
+            intervention.cardElement.classList.add('hidden');
+        }
+        if (intervention.rowElement) {
+            intervention.rowElement.classList.add('hidden');
+        }
+    }
+
+    // ========== FILTRES PAR ONGLETS ========== //
+    function initFilterTabs() {
+        filterTabs.forEach(tab => {
+            tab.addEventListener('click', function() {
+                filterTabs.forEach(t => {
+                    t.classList.remove('active');
+                    t.setAttribute('aria-pressed', 'false');
+                });
+                
+                this.classList.add('active');
+                this.setAttribute('aria-pressed', 'true');
+                
+                currentFilter = this.dataset.filter;
+                applyCurrentFilter();
+                
+                this.style.transform = 'scale(0.95)';
+                setTimeout(() => {
+                    this.style.transform = 'scale(1)';
+                }, 150);
+            });
+        });
+    }
+
+    function applyCurrentFilter() {
+        const query = searchInput ? searchInput.value.toLowerCase().trim() : '';
+        filterInterventions(query);
+    }
+
+    function matchesCurrentFilter(intervention) {
+        if (currentFilter === 'all') return true;
+        
+        if (currentFilter === 'recent') {
+            if (!intervention.date) return false;
+            const date = new Date(intervention.date);
+            const now = new Date();
+            const diffTime = Math.abs(now - date);
+            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+            return diffDays <= 30;
+        }
+        
+        return true;
+    }
+
+    // ========== TRI DES COLONNES ========== //
+    function initSortFunctionality() {
+        sortableHeaders.forEach(header => {
+            header.addEventListener('click', function() {
+                const column = this.dataset.sort;
+                
+                if (currentSort.column === column) {
+                    currentSort.direction = currentSort.direction === 'asc' ? 'desc' : 'asc';
+                } else {
+                    currentSort.column = column;
+                    currentSort.direction = 'asc';
+                }
+                
+                updateSortIcons();
+                sortInterventions();
+            });
+        });
+    }
+
+    function updateSortIcons() {
+        sortableHeaders.forEach(header => {
+            const icon = header.querySelector('.sort-icon');
+            const column = header.dataset.sort;
+            
+            if (column === currentSort.column) {
+                icon.classList.remove('bi-chevron-up', 'bi-chevron-down');
+                icon.classList.add(currentSort.direction === 'asc' ? 'bi-chevron-up' : 'bi-chevron-down');
+                icon.style.opacity = '1';
+                header.classList.add('sorted');
+            } else {
+                icon.classList.remove('bi-chevron-up', 'bi-chevron-down');
+                icon.classList.add('bi-chevron-up');
+                icon.style.opacity = '0';
+                header.classList.remove('sorted');
+            }
+        });
+    }
+
+    function sortInterventions() {
+        interventions.sort((a, b) => {
+            let aValue = a[currentSort.column] || '';
+            let bValue = b[currentSort.column] || '';
+            
+            if (currentSort.column === 'date') {
+                aValue = new Date(aValue || '1900-01-01');
+                bValue = new Date(bValue || '1900-01-01');
+            }
+            
+            if (currentSort.direction === 'asc') {
+                return aValue > bValue ? 1 : -1;
+            } else {
+                return aValue < bValue ? 1 : -1;
+            }
+        });
+        
+        // Réorganiser les éléments dans le DOM
+        const cardContainer = document.getElementById('cards-container');
+        const tableBody = document.getElementById('table-body');
+        
+        interventions.forEach((intervention, index) => {
+            if (intervention.cardElement && cardContainer) {
+                cardContainer.appendChild(intervention.cardElement);
+            }
+            if (intervention.rowElement && tableBody) {
+                tableBody.appendChild(intervention.rowElement);
+            }
+            
+            setTimeout(() => {
+                if (intervention.cardElement) {
+                    intervention.cardElement.style.animation = 'fadeInUp 0.2s ease-out';
+                }
+                if (intervention.rowElement) {
+                    intervention.rowElement.style.animation = 'slideInLeft 0.2s ease-out';
+                }
+            }, index * 30);
+        });
+    }
+
+    // ========== MESSAGE AUCUN RÉSULTAT ========== //
+    function showNoResultsMessage(show) {
+        const existingMessage = document.querySelector('.no-results-message');
+        if (existingMessage) {
+            existingMessage.remove();
+        }
+        
+        if (show) {
+            const container = document.getElementById('cards-container') || 
+                             document.querySelector('.desktop-table-container');
+            
+            if (container) {
+                const message = document.createElement('div');
+                message.className = 'no-results-message';
+                message.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-state-content">
+                            <div class="empty-state-icon">
+                                <i class="bi bi-search"></i>
+                            </div>
+                            <h3 class="empty-state-title">Aucun résultat trouvé</h3>
+                            <p class="empty-state-text">Essayez de modifier vos critères de recherche</p>
+                            <button class="btn-empty-action" onclick="clearSearch()">
+                                <i class="bi bi-x-lg me-2"></i>
+                                Effacer la recherche
+                            </button>
+                        </div>
+                    </div>
+                `;
+                container.appendChild(message);
+            }
+        }
+    }
+
+    // ========== ANIMATIONS ========== //
+    function initAnimations() {
+        document.querySelectorAll('.btn-card-action, .btn-new-intervention').forEach(btn => {
+            btn.addEventListener('click', function(e) {
+                const ripple = document.createElement('span');
+                ripple.className = 'ripple';
+                
+                const rect = this.getBoundingClientRect();
+                const size = Math.max(rect.width, rect.height);
+                ripple.style.width = ripple.style.height = size + 'px';
+                ripple.style.left = (e.clientX - rect.left - size / 2) + 'px';
+                ripple.style.top = (e.clientY - rect.top - size / 2) + 'px';
+                
+                this.appendChild(ripple);
+                
+                setTimeout(() => {
+                    ripple.remove();
+                }, 600);
+            });
+        });
+    }
+
+    // ========== MISE À JOUR DES COMPTEURS ========== //
+    function updateCounters() {
+        const visibleCount = interventions.filter(i => 
+            (i.cardElement && !i.cardElement.classList.contains('hidden')) ||
+            (i.rowElement && !i.rowElement.classList.contains('hidden'))
+        ).length;
+        
+        // Compteur principal
+        if (counter) {
+            counter.textContent = visibleCount;
+        }
+        
+        // Compteurs des onglets
+        const recentCount = interventions.filter(intervention => {
+            if (!intervention.date) return false;
+            const date = new Date(intervention.date);
+            const now = new Date();
+            const diffTime = Math.abs(now - date);
+            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+            return diffDays <= 30;
+        }).length;
+        
+        const allTab = document.getElementById('filter-all');
+        const recentTab = document.getElementById('filter-recent');
+        
+        if (allTab) {
+            allTab.querySelector('.tab-count').textContent = interventions.length;
+        }
+        if (recentTab) {
+            recentTab.querySelector('.tab-count').textContent = recentCount;
+        }
+    }
+
+    // ========== RACCOURCIS CLAVIER ========== //
+    document.addEventListener('keydown', function(e) {
+        if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
+            e.preventDefault();
+            if (searchInput) {
+                searchInput.focus();
+                searchInput.select();
+            }
+        }
+        
+        if (e.key === 'Escape') {
+            if (searchInput && document.activeElement === searchInput) {
+                searchInput.blur();
+                if (searchInput.value) {
+                    clearSearch();
+                }
+            }
+        }
+        
+        if ((e.ctrlKey || e.metaKey) && e.key === 'e') {
+            e.preventDefault();
+            exportInterventions();
+        }
+        
+        if ((e.ctrlKey || e.metaKey) && e.key === 'p') {
+            e.preventDefault();
+            printInterventions();
+        }
+    });
+
+    // ========== INITIALISATION ========== //
+    init();
+    
+});
+
+// ========== FONCTIONS GLOBALES ========== //
+
+function clearSearch() {
+    const searchInput = document.getElementById('search-input');
+    if (searchInput) {
+        searchInput.value = '';
+        searchInput.dispatchEvent(new Event('input'));
+    }
+    
+    const allTab = document.getElementById('filter-all');
+    if (allTab && !allTab.classList.contains('active')) {
+        allTab.click();
+    }
+}
+
+function exportInterventions() {
+    const visibleInterventions = Array.from(document.querySelectorAll('.intervention-card:not(.hidden), .intervention-row:not(.hidden)'));
+    
+    if (visibleInterventions.length === 0) {
+        alert('Aucune intervention à exporter');
+        return;
+    }
+    
+    const headers = ['Numéro de bon', 'Client', 'Ville', 'Date', 'Type'];
+    const csvContent = [
+        headers.join(','),
+        ...visibleInterventions.map(el => {
+            const data = [
+                el.dataset.bonNumero || '',
+                el.dataset.client || '',
+                el.dataset.ville || '',
+                el.dataset.date || '',
+                el.dataset.type || ''
+            ];
+            
+            return data.map(field => 
+                `"${field.replace(/"/g, '""')}"`
+            ).join(',');
+        })
+    ].join('\n');
+    
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement('a');
+    link.href = URL.createObjectURL(blob);
+    link.download = `interventions_${new Date().toISOString().split('T')[0]}.csv`;
+    link.click();
+    
+    console.log('✅ Export CSV généré avec succès');
+}
+
+function printInterventions() {
+    const visibleInterventions = Array.from(document.querySelectorAll('.intervention-card:not(.hidden), .intervention-row:not(.hidden)'));
+    
+    if (visibleInterventions.length === 0) {
+        alert('Aucune intervention à imprimer');
+        return;
+    }
+    
+    const printWindow = window.open('', '_blank');
+    const printContent = `
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <title>Liste des Interventions</title>
+            <meta charset="UTF-8">
+            
+        </head>
+        <body>
+            <h1>Liste des Interventions</h1>
+            <p class="meta">Généré le ${new Date().toLocaleDateString('fr-FR')} à ${new Date().toLocaleTimeString('fr-FR')}</p>
+            <p class="meta">${visibleInterventions.length} intervention(s)</p>
+            <hr>
+            ${visibleInterventions.map(el => {
+                return `
+                    <div class="intervention">
+                        <h3>${el.dataset.bonNumero}</h3>
+                        <p><strong>Client:</strong> ${el.dataset.client}</p>
+                        <p><strong>Ville:</strong> ${el.dataset.ville}</p>
+                        <p><strong>Date:</strong> ${el.dataset.date || 'Non définie'}</p>
+                        <p><strong>Type:</strong> ${el.dataset.type}</p>
+                    </div>
+                `;
+            }).join('')}
+        </body>
+        </html>
+    `;
+    
+    printWindow.document.write(printContent);
+    printWindow.document.close();
+    printWindow.print();
+    
+    console.log('✅ Version imprimable générée');
+}
+
+function refreshInterventions() {
+    const container = document.getElementById('cards-container') || 
+                     document.querySelector('.desktop-table-container');
+    
+    if (container) {
+        container.style.opacity = '0.5';
+        container.style.transition = 'opacity 0.3s ease';
+        
+        setTimeout(() => {
+            location.reload();
+        }, 500);
+    }
+    
+    console.log('🔄 Actualisation des interventions...');
+}
+
+function confirmDelete(interventionId, interventionTitle) {
+    if (confirm(`Êtes-vous sûr de vouloir supprimer l'intervention "${interventionTitle}" ?\n\nCette action est irréversible.`)) {
+        console.log(`🗑️ Suppression de l'intervention ${interventionId}`);
+        
+        // Animation de suppression
+        const cardElement = document.querySelector(`[data-intervention-id="${interventionId}"].intervention-card`);
+        const rowElement = document.querySelector(`[data-intervention-id="${interventionId}"].intervention-row`);
+        
+        if (cardElement) {
+            cardElement.style.animation = 'fadeOut 0.3s ease-out';
+            setTimeout(() => {
+                cardElement.remove();
+            }, 300);
+        }
+        
+        if (rowElement) {
+            rowElement.style.animation = 'fadeOut 0.3s ease-out';
+            setTimeout(() => {
+                rowElement.remove();
+            }, 300);
+        }
+        
+        // Ici vous pourriez faire un appel AJAX réel pour supprimer du serveur
+        // fetch(`/intervention/${interventionId}`, { method: 'DELETE' })
+        //     .then(() => console.log('Supprimé du serveur'));
+        
+        return true;
+    }
+    return false;
+}
+
+function formatDate(dateString) {
+    if (!dateString) return 'Non définie';
+    
+    const date = new Date(dateString);
+    const now = new Date();
+    const diffTime = Math.abs(now - date);
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+    
+    if (diffDays === 0) return 'Aujourd\'hui';
+    if (diffDays === 1) return 'Hier';
+    if (diffDays < 7) return `Il y a ${diffDays} jours`;
+    if (diffDays < 30) return `Il y a ${Math.ceil(diffDays / 7)} semaines`;
+    
+    return date.toLocaleDateString('fr-FR');
+}
+
+// Fonction pour statistiques (bonus)
+function getInterventionStats() {
+    const cards = document.querySelectorAll('.intervention-card:not(.hidden)');
+    const total = cards.length;
+    
+    if (total === 0) return console.log('📊 Aucune intervention visible');
+    
+    const stats = {
+        total,
+        parVille: {},
+        parMois: {},
+        recent: 0
+    };
+    
+    cards.forEach(card => {
+        // Par ville
+        const ville = card.dataset.ville;
+        if (ville) {
+            stats.parVille[ville] = (stats.parVille[ville] || 0) + 1;
+        }
+        
+        // Par mois
+        const dateStr = card.dataset.date;
+        if (dateStr) {
+            const date = new Date(dateStr);
+            const mois = date.toLocaleDateString('fr-FR', { year: 'numeric', month: 'long' });
+            stats.parMois[mois] = (stats.parMois[mois] || 0) + 1;
+            
+            // Compteur récent (30 jours)
+            const diffTime = Math.abs(new Date() - date);
+            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+            if (diffDays <= 30) stats.recent++;
+        }
+    });
+    
+    console.log('📊 Statistiques des interventions:', stats);
+    return stats;
+}
+
+// Message d'information sur les raccourcis (affiché une seule fois)
+if (!localStorage.getItem('keyboardShortcutsShown')) {
+    setTimeout(() => {
+        console.log(`
+🎯 Raccourcis clavier disponibles:
+• Ctrl/⌘ + K : Focus sur la recherche
+• Échap : Effacer la recherche
+• Ctrl/⌘ + E : Exporter en CSV
+• Ctrl/⌘ + P : Imprimer la liste
+        `);
+        localStorage.setItem('keyboardShortcutsShown', 'true');
+    }, 2000);
+}
+
+console.log('✅ Toutes les fonctionnalités JavaScript sont chargées et prêtes !');
+
+</script>
+{% endblock %}

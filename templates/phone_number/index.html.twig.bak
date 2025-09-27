@@ -1,0 +1,96 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Liste des numéros{% endblock %}
+
+{% block stylesheets %}
+<style>
+
+</style>
+{% endblock %}
+
+{% block body %}
+<div class="page-header">
+  <div class="container-modern">
+    <div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
+      <h1 class="page-title">📞 Liste des numéros</h1>
+      <div class="action-buttons">
+        <a class="btn-modern btn-primary-modern" href="{{ path('phone_number_new') }}">
+          ➕ Ajouter un numéro
+        </a>
+        <a class="btn-modern btn-secondary-modern" href="{{ path('phone_category_index') }}">
+          🗂️ Gérer les catégories
+        </a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="container-modern">
+  {% for cat in categories %}
+    <div class="category-section">
+      <div class="category-header">
+        <h2 class="category-title">
+          <span class="category-icon">🗂️</span>
+          {{ cat.name }}
+        </h2>
+        {% if cat.description %}
+          <p class="category-description">{{ cat.description }}</p>
+        {% endif %}
+      </div>
+
+      {% if cat.numbers|length > 0 %}
+        <table class="modern-table">
+          <thead>
+            <tr>
+              <th style="width:35%;">Nom / Service</th>
+              <th style="width:25%;">Numéro</th>
+              <th style="width:25%;">Notes</th>
+              <th style="width:15%;">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for n in cat.numbers %}
+              <tr>
+                <td>
+                  <div class="service-name">{{ n.name }}</div>
+                </td>
+                <td>
+                  <a class="phone-link" href="tel:{{ n.number|replace({' ':''}) }}">
+                    📞 {{ n.number }}
+                  </a>
+                </td>
+                <td>
+                  <span class="notes-text">{{ n.notes ?: '—' }}</span>
+                </td>
+                <td>
+                  <div class="action-group">
+                    <a class="btn-sm-modern btn-edit" href="{{ path('phone_number_edit', {id: n.id}) }}">
+                      ✏️ Modifier
+                    </a>
+                    <form method="post" action="{{ path('phone_number_delete', {id: n.id}) }}" style="display:inline" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer ce numéro ?');">
+                      <input type="hidden" name="_token" value="{{ csrf_token('delete_number_' ~ n.id) }}">
+                      <button class="btn-sm-modern btn-delete" type="submit">
+                        🗑️ Supprimer
+                      </button>
+                    </form>
+                  </div>
+                </td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      {% else %}
+        <div class="empty-state">
+          <div class="empty-state-icon">📵</div>
+          <p>Aucun numéro dans cette catégorie pour le moment.</p>
+        </div>
+      {% endif %}
+    </div>
+  {% else %}
+    <div class="alert-modern">
+      <h3>🚀 Commencez par créer votre première catégorie</h3>
+      <p>Organisez vos numéros de téléphone en créant des catégories personnalisées.</p>
+    </div>
+  {% endfor %}
+</div>
+{% endblock %}

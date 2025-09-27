@@ -7,274 +7,12 @@
   {{ parent() }}
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
 
-  <style>
-    /* ========== VARIABLES CSS MODERNES ========== */
-    :root {
-      --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      --card-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
-      --card-shadow-hover: 0 15px 40px rgba(0, 0, 0, 0.12);
-      --border-radius: 12px;
-      --border-radius-lg: 16px;
-      --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    }
-
-    /* ========== HEADER SECTION ========== */
-    .page-header {
-      background: var(--primary-gradient);
-      border-radius: var(--border-radius-lg);
-      color: white;
-      padding: 2rem;
-      margin-bottom: 2rem;
-      position: relative;
-      overflow: hidden;
-    }
-
-    .page-header::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      right: 0;
-      width: 100%;
-      height: 100%;
-      background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="80" cy="20" r="20" fill="rgba(255,255,255,0.1)"/><circle cx="90" cy="60" r="15" fill="rgba(255,255,255,0.08)"/><circle cx="70" cy="80" r="10" fill="rgba(255,255,255,0.06)"/></svg>');
-      background-size: 200px 200px;
-      opacity: 0.3;
-    }
-
-    .page-header h1 {
-      font-size: 2.2rem;
-      font-weight: 700;
-      margin-bottom: 0.5rem;
-      position: relative;
-      z-index: 1;
-    }
-
-    .page-header .subtitle {
-      opacity: 0.9;
-      font-size: 1.1rem;
-      position: relative;
-      z-index: 1;
-    }
-
-    .breadcrumb-nav {
-      position: relative;
-      z-index: 1;
-      margin-top: 1rem;
-    }
-
-    .breadcrumb-nav a {
-      color: rgba(255, 255, 255, 0.8);
-      text-decoration: none;
-      transition: var(--transition);
-    }
-
-    .breadcrumb-nav a:hover {
-      color: white;
-    }
-
-    .breadcrumb-nav .separator {
-      color: rgba(255, 255, 255, 0.6);
-      margin: 0 0.5rem;
-    }
-
-    /* ========== FORMULAIRE MODERNE ========== */
-    .form-container {
-      max-width: 800px;
-      margin: 0 auto;
-    }
-
-    .modern-form-card {
-      background: white;
-      border-radius: var(--border-radius-lg);
-      box-shadow: var(--card-shadow);
-      overflow: hidden;
-      transition: var(--transition);
-    }
-
-    .modern-form-card:hover {
-      box-shadow: var(--card-shadow-hover);
-    }
-
-    /* ========== CHAMPS DE FORMULAIRE MODERNES ========== */
-    .form-label {
-      font-weight: 600;
-      color: #2d3748;
-      margin-bottom: 0.5rem;
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-    }
-
-    .form-control, .form-select {
-      border: 2px solid #e2e8f0;
-      border-radius: var(--border-radius);
-      padding: 0.875rem 1rem;
-      font-size: 1rem;
-      transition: var(--transition);
-      background: white;
-    }
-
-    .form-control:focus, .form-select:focus {
-      border-color: #667eea;
-      background: white;
-      box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
-      outline: none;
-    }
-
-    .form-control:hover:not(:focus), .form-select:hover:not(:focus) {
-      border-color: #cbd5e0;
-    }
-
-    /* ========== CHECKBOXES MODERNES POUR LES RÔLES ========== */
-    .form-check {
-      background: white;
-      border: 2px solid #e2e8f0;
-      border-radius: var(--border-radius);
-      padding: 1rem;
-      margin-bottom: 0.75rem;
-      transition: var(--transition);
-      position: relative;
-    }
-
-    .form-check:hover {
-      border-color: #cbd5e0;
-      background: #f8fafc;
-      transform: translateY(-1px);
-    }
-
-    .form-check-input:checked + .form-check-label {
-      color: #667eea;
-      font-weight: 600;
-    }
-
-    .form-check-input:checked ~ * {
-      color: #667eea;
-    }
-
-    .form-check-input:checked {
-      background-color: #667eea;
-      border-color: #667eea;
-    }
-
-    .form-check.checked {
-      border-color: #667eea;
-      background: rgba(102, 126, 234, 0.05);
-      box-shadow: 0 4px 15px rgba(102, 126, 234, 0.1);
-    }
-
-    .form-check-label {
-      font-weight: 500;
-      cursor: pointer;
-      transition: var(--transition);
-    }
-
-    /* ========== BOUTONS MODERNES ========== */
-    .btn-modern {
-      padding: 0.875rem 2rem;
-      font-weight: 600;
-      border-radius: var(--border-radius);
-      transition: var(--transition);
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-      min-height: 48px;
-    }
-
-    .btn-primary {
-      background: var(--primary-gradient);
-      border: none;
-      color: white;
-    }
-
-    .btn-primary:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
-      color: white;
-    }
-
-    .btn-outline-secondary {
-      background: white;
-      border: 2px solid #e2e8f0;
-      color: #4a5568;
-    }
-
-    .btn-outline-secondary:hover {
-      border-color: #cbd5e0;
-      background: #f7fafc;
-      transform: translateY(-1px);
-      color: #4a5568;
-    }
-
-    /* ========== RESPONSIVE ========== */
-    @media (max-width: 768px) {
-      .page-header {
-        padding: 1.5rem;
-        text-align: center;
-      }
-
-      .page-header h1 {
-        font-size: 1.8rem;
-      }
-
-      .form-container {
-        margin: 0 1rem;
-      }
-
-      .modern-form-card {
-        margin: 0;
-      }
-    }
-
-    /* ========== ANIMATIONS ========== */
-    @keyframes slideInUp {
-      from {
-        opacity: 0;
-        transform: translateY(20px);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
-    }
-
-    .modern-form-card {
-      animation: slideInUp 0.5s ease-out;
-    }
-
-    /* ========== ÉTATS DE VALIDATION ========== */
-    .is-invalid {
-      border-color: #dc2626 !important;
-      background: #fef2f2 !important;
-    }
-
-    .is-invalid:focus {
-      box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.1) !important;
-    }
-
-    .invalid-feedback {
-      color: #dc2626;
-      font-size: 0.875rem;
-      margin-top: 0.5rem;
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-    }
-
-    .is-valid {
-      border-color: #10b981 !important;
-      background: #f0fdf4 !important;
-    }
-
-    .is-valid:focus {
-      box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1) !important;
-    }
-  </style>
+  <link rel="stylesheet" href="{{ asset('assets/css/users/form.css') }}">
 {% endblock %}
 
 {% block body %}
 <div class="container-fluid px-4 py-3">
 
-  {# ========== HEADER MODERNE ========== #}
   <div class="page-header">
     <div class="d-flex flex-column">
       <h1>
@@ -291,28 +29,38 @@
           Modifiez les informations de l'utilisateur #{{ user.id }}
         {% endif %}
       </p>
-      
       <nav class="breadcrumb-nav">
-        <a href="{{ path('users_index') }}">
-          <i class="bi bi-people me-1"></i>Utilisateurs
-        </a>
+        <a href="{{ path('users_index') }}"><i class="bi bi-people me-1"></i>Utilisateurs</a>
         <span class="separator">›</span>
         <span>{{ mode == 'new' ? 'Nouvel utilisateur' : 'Modification' }}</span>
       </nav>
     </div>
   </div>
 
-  {# ========== FORMULAIRE MODERNE ========== #}
   <div class="form-container">
     <div class="modern-form-card">
       <div class="card-body p-4 p-md-5">
-        
+
         {{ form_start(form, {'attr': {'id': 'user-form'}}) }}
           <div class="row g-3">
             <div class="col-12 col-md-6">{{ form_row(form.username) }}</div>
             <div class="col-12 col-md-6">{{ form_row(form.email) }}</div>
             <div class="col-12 col-md-6">{{ form_row(form.agence) }}</div>
-            <div class="col-12">{{ form_row(form.roles) }}</div>
+
+            {# -------- Rôle unique (primaryRole) -------- #}
+            <div class="col-12">
+              <label class="form-label d-flex align-items-center gap-2">
+                <i class="bi bi-shield-check"></i> Rôle
+              </label>
+              <div class="role-group">
+                {{ form_widget(form.primaryRole) }}
+                {{ form_errors(form.primaryRole) }}
+              </div>
+              <div class="form-text text-muted">
+                La hiérarchie des rôles appliquera automatiquement les permissions associées.
+              </div>
+            </div>
+
             <div class="col-12">{{ form_row(form.plainPassword) }}</div>
           </div>
 
@@ -322,8 +70,7 @@
               {% if mode == 'new' %}Créer l'utilisateur{% else %}Enregistrer les modifications{% endif %}
             </button>
             <a class="btn btn-outline-secondary btn-modern" href="{{ path('users_index') }}">
-              <i class="bi bi-x-lg"></i>
-              Annuler
+              <i class="bi bi-x-lg"></i> Annuler
             </a>
           </div>
         {{ form_end(form) }}
@@ -333,160 +80,76 @@
   </div>
 </div>
 
-{# ========== JAVASCRIPT SIMPLE ========== #}
 <script>
 document.addEventListener('DOMContentLoaded', function() {
   const form = document.getElementById('user-form');
   const submitBtn = document.getElementById('submit-btn');
 
-  // ========== Animation des checkboxes de rôles ==========
-  const roleCheckboxes = document.querySelectorAll('input[name*="[roles]"]');
-  
-  roleCheckboxes.forEach(checkbox => {
-    const formCheck = checkbox.closest('.form-check');
-    
-    // État initial
-    if (checkbox.checked && formCheck) {
-      formCheck.classList.add('checked');
-    }
-    
-    // Événement de changement
-    checkbox.addEventListener('change', function() {
-      if (formCheck) {
-        if (this.checked) {
-          formCheck.classList.add('checked');
-        } else {
-          formCheck.classList.remove('checked');
-        }
-      }
-      
-      // Logique métier : si admin est sélectionné, sélectionner user aussi
-      if (this.value === 'ROLE_ADMIN' && this.checked) {
-        const userCheckbox = Array.from(roleCheckboxes).find(cb => cb.value === 'ROLE_USER');
-        const userFormCheck = userCheckbox ? userCheckbox.closest('.form-check') : null;
-        if (userCheckbox && userFormCheck) {
-          userCheckbox.checked = true;
-          userFormCheck.classList.add('checked');
-        }
-      }
-      
-      // S'assurer qu'au moins ROLE_USER est sélectionné
-      ensureMinimumRole();
+  // Mise en valeur du rôle sélectionné (radios)
+  const roleRadios = document.querySelectorAll('input[name*="[primaryRole]"]');
+  function refreshRoleStyles(){
+    roleRadios.forEach(r => {
+      const box = r.closest('.form-check');
+      if (box) box.classList.toggle('checked', r.checked);
     });
-  });
-
-  function ensureMinimumRole() {
-    const anyChecked = Array.from(roleCheckboxes).some(cb => cb.checked);
-    if (!anyChecked) {
-      const userCheckbox = Array.from(roleCheckboxes).find(cb => cb.value === 'ROLE_USER');
-      const userFormCheck = userCheckbox ? userCheckbox.closest('.form-check') : null;
-      if (userCheckbox && userFormCheck) {
-        userCheckbox.checked = true;
-        userFormCheck.classList.add('checked');
-      }
-    }
   }
+  roleRadios.forEach(r => r.addEventListener('change', refreshRoleStyles));
+  refreshRoleStyles();
 
-  // ========== Validation en temps réel ==========
+  // Validation légère (username/email) et UX
   if (form && submitBtn) {
     const inputs = form.querySelectorAll('input[type="text"], input[type="email"], input[type="password"], select');
-    
     inputs.forEach(input => {
-      input.addEventListener('blur', function() {
-        validateField(this);
-      });
-      
-      input.addEventListener('input', function() {
+      input.addEventListener('blur', function(){ validateField(this); });
+      input.addEventListener('input', function(){
         this.classList.remove('is-invalid');
-        const feedback = this.parentNode.querySelector('.invalid-feedback');
-        if (feedback) {
-          feedback.style.display = 'none';
-        }
+        const fb = this.parentNode.querySelector('.invalid-feedback');
+        if (fb) fb.style.display = 'none';
       });
     });
 
-    function validateField(field) {
+    function validateField(field){
       const value = field.value.trim();
-      const fieldName = field.name;
-      let isValid = true;
-      let message = '';
-
-      if (fieldName.includes('[username]')) {
-        isValid = value.length >= 3 && /^[a-zA-Z0-9_]+$/.test(value);
-        message = 'Le nom d\'utilisateur doit contenir au moins 3 caractères (lettres, chiffres, underscore)';
-      } else if (fieldName.includes('[email]')) {
-        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        isValid = value === '' || emailRegex.test(value);
-        message = 'Format d\'email invalide';
-      }
-
-      if (value && isValid) {
-        field.classList.remove('is-invalid');
-        field.classList.add('is-valid');
-      } else if (value && !isValid) {
-        field.classList.remove('is-valid');
-        field.classList.add('is-invalid');
-        showFieldError(field, message);
-      }
+      const name = field.name; let ok = true; let msg = '';
+      if (name.includes('[username]')) { ok = value.length >= 3 && /^[a-zA-Z0-9_]+$/.test(value); msg = 'Le nom d\'utilisateur doit contenir au moins 3 caractères (lettres, chiffres, underscore)'; }
+      else if (name.includes('[email]')) { const re=/^[^\s@]+@[^\s@]+\.[^\s@]+$/; ok = (value==='' || re.test(value)); msg='Format d\'email invalide'; }
+      if (value && !ok) { field.classList.add('is-invalid'); showErr(field, msg); } else if (value && ok) { field.classList.add('is-valid'); }
+    }
+    function showErr(field, msg){
+      const c = field.parentNode; let fb = c.querySelector('.invalid-feedback');
+      if (!fb) { fb = document.createElement('div'); fb.className='invalid-feedback'; c.appendChild(fb); }
+      fb.innerHTML = '<i class="bi bi-exclamation-triangle"></i> ' + msg; fb.style.display='flex';
     }
 
-    function showFieldError(field, message) {
-      const container = field.parentNode;
-      let feedback = container.querySelector('.invalid-feedback');
-      
-      if (!feedback) {
-        feedback = document.createElement('div');
-        feedback.className = 'invalid-feedback';
-        container.appendChild(feedback);
-      }
-      
-      feedback.innerHTML = '<i class="bi bi-exclamation-triangle"></i> ' + message;
-      feedback.style.display = 'flex';
-    }
-
-    // Animation de soumission
-    form.addEventListener('submit', function(e) {
+    form.addEventListener('submit', function(){
       submitBtn.innerHTML = '<i class="bi bi-arrow-repeat me-2"></i>Enregistrement...';
       submitBtn.disabled = true;
     });
   }
 
-  // ========== Auto-complétion intelligente ==========
+  // Auto-suggestion username depuis email
   const usernameInput = document.querySelector('input[name*="[username]"]');
   const emailInput = document.querySelector('input[name*="[email]"]');
-  
   if (usernameInput && emailInput) {
-    emailInput.addEventListener('input', function() {
+    emailInput.addEventListener('input', function(){
       if (!usernameInput.value && this.value.includes('@')) {
-        const suggestion = this.value.split('@')[0].toLowerCase().replace(/[^a-z0-9]/g, '');
-        if (suggestion.length >= 3) {
-          usernameInput.setAttribute('placeholder', 'Suggestion: ' + suggestion);
-        }
+        const suggestion = this.value.split('@')[0].toLowerCase().replace(/[^a-z0-9_]/g,'');
+        if (suggestion.length >= 3) usernameInput.setAttribute('placeholder', 'Suggestion: ' + suggestion);
       }
     });
   }
 
-  // ========== Raccourcis clavier ==========
-  document.addEventListener('keydown', function(e) {
-    // Ctrl/Cmd + S pour sauvegarder
+  // Raccourci Ctrl/Cmd+S
+  document.addEventListener('keydown', function(e){
     if ((e.ctrlKey || e.metaKey) && e.key === 's') {
       e.preventDefault();
-      if (submitBtn && !submitBtn.disabled) {
-        submitBtn.click();
-      }
+      if (submitBtn && !submitBtn.disabled) submitBtn.click();
     }
   });
 
-  // ========== Initialisation ==========
-  ensureMinimumRole();
-  
-  // Focus sur le premier champ
-  const firstInput = form.querySelector('input:not([type="hidden"]):not([type="checkbox"])');
-  if (firstInput) {
-    setTimeout(() => {
-      firstInput.focus();
-    }, 200);
-  }
+  // Focus premier champ
+  const first = document.querySelector('#user-form input:not([type="hidden"])');
+  if (first) setTimeout(()=> first.focus(), 200);
 });
 </script>
 {% endblock %}

@@ -42,18 +42,20 @@ class UserType extends AbstractType
                 'choices' => $choices,            // <- string stocké dans User.agence
                 'required' => true,
             ])
-            ->add('roles', ChoiceType::class, [
-                'label' => 'Rôles',
-                'multiple' => true,
-                'expanded' => true,
-                'choices' => [
-                    'Responsable'     => User::ROLE_ADMIN,
-                    'Développeur'       => User::ROLE_DEV,
-                    'Administrateur'   => User::ROLE_SUPPORT,
-                    'Agent Mobile' => User::ROLE_OPERATEUR,
-                    'Utilateur'      => User::ROLE_USER,
-                ],
-            ])
+            ->add('primaryRole', ChoiceType::class, [
+            'label' => 'Rôle',
+            'choices' => [
+                'Administrateur' => User::ROLE_ADMIN,
+                'Développeur'    => User::ROLE_DEV,
+                'Support'        => User::ROLE_SUPPORT,
+                'Opérateur'      => User::ROLE_OPERATEUR,
+                // Pas de ROLE_USER ici: il est donné par défaut et géré par la hiérarchie
+            ],
+            'expanded'   => true,   // radios jolies; mets false si tu veux un select
+            'multiple'   => false,
+            'required'   => false,
+            'placeholder'=> false,  // évite “None”
+        ])
             ->add('plainPassword', PasswordType::class, [
                 'label' => $isEdit ? 'Nouveau mot de passe (optionnel)' : 'Mot de passe',
                 'mapped' => false,

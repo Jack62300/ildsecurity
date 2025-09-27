@@ -282,35 +282,4 @@
 
 {% endif %}
 
-<style>
-.hover-card {
-  transition: all 0.2s ease-in-out;
-}
-
-.hover-card:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15) !important;
-}
-
-.card-img-top {
-  transition: transform 0.2s ease-in-out;
-}
-
-.hover-card:hover .card-img-top {
-  transform: scale(1.02);
-}
-
-.badge {
-  font-size: 0.7em;
-}
-
-.btn-sm {
-  font-size: 0.8rem;
-}
-
-@media (max-width: 767.98px) {
-  .card-title {
-    font-size: 1rem;
-  }
-}
-</style>
+<link rel="stylesheet" href="{{ asset('assets/css/clients/_cards.css') }}">

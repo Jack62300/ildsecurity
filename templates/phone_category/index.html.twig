@@ -1,0 +1,45 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Catégories de numéros{% endblock %}
+
+{% block body %}
+<div class="container py-4">
+  <h1>Catégories de numéros</h1>
+
+  <div class="mb-3">
+    <a class="btn btn-primary" href="{{ path('phone_category_new') }}">➕ Nouvelle catégorie</a>
+    <a class="btn btn-outline-secondary" href="{{ path('phone_number_index') }}">📞 Revenir aux numéros</a>
+  </div>
+
+  <table class="table table-striped align-middle">
+    <thead>
+      <tr>
+        <th>#</th>
+        <th>Nom</th>
+        <th>Description</th>
+        <th>Nb. numéros</th>
+        <th style="width: 180px;">Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for c in categories %}
+        <tr>
+          <td>{{ c.id }}</td>
+          <td>{{ c.name }}</td>
+          <td>{{ c.description ?: '—' }}</td>
+          <td>{{ c.numbers|length }}</td>
+          <td>
+            <a class="btn btn-sm btn-secondary" href="{{ path('phone_category_edit', {id: c.id}) }}">✏️ Modifier</a>
+            <form method="post" action="{{ path('phone_category_delete', {id: c.id}) }}" style="display:inline" onsubmit="return confirm('Supprimer cette catégorie ?');">
+              <input type="hidden" name="_token" value="{{ csrf_token('delete_category_' ~ c.id) }}">
+              <button class="btn btn-sm btn-danger" {% if c.numbers|length > 0 %}disabled title="Supprimer les numéros d'abord"{% endif %}>🗑️ Supprimer</button>
+            </form>
+          </td>
+        </tr>
+      {% else %}
+        <tr><td colspan="5" class="text-center text-muted">Aucune catégorie.</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

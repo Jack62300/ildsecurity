@@ -1,0 +1,7 @@
+{% extends 'base.html.twig' %}
+{% block title %}Nouveau bon d'intervention{% endblock %}
+{% block body %}
+<h1>Nouveau bon d'intervention</h1>
+{{ include('intervention/_form.html.twig', {form: form, button_label: 'Créer'}) }}
+<p class="mt-3"><a href="{{ path('app_intervention_index') }}">Retour à la liste</a></p>
+{% endblock %}

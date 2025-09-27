@@ -1,0 +1,339 @@
+{% extends 'base.html.twig' %}
+{% block title %}Bon d'intervention #{{ intervention.bonNumero ?: intervention.id }}{% endblock %}
+{% block body %}
+
+<link rel="stylesheet" href="{{ asset('assets/css/intervention/show.css') }}">
+
+<!-- Boutons d'action flottants -->
+<div class="action-buttons no-print">
+    <button class="btn btn-print" onclick="window.print()" type="button">
+        🖨️ Imprimer
+    </button>
+    <a class="btn btn-edit" href="{{ path('app_intervention_edit', {id: intervention.id}) }}">
+        ✏️ Éditer
+    </a>
+    <a class="btn btn-back" href="{{ path('app_intervention_index') }}">
+        ← Retour
+    </a>
+</div>
+
+<!-- Boutons d'action alternatifs (au cas où les flottants ne s'affichent pas) -->
+<div class="alternative-buttons no-print" style="text-align: center; margin: 20px 0; padding: 20px;">
+    <a target="_blank"
+   href="{{ path('app_intervention_print', {id: intervention.id}) }}"><button class="btn btn-print" type="button" style="margin: 5px;">
+        
+  <i class="bi bi-printer"></i> Imprimer (A4)
+
+    </button></a>
+    <a class="btn btn-edit" href="{{ path('app_intervention_edit', {id: intervention.id}) }}" style="margin: 5px;">
+        ✏️ Éditer
+    </a>
+    <a class="btn btn-back" href="{{ path('app_intervention_index') }}" style="margin: 5px;">
+        ← Retour
+    </a>
+</div>
+
+<div class="page-container">
+    <!-- En-tête avec logo -->
+    <div class="header-section">
+        <div class="logo-section">
+            <img src="{{ asset('assets/images/logo.png') }}" alt="Logo Entreprise" class="company-logo">
+            <div class="company-info">
+                <strong>{{ intervention.entreprise ?: 'VOTRE ENTREPRISE' }}</strong><br>
+                Sécurité & Surveillance<br>
+                Tél: 01.23.45.67.89
+            </div>
+        </div>
+        
+        <div class="document-title">
+            <h1>Bon d'Intervention</h1>
+            <div class="document-number">N° {{ intervention.bonNumero ?: intervention.id }}</div>
+        </div>
+        
+        <div class="document-date">
+            <div class="date-label">Date d'intervention</div>
+            <div class="date-value">
+                {{ intervention.dateBon ? intervention.dateBon|date('d/m/Y') : 'Non définie' }}
+            </div>
+        </div>
+    </div>
+
+    <div class="intervention-content">
+        <!-- Informations Client -->
+        <div class="client-info-box">
+            <div class="client-info-title">INFORMATIONS CLIENT</div>
+            <div class="client-details">
+                <div class="client-field">
+                    <label>Client</label>
+                    <span>{{ intervention.client ?: '-' }}</span>
+                </div>
+                <div class="client-field">
+                    <label>Type d'intervention</label>
+                    <span>{{ intervention.compteRendu ?: '-' }}</span>
+                </div>
+                <div class="client-field">
+                    <label>Adresse</label>
+                    <span>{{ intervention.adresse ?: '-' }}</span>
+                </div>
+                <div class="client-field">
+                    <label>Moyen d'accès</label>
+                    <span class="status-badge {{ intervention.avecMoyenAcces ? 'badge-oui' : 'badge-non' }}">
+                        {{ intervention.avecMoyenAcces ? 'Oui' : 'Non' }}
+                    </span>
+                </div>
+                <div class="client-field">
+                    <label>Ville</label>
+                    <span>{{ intervention.ville ?: '-' }}</span>
+                </div>
+                <div class="client-field">
+                    <label>Bon n°</label>
+                    <span>{{ intervention.bonNumero ?: '-' }}</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Horaires d'intervention -->
+        <div class="info-section">
+            <div class="section-header">Horaires d'intervention</div>
+            <div class="section-content">
+                <div class="info-grid">
+                    <div class="info-row">
+                        <div class="info-label">Heure d'appel</div>
+                        <div class="info-value">
+                            {% if intervention.heureAppel %}
+                                <span class="datetime-badge">{{ intervention.heureAppel|date('d/m/Y H:i') }}</span>
+                            {% else %}
+                                <em>Non renseignée</em>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="info-row">
+                        <div class="info-label">Heure d'arrivée</div>
+                        <div class="info-value">
+                            {% if intervention.heureArrivee %}
+                                <span class="datetime-badge">{{ intervention.heureArrivee|date('d/m/Y H:i') }}</span>
+                            {% else %}
+                                <em>Non renseignée</em>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="info-row">
+                        <div class="info-label">Heure de départ</div>
+                        <div class="info-value">
+                            {% if intervention.heureDepart %}
+                                <span class="datetime-badge">{{ intervention.heureDepart|date('d/m/Y H:i') }}</span>
+                            {% else %}
+                                <em>Non renseignée</em>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Constats et vérifications -->
+        <div class="info-section">
+            <div class="section-header">Constats et vérifications</div>
+            <div class="section-content">
+                <div class="info-grid">
+                    <div class="info-row">
+                        <div class="info-label">Constat météo</div>
+                        <div class="info-value">{{ intervention.constatMeteo ?: '-' }}</div>
+                    </div>
+                    <div class="info-row">
+                        <div class="info-label">Circulation</div>
+                        <div class="info-value">
+                            {{ intervention.circulation ?: '-' }}
+                            {% if intervention.circulationMotif %}
+                                <br><small style="color: #666; font-style: italic;">{{ intervention.circulationMotif }}</small>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="info-row">
+                        <div class="info-label">Circuit de vérification</div>
+                        <div class="info-value">
+                            {% if intervention.circuitVerification and intervention.circuitVerification|length > 0 %}
+                                <div class="list-value">{{ intervention.circuitVerification|join(', ') }}</div>
+                                {% if intervention.circuitPoints %}
+                                    <br><small style="color: #666;">{{ intervention.circuitPoints }}</small>
+                                {% endif %}
+                            {% else %}
+                                -
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="info-row">
+                        <div class="info-label">Lumière allumée</div>
+                        <div class="info-value">
+                            {{ intervention.lumiereAllumee ?: '-' }}
+                            {% if intervention.lumierePiece %}
+                                <br><small style="color: #666; font-style: italic;">{{ intervention.lumierePiece }}</small>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="info-row">
+                        <div class="info-label">Issues ouvertes</div>
+                        <div class="info-value">
+                            {{ intervention.issuesOuvertes ?: '-' }}
+                            {% if intervention.issuesLesquelles %}
+                                <br><small style="color: #666; font-style: italic;">{{ intervention.issuesLesquelles }}</small>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="info-row">
+                        <div class="info-label">Sirène en fonction</div>
+                        <div class="info-value">{{ intervention.sireneEnFonction ?: '-' }}</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Système et sécurité -->
+        <div class="info-section">
+            <div class="section-header">Système et sécurité</div>
+            <div class="section-content">
+                <div class="info-grid">
+                    <div class="info-row">
+                        <div class="info-label">État du système</div>
+                        <div class="info-value"><strong>{{ intervention.systemeEtat ?: '-' }}</strong></div>
+                    </div>
+                    <div class="info-row">
+                        <div class="info-label">Remise en service</div>
+                        <div class="info-value">{{ intervention.remiseEnService ?: '-' }}</div>
+                    </div>
+                    <div class="info-row">
+                        <div class="info-label">Zones</div>
+                        <div class="info-value">{{ intervention.zones ?: '-' }}</div>
+                    </div>
+                    <div class="info-row">
+                        <div class="info-label">Effraction</div>
+                        <div class="info-value">{{ intervention.effraction ?: '-' }}</div>
+                    </div>
+                    <div class="info-row">
+                        <div class="info-label">Présence détectée</div>
+                        <div class="info-value">
+                            {% if intervention.presence and intervention.presence|length > 0 %}
+                                <div class="list-value">{{ intervention.presence|join(', ') }}</div>
+                            {% else %}
+                                -
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Personnel et matériel -->
+        <div class="info-section">
+            <div class="section-header">Personnel et matériel</div>
+            <div class="section-content">
+                <div class="info-grid">
+                    <div class="info-row">
+                        <div class="info-label">Mise en place</div>
+                        <div class="info-value">
+                            {{ intervention.miseEnPlace ?: '-' }}
+                            {% if intervention.demandePar %}
+                                <br><small style="color: #666; font-style: italic;">Demandé par : {{ intervention.demandePar }}</small>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="info-row">
+                        <div class="info-label">Personnel sur place</div>
+                        <div class="info-value">
+                            {{ intervention.personnelSurPlace ?: '-' }}
+                            {% if intervention.personnelNote %}
+                                <br><small style="color: #666; font-style: italic;">{{ intervention.personnelNote }}</small>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="info-row">
+                        <div class="info-label">Véhicule sur place</div>
+                        <div class="info-value">
+                            {{ intervention.vehiculeSurPlace ?: '-' }}
+                            {% if intervention.vehiculeMarque or intervention.vehiculeNumero %}
+                                <br><small style="color: #666; font-style: italic;">
+                                    {% if intervention.vehiculeMarque %}{{ intervention.vehiculeMarque }}{% endif %}
+                                    {% if intervention.vehiculeNumero %} - {{ intervention.vehiculeNumero }}{% endif %}
+                                </small>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="info-row">
+                        <div class="info-label">Animaux</div>
+                        <div class="info-value">
+                            {{ intervention.animaux ?: '-' }}
+                            {% if intervention.animauxEspece %}
+                                <br><small style="color: #666; font-style: italic;">{{ intervention.animauxEspece }}</small>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Informations de clôture -->
+        <div class="info-section">
+            <div class="section-header">Informations de clôture</div>
+            <div class="section-content">
+                <div class="info-grid">
+                    <div class="info-row">
+                        <div class="info-label">Bon déposé</div>
+                        <div class="info-value">
+                            {{ intervention.bonDepose ?: '-' }}
+                            {% if intervention.bonDeposePrecision %}
+                                <br><small style="color: #666; font-style: italic;">{{ intervention.bonDeposePrecision }}</small>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="info-row">
+                        <div class="info-label">Intervenant</div>
+                        <div class="info-value"><strong>{{ intervention.intervenant ?: '-' }}</strong></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Commentaires -->
+        {% if intervention.commentaires %}
+        <div class="comments-section">
+            <div class="comments-title">Commentaires et observations</div>
+            <div class="comments-text">
+                {{ intervention.commentaires|nl2br }}
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- Signatures -->
+        <div class="signature-section">
+            <div class="signature-box">
+                <div class="signature-title">Signature Client</div>
+                <div class="signature-content">
+                    <div class="signature-line"></div>
+                </div>
+            </div>
+            <div class="signature-box">
+                <div class="signature-title">Signature Intervenant</div>
+                <div class="signature-content">
+                    {% if intervention.signaturePath %}
+                        <img src="{{ asset(intervention.signaturePath) }}" alt="Signature" class="signature-image">
+                    {% else %}
+                        <div class="signature-line"></div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Pied de page -->
+    <div class="footer-section">
+        Document généré le {{ "now"|date('d/m/Y à H:i') }} - Bon d'intervention n°{{ intervention.bonNumero ?: intervention.id }}
+    </div>
+</div>
+
+<!-- Formulaire de suppression (conservé) -->
+<div class="no-print" style="margin-top: 20px; text-align: center;">
+    {{ include('intervention/_delete_form.html.twig', {intervention: intervention}) }}
+</div>
+
+
+{% endblock %}

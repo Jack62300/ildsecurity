@@ -1,0 +1,720 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Fiche client — {{ client.nom }}{% endblock %}
+
+{% block stylesheets %}
+  {{ parent() }}
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+
+  <style>
+    /* ========== VARIABLES CSS MODERNES ========== */
+    :root {
+      --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      --card-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+      --card-shadow-hover: 0 15px 40px rgba(0, 0, 0, 0.12);
+      --border-radius: 12px;
+      --border-radius-lg: 16px;
+      --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    /* ========== HEADER SECTION ========== */
+    .page-header {
+      background: var(--primary-gradient);
+      border-radius: var(--border-radius-lg);
+      color: white;
+      padding: 2rem;
+      margin-bottom: 2rem;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .page-header::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      right: 0;
+      width: 100%;
+      height: 100%;
+      background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="80" cy="20" r="20" fill="rgba(255,255,255,0.1)"/><circle cx="90" cy="60" r="15" fill="rgba(255,255,255,0.08)"/><circle cx="70" cy="80" r="10" fill="rgba(255,255,255,0.06)"/></svg>');
+      background-size: 200px 200px;
+      opacity: 0.3;
+    }
+
+    .page-header h1 {
+      font-size: 2.2rem;
+      font-weight: 700;
+      margin-bottom: 0.5rem;
+      position: relative;
+      z-index: 1;
+    }
+
+    .page-header .subtitle {
+      opacity: 0.9;
+      font-size: 1.1rem;
+      position: relative;
+      z-index: 1;
+    }
+
+    .page-header-actions {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      gap: 0.75rem;
+      margin-top: 1.5rem;
+    }
+
+    .btn-header {
+      background: rgba(255, 255, 255, 0.15);
+      border: 2px solid rgba(255, 255, 255, 0.3);
+      color: white;
+      font-weight: 600;
+      border-radius: var(--border-radius);
+      backdrop-filter: blur(10px);
+      transition: var(--transition);
+      padding: 0.75rem 1.5rem;
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .btn-header:hover {
+      background: rgba(255, 255, 255, 0.25);
+      border-color: rgba(255, 255, 255, 0.5);
+      color: white;
+      transform: translateY(-2px);
+    }
+
+    .btn-header.btn-primary-alt {
+      background: rgba(16, 185, 129, 0.2);
+      border-color: rgba(16, 185, 129, 0.4);
+    }
+
+    .btn-header.btn-primary-alt:hover {
+      background: rgba(16, 185, 129, 0.3);
+      border-color: rgba(16, 185, 129, 0.6);
+    }
+
+    /* ========== CONTENU PRINCIPAL ========== */
+    .client-sheet {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .modern-card {
+      background: white;
+      border-radius: var(--border-radius-lg);
+      box-shadow: var(--card-shadow);
+      overflow: hidden;
+      transition: var(--transition);
+    }
+
+    .modern-card:hover {
+      box-shadow: var(--card-shadow-hover);
+    }
+
+    /* ========== SECTIONS DE CONTENU ========== */
+    .info-section {
+      padding: 2rem;
+      border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+    }
+
+    .info-section:last-child {
+      border-bottom: none;
+    }
+
+    .section-title {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      margin-bottom: 1.5rem;
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: #2d3748;
+    }
+
+    .section-icon {
+      width: 36px;
+      height: 36px;
+      background: var(--primary-gradient);
+      border-radius: var(--border-radius);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 1.1rem;
+    }
+
+    /* ========== GRILLE D'INFORMATIONS ========== */
+    .info-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 2rem;
+    }
+
+    .info-item {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    .info-label {
+      font-weight: 600;
+      color: #4a5568;
+      font-size: 0.875rem;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .info-value {
+      color: #2d3748;
+      font-size: 1rem;
+      font-weight: 500;
+      line-height: 1.5;
+    }
+
+    .info-value.empty {
+      color: #a0aec0;
+      font-style: italic;
+    }
+
+    /* ========== BADGES ET CHIPS ========== */
+    .chip {
+      display: inline-block;
+      background: var(--primary-gradient);
+      color: white;
+      padding: 0.25rem 0.75rem;
+      border-radius: 50px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      margin: 0.1rem;
+    }
+
+    .chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.25rem;
+    }
+
+    .organisme-badge {
+      background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+      color: white;
+      padding: 0.5rem 1rem;
+      border-radius: var(--border-radius);
+      font-weight: 600;
+      font-size: 0.875rem;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    /* ========== CARTE INTERACTIVE ========== */
+    .map-container {
+      margin-top: 1rem;
+      border-radius: var(--border-radius);
+      overflow: hidden;
+      box-shadow: var(--card-shadow);
+    }
+
+    #client-map {
+      height: 350px;
+      border-radius: var(--border-radius);
+    }
+
+    .coordinates-info {
+      background: #f8fafc;
+      padding: 1rem;
+      border-radius: var(--border-radius);
+      margin-top: 1rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-family: 'Monaco', 'Menlo', monospace;
+      font-size: 0.875rem;
+    }
+
+    /* ========== GALERIE PHOTOS ========== */
+    .photo-gallery {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 1rem;
+      margin-top: 1rem;
+    }
+
+    .photo-item {
+      position: relative;
+      aspect-ratio: 4/3;
+      border-radius: var(--border-radius);
+      overflow: hidden;
+      background: #f8fafc;
+      transition: var(--transition);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+
+    .photo-item:hover {
+      transform: translateY(-4px);
+      box-shadow: var(--card-shadow);
+    }
+
+    .photo-item img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: var(--transition);
+    }
+
+    .photo-item:hover img {
+      transform: scale(1.05);
+    }
+
+    .photo-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: linear-gradient(to bottom, transparent 60%, rgba(0,0,0,0.7));
+      opacity: 0;
+      transition: var(--transition);
+      display: flex;
+      align-items: flex-end;
+      padding: 1rem;
+    }
+
+    .photo-item:hover .photo-overlay {
+      opacity: 1;
+    }
+
+    .photo-info {
+      color: white;
+      font-size: 0.875rem;
+      font-weight: 500;
+    }
+
+    /* ========== ÉTAT VIDE ========== */
+    .empty-state {
+      text-align: center;
+      padding: 2rem;
+      color: #6c757d;
+      background: #f8fafc;
+      border-radius: var(--border-radius);
+    }
+
+    .empty-state i {
+      font-size: 2rem;
+      margin-bottom: 0.5rem;
+      display: block;
+      color: #a0aec0;
+    }
+
+    /* ========== RESPONSIVE ========== */
+    @media (max-width: 768px) {
+      .page-header {
+        padding: 1.5rem;
+        text-align: center;
+      }
+
+      .page-header h1 {
+        font-size: 1.8rem;
+      }
+
+      .page-header-actions {
+        justify-content: center;
+        flex-wrap: wrap;
+      }
+
+      .client-sheet {
+        margin: 0 1rem;
+      }
+
+      .info-section {
+        padding: 1.5rem;
+      }
+
+      .info-grid {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+      }
+
+      .photo-gallery {
+        grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+      }
+    }
+
+    /* ========== ANIMATIONS ========== */
+    @keyframes slideInUp {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .modern-card {
+      animation: slideInUp 0.5s ease-out;
+    }
+
+    /* ========== IMPRESSION (A4, 1 page) ========== */
+   @media print {
+  @page {
+    size: A4 portrait;
+    margin: 12mm;
+  }
+
+  /* IMPORTANT: no fixed width/height here */
+  html, body {
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+    background: #fff !important;
+    color: #111827;
+    font-size: 11pt;
+    line-height: 1.25;
+  }
+  body { margin: 0 !important; padding: 0 !important; }
+
+  /* Remove outer padding/margins that can create phantom first page */
+  .container-fluid,
+  .client-sheet {
+    margin: 0 !important;
+    padding: 0 !important;
+    max-width: none !important;
+  }
+
+  /* Header compact + ensure it doesn't start on a new page */
+  .page-header {
+    padding: 10mm 0 6mm 0 !important;
+    margin: 0 0 6mm 0 !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+    background: #2d3748 !important;
+    break-before: avoid-page;
+    page-break-before: avoid;
+  }
+  .page-header .subtitle { font-size: 10pt !important; }
+  .page-header-actions, .btn-header { display: none !important; }
+
+  /* Card/sections: compact and avoid ugly splits */
+  .modern-card {
+    box-shadow: none !important;
+    border: 1px solid #e5e7eb !important;
+    border-radius: 0 !important;
+    break-inside: avoid;
+    page-break-inside: avoid;
+    animation: none !important;
+    transform: none !important;
+  }
+
+  .info-section {
+    padding: 6mm 0 !important;
+    margin: 0 !important;
+    border-bottom: 1px solid #eaeaea !important;
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+  .info-section:last-child { border-bottom: 0 !important; }
+
+  .section-title { margin-bottom: 4mm !important; font-size: 12pt !important; }
+  .section-icon { display: none !important; }
+
+  .info-grid {
+    grid-template-columns: 1fr 1fr !important;
+    gap: 4mm 8mm !important;
+  }
+  .info-label { font-size: 8.5pt !important; }
+  .info-value { font-size: 10.5pt !important; }
+  .info-section .info-value:not(.empty) {
+    max-height: 42mm; overflow: hidden;
+  }
+
+  /* Map smaller and tidy */
+  #client-map { height: 45mm !important; }
+  .map-container { box-shadow: none !important; border: 1px solid #e5e7eb !important; }
+  .coordinates-info { font-size: 9pt !important; padding: 3mm 4mm !important; }
+  .leaflet-control-container { display: none !important; }
+
+  /* Gallery: limit to 6 images to keep 1 page */
+  .photo-gallery { grid-template-columns: repeat(3, 1fr) !important; gap: 3mm !important; }
+  .photo-gallery .photo-item { box-shadow: none !important; border: 1px solid #e5e7eb !important; }
+  .photo-overlay { display: none !important; }
+  .photo-gallery .photo-item:nth-child(n+7) { display: none !important; }
+
+  /* General: avoid accidental page breaks & effects */
+  img, .info-grid, .photo-gallery { break-inside: avoid; page-break-inside: avoid; }
+  a[href]:after { content: "" !important; }
+}
+  </style>
+{% endblock %}
+
+{% block javascripts %}
+  {{ parent() }}
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+{% endblock %}
+
+{% block body %}
+<div class="container-fluid px-4 py-3">
+
+  {# ========== HEADER MODERNE ========== #}
+  <div class="page-header">
+    <div class="d-flex flex-column">
+      <h1>
+        <i class="bi bi-person-vcard me-2"></i>{{ client.nom }}
+      </h1>
+      <p class="subtitle mb-0">
+        Fiche complète du client #{{ client.id }}
+        {% if client.organisme %}
+          • {{ client.organisme.name }}
+        {% endif %}
+      </p>
+      
+      <div class="page-header-actions">
+        <a href="{{ path('clients_index') }}" class="btn-header">
+          <i class="bi bi-arrow-left"></i>
+          Retour à la liste
+        </a>
+        <a href="{{ path('clients_edit', {id: client.id}) }}" class="btn-header btn-primary-alt">
+          <i class="bi bi-pencil"></i>
+          Modifier
+        </a>
+        <button onclick="window.print()" class="btn-header">
+          <i class="bi bi-printer"></i>
+          Imprimer
+        </button>
+      </div>
+    </div>
+  </div>
+
+  {# ========== CONTENU PRINCIPAL ========== #}
+  <div class="client-sheet">
+    <div class="modern-card">
+
+      {# ========== INFORMATIONS GÉNÉRALES ========== #}
+      <div class="info-section">
+        <div class="section-title">
+          <div class="section-icon">
+            <i class="bi bi-info-circle"></i>
+          </div>
+          Informations générales
+        </div>
+
+        <div class="info-grid">
+          <div class="info-item">
+            <div class="info-label">
+              <i class="bi bi-person"></i>
+              Nom du client
+            </div>
+            <div class="info-value">{{ client.nom }}</div>
+          </div>
+
+          <div class="info-item">
+            <div class="info-label">
+              <i class="bi bi-hash"></i>
+              Code TLS
+            </div>
+            <div class="info-value {{ client.codetls ? '' : 'empty' }}">
+              {{ client.codetls ?: 'Non renseigné' }}
+            </div>
+          </div>
+
+          <div class="info-item">
+            <div class="info-label">
+              <i class="bi bi-building"></i>
+              Organisme
+            </div>
+            <div class="info-value">
+              {% if client.organisme %}
+                <span class="organisme-badge">
+                  <i class="bi bi-building"></i>
+                  {{ client.organisme.name }}
+                </span>
+              {% else %}
+                <span class="empty">Non assigné</span>
+              {% endif %}
+            </div>
+          </div>
+
+          <div class="info-item">
+            <div class="info-label">
+              <i class="bi bi-shield-lock"></i>
+              Code alarme
+            </div>
+            <div class="info-value {{ client.codeAlarme ? '' : 'empty' }}">
+              {{ client.codeAlarme ?: 'Non renseigné' }}
+            </div>
+          </div>
+
+          <div class="info-item">
+            <div class="info-label">
+              <i class="bi bi-key"></i>
+              Keycode ILD
+            </div>
+            <div class="info-value {{ client.keycodeild ? '' : 'empty' }}">
+              {{ client.keycodeild ?: 'Non renseigné' }}
+            </div>
+          </div>
+
+          <div class="info-item">
+            <div class="info-label">
+              <i class="bi bi-geo-alt"></i>
+              Adresse
+            </div>
+            <div class="info-value {{ client.adresse ? '' : 'empty' }}">
+              {{ client.adresse ? client.adresse|nl2br : 'Non renseignée' }}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {# ========== ACCÈS ET SÉCURITÉ ========== #}
+      <div class="info-section">
+        <div class="section-title">
+          <div class="section-icon">
+            <i class="bi bi-key-fill"></i>
+          </div>
+          Accès et sécurité
+        </div>
+
+        <div class="info-grid">
+          <div class="info-item">
+            <div class="info-label">
+              <i class="bi bi-collection"></i>
+              Clés d'accès
+            </div>
+            <div class="info-value">
+              {% set keys = client.key is iterable ? client.key : (client.key ? client.key|split(',') : []) %}
+              {% if keys|length > 0 %}
+                <div class="chips">
+                  {% for k in keys %}
+                    {% set item = k|trim %}
+                    {% if item != '' %}
+                      <span class="chip">{{ item }}</span>
+                    {% endif %}
+                  {% endfor %}
+                </div>
+              {% else %}
+                <span class="empty">Aucune clé renseignée</span>
+              {% endif %}
+            </div>
+          </div>
+
+          <div class="info-item">
+            <div class="info-label">
+              <i class="bi bi-chat-text"></i>
+              Informations complémentaires
+            </div>
+            <div class="info-value {{ client.information ? '' : 'empty' }}">
+              {{ client.information ? client.information|nl2br : 'Aucune information' }}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {# ========== DESCRIPTION ========== #}
+      {% if client.description %}
+        <div class="info-section">
+          <div class="section-title">
+            <div class="section-icon">
+              <i class="bi bi-file-text"></i>
+            </div>
+            Description
+          </div>
+          <div class="info-value">{{ client.description|nl2br }}</div>
+        </div>
+      {% endif %}
+
+      {# ========== LOCALISATION ========== #}
+      {% if client.latitude and client.longitude %}
+        <div class="info-section">
+          <div class="section-title">
+            <div class="section-icon">
+              <i class="bi bi-geo-alt"></i>
+            </div>
+            Localisation
+          </div>
+          
+          <div class="map-container">
+            <div id="client-map"></div>
+          </div>
+          
+          <div class="coordinates-info">
+            <div>
+              <strong>Coordonnées GPS :</strong>
+            </div>
+            <div>
+              Latitude: {{ client.latitude }} • Longitude: {{ client.longitude }}
+            </div>
+          </div>
+        </div>
+      {% endif %}
+
+      {# ========== GALERIE PHOTOS ========== #}
+      <div class="info-section">
+        <div class="section-title">
+          <div class="section-icon">
+            <i class="bi bi-images"></i>
+          </div>
+          Galerie photos
+        </div>
+
+        {% set base = '/uploads/clients' %}
+        {% if client.photos is defined and client.photos|length > 0 %}
+          <div class="photo-gallery">
+            {% for p in client.photos %}
+              {% if p.imageName %}
+                <a href="{{ asset(base ~ '/' ~ p.imageName) }}" target="_blank" rel="noopener" class="photo-item">
+                  <img src="{{ asset(base ~ '/' ~ p.imageName) }}" 
+                       alt="Photo {{ loop.index }} de {{ client.nom }}"
+                       loading="lazy">
+                  <div class="photo-overlay">
+                    <div class="photo-info">
+                      Photo {{ loop.index }}
+                    </div>
+                  </div>
+                </a>
+              {% endif %}
+            {% endfor %}
+          </div>
+        {% else %}
+          <div class="empty-state">
+            <i class="bi bi-image"></i>
+            <div>Aucune photo disponible</div>
+          </div>
+        {% endif %}
+      </div>
+
+    </div>
+  </div>
+</div>
+  {% if client.latitude and client.longitude %}
+  <script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const map = L.map('client-map').setView([{{ client.latitude }}, {{ client.longitude }}], 15);
+    
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      maxZoom: 19,
+      attribution: '&copy; OpenStreetMap contributors'
+    }).addTo(map);
+    
+    const marker = L.marker([{{ client.latitude }}, {{ client.longitude }}]).addTo(map);
+    
+    marker.bindPopup(`
+      <div style="text-align: center;">
+        <strong>{{ client.nom|e('js') }}</strong><br>
+        {% if client.adresse %}
+          <small>{{ client.adresse|e('js') }}</small>
+        {% endif %}
+      </div>
+    `).openPopup();
+    
+    setTimeout(() => map.invalidateSize(), 100);
+  });
+  </script>
+  {% endif %}
+{% endblock %}
+
