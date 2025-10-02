@@ -1,8 +1,28 @@
 parameters:
-    level: 6
-    paths:
-        - bin/
-        - config/
-        - public/
-        - src/
-        - tests/
+  level: max
+
+  # Dossiers à analyser
+  paths:
+    - src
+    - tests
+
+  # Dossier cache PHPStan
+  tmpDir: var/phpstan
+
+  # Exclusions (nouvelles clés)
+  excludePaths:
+    analyse:
+      - %currentWorkingDirectory%/var/*
+      - %currentWorkingDirectory%/public/*
+      - %currentWorkingDirectory%/vendor/*
+
+  # Extension Symfony : chemin du container compilé (DEV ou TEST)
+  symfony:
+    # Sur Windows, garde les slashs / (PHPStan s'en accommode)
+    containerXmlPath: var/cache/dev/App_KernelDevDebugContainer.xml
+    # ou en CI pour l'env test :
+    # containerXmlPath: var/cache/test/App_KernelTestDebugContainer.xml
+
+  # (facultatif) règles plus strictes — décommente si tu ajoutes phpstan-strict-rules
+  # checkGenericClassInNonGenericObjectType: true
+  # treatPhpDocTypesAsCertain: false
