@@ -1,0 +1,187 @@
+{% extends 'base.html.twig' %}
+{% block title %}Suggérer une correction — {{ client.nom }}{% endblock %}
+{# si ton base n'applique pas déjà Bootstrap 5 aux formulaires, décommente :
+{% form_theme form 'bootstrap_5_layout.html.twig' %}
+#}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <link rel="stylesheet" href="{{ asset('styles/modification/suggest.css') }}">
+{% endblock %}
+
+{% block body %}
+{% for label, messages in app.flashes %}
+  {% for message in messages %}
+    <div class="alert alert-{{ label in ['success','danger','warning','info'] ? label : 'secondary' }} alert-dismissible fade show" role="alert">
+      {{ message }}
+      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fermer"></button>
+    </div>
+  {% endfor %}
+{% endfor %}
+<div class="container py-4">
+  {# === En-tête avec gradient === #}
+  <div class="page-header mb-4">
+    <div class="d-flex justify-content-between align-items-center">
+      <div class="header-content">
+        <h1>Suggérer une correction</h1>
+        <p class="subtitle mb-0">Client : <strong class="client-name">{{ client.nom }}</strong></p>
+      </div>
+    </div>
+  </div>
+
+  {# === Carte principale === #}
+  <div class="suggest-card">
+    <div class="suggest-card-body">
+      {{ form_start(form, {'attr': {'class': 'suggest-form'}}) }}
+      
+      {# === Informations principales === #}
+      <div class="form-section">
+        <h5 class="section-title">
+          <i class="bi bi-person-badge"></i>
+          <span>Informations client</span>
+        </h5>
+        <div class="row g-3">
+          <div class="col-md-6">
+            <div class="form-field">
+              {{ form_row(form.nom) }}
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="form-field">
+              {{ form_row(form.organisme) }}
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="form-field">
+              {{ form_row(form.agence) }}
+            </div>
+          </div>
+          <div class="col-md-3">
+            <div class="form-field">
+              {{ form_row(form.codetls) }}
+            </div>
+          </div>
+          <div class="col-md-3">
+            <div class="form-field">
+              {{ form_row(form.key) }}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <hr class="section-divider">
+
+      {# === Codes / Sécurité === #}
+      <div class="form-section">
+        <h5 class="section-title">
+          <i class="bi bi-shield-lock"></i>
+          <span>Codes & sécurité</span>
+        </h5>
+        <div class="row g-3">
+          <div class="col-md-4">
+            <div class="form-field">
+              {{ form_row(form.codeAlarme) }}
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="form-field">
+              {{ form_row(form.keycodeild) }}
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="form-field">
+              {{ form_row(form.information) }}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <hr class="section-divider">
+
+      {# === Adresse & description === #}
+      <div class="form-section">
+        <h5 class="section-title">
+          <i class="bi bi-geo-alt"></i>
+          <span>Adresse</span>
+        </h5>
+        <div class="row g-3">
+          <div class="col-12">
+            <div class="form-field">
+              {{ form_row(form.adresse) }}
+            </div>
+          </div>
+          <div class="col-12">
+            <div class="form-field">
+              {{ form_row(form.description) }}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <hr class="section-divider">
+
+      {# === Géolocalisation === #}
+      <div class="form-section">
+        <h5 class="section-title">
+          <i class="bi bi-pin-map"></i>
+          <span>Géolocalisation</span>
+        </h5>
+        <div class="row g-3">
+          <div class="col-md-6">
+            <div class="form-field">
+              {{ form_row(form.latitude) }}
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="form-field">
+              {{ form_row(form.longitude) }}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <hr class="section-divider">
+
+      {# === Informations du proposant (public) === #}
+      <div class="form-section submitter-section">
+        <h5 class="section-title">
+          <i class="bi bi-person-circle"></i>
+          <span>Vos informations</span>
+          <span class="optional-badge">facultatif</span>
+        </h5>
+        <div class="row g-3">
+          <div class="col-md-6">
+            <div class="form-field">
+              {{ form_row(form.submittedByName) }}
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="form-field">
+              {{ form_row(form.submittedByEmail) }}
+            </div>
+          </div>
+          <div class="col-12">
+            <div class="form-field">
+              {{ form_row(form.comment) }}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {# === Actions === #}
+      <div class="form-actions">
+        <a href="{{ path('client_show', {id: client.id}) }}" class="btn btn-cancel">
+          <i class="bi bi-x-circle"></i>
+          <span>Annuler</span>
+        </a>
+        <button type="submit" class="btn btn-submit">
+          <i class="bi bi-send"></i>
+          <span>Envoyer la suggestion</span>
+        </button>
+      </div>
+
+      {{ form_end(form) }}
+    </div>
+  </div>
+</div>
+{% endblock %}

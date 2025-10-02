@@ -8,9 +8,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet">
     {% if isDeniedPage is defined and isDeniedPage %}
-      <link rel="stylesheet" href="{{ asset('assets/css/denied.css') }}">
+      <link rel="stylesheet" href="{{ asset('styles/denied.css') }}">
     {% else %}
-      <link rel="stylesheet" href="{{ asset('assets/css/custom.css') }}">
+      <link rel="stylesheet" href="{{ asset('styles/custom.css') }}">
     {% endif %}
     {% block stylesheets %}{% endblock %}
    

@@ -102,8 +102,15 @@ class ClientController extends AbstractController
                 }
             }
 
-            $em->persist($client);
-            $em->flush();
+           try {
+                $em->persist($client);
+                $em->flush();
+            } catch (\Doctrine\DBAL\Exception\UniqueConstraintViolationException $e) {
+                $form->addError(new \Symfony\Component\Form\FormError(
+                    'Un client avec cette adresse existe déjà.'
+                ));
+            }
+
 
             $this->addFlash('success', 'Client créé.');
             return $this->redirectToRoute('clients_index');
@@ -174,9 +181,20 @@ class ClientController extends AbstractController
                 }
             }
 
-            $em->flush();
-            $this->addFlash('success', $isAdmin ? 'Client mis à jour.' : 'Photos mises à jour.');
-            return $this->redirectToRoute('clients_index');
+            try {
+                $em->persist($client);
+                $em->flush();
+                $this->addFlash('success', $isAdmin ? 'Client mis à jour.' : 'Photos mises à jour.');
+                return $this->redirectToRoute('clients_index');
+                } catch (\Doctrine\DBAL\Exception\UniqueConstraintViolationException $e) {
+                    $form->addError(new \Symfony\Component\Form\FormError(
+                        'Un client avec cette adresse existe déjà.'
+                    ));
+            }
+
+           
+            
+            
         }
 
         return $this->render('clients/form.html.twig', [

@@ -1,0 +1,315 @@
+/* ============================================
+   VARIABLES
+   ============================================ */
+:root {
+  --primary-color: #2563eb;
+  --primary-hover: #1d4ed8;
+  --primary-light: #dbeafe;
+  --secondary-color: #64748b;
+  --secondary-hover: #475569;
+  --success-color: #10b981;
+  --danger-color: #ef4444;
+  --warning-color: #f59e0b;
+  
+  --bg-primary: #ffffff;
+  --bg-secondary: #f8fafc;
+  --bg-card: #ffffff;
+  --bg-input: #ffffff;
+  
+  --text-primary: #1e293b;
+  --text-secondary: #64748b;
+  --text-muted: #94a3b8;
+  
+  --border-color: #e2e8f0;
+  --border-radius: 12px;
+  --border-radius-sm: 8px;
+  
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+  --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+  
+  --spacing-xs: 0.5rem;
+  --spacing-sm: 0.75rem;
+  --spacing-md: 1rem;
+  --spacing-lg: 1.5rem;
+  --spacing-xl: 2rem;
+  --spacing-2xl: 3rem;
+  
+  --transition: all 0.3s ease;
+}
+
+/* ============================================
+   PAGE LAYOUT
+   ============================================ */
+.page-container {
+  min-height: calc(100vh - 140px);
+  background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+  padding: var(--spacing-xl) var(--spacing-md);
+  border-radius: 3%;
+}
+
+.content-wrapper {
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+/* ============================================
+   PAGE HEADER
+   ============================================ */
+.page-header {
+  background: var(--bg-card);
+  border-radius: var(--border-radius);
+  padding: var(--spacing-xl);
+  margin-bottom: var(--spacing-xl);
+  box-shadow: var(--shadow-md);
+  border: 1px solid var(--border-color);
+  animation: slideInDown 0.5s ease-out;
+}
+
+.header-content {
+  text-align: center;
+}
+
+.page-title {
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin: 0 0 var(--spacing-sm) 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-md);
+}
+
+.title-icon {
+  font-size: 2.5rem;
+}
+
+.page-subtitle {
+  color: var(--text-secondary);
+  font-size: 1rem;
+  margin: 0;
+  line-height: 1.6;
+}
+
+/* ============================================
+   FORM SECTION
+   ============================================ */
+.form-section {
+  margin-bottom: var(--spacing-xl);
+}
+
+.form-container {
+  background: var(--bg-card);
+  border-radius: var(--border-radius);
+  padding: var(--spacing-2xl);
+  box-shadow: var(--shadow-lg);
+  border: 1px solid var(--border-color);
+  animation: slideInUp 0.5s ease-out;
+}
+
+/* ============================================
+   FORM
+   ============================================ */
+.phone-category-form {
+  width: 100%;
+}
+
+/* ============================================
+   FORM SECTION GROUP
+   ============================================ */
+.form-section-group {
+  margin-bottom: var(--spacing-2xl);
+}
+
+.section-header {
+  padding-bottom: var(--spacing-lg);
+  border-bottom: 2px solid var(--primary-light);
+  margin-bottom: var(--spacing-xl);
+}
+
+.section-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin: 0 0 var(--spacing-sm) 0;
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+}
+
+.section-icon {
+  font-size: 1.75rem;
+}
+
+.section-description {
+  color: var(--text-secondary);
+  margin: 0;
+  font-size: 0.95rem;
+  line-height: 1.5;
+}
+
+/* ============================================
+   FORM FIELDS
+   ============================================ */
+.form-fields {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-xl);
+}
+
+.form-field-wrapper {
+  position: relative;
+}
+
+/* Labels générés par Symfony */
+.phone-category-form label {
+  display: block;
+  font-weight: 600;
+  font-size: 0.95rem;
+  color: var(--text-primary);
+  margin-bottom: var(--spacing-sm);
+  text-transform: none;
+  letter-spacing: normal;
+}
+
+.phone-category-form label.required::after {
+  content: " *";
+  color: var(--danger-color);
+  font-weight: 700;
+  margin-left: 0.25rem;
+}
+
+/* Inputs et textarea générés par Symfony */
+.phone-category-form input[type="text"],
+.phone-category-form input[type="email"],
+.phone-category-form input[type="number"],
+.phone-category-form input[type="tel"],
+.phone-category-form textarea,
+.phone-category-form select,
+.phone-category-form .form-input {
+  width: 100%;
+  padding: 0.875rem 1.125rem;
+  font-size: 1rem;
+  border: 2px solid var(--border-color);
+  border-radius: var(--border-radius-sm);
+  background: var(--bg-input);
+  color: var(--text-primary);
+  transition: var(--transition);
+  font-family: inherit;
+  line-height: 1.5;
+}
+
+.phone-category-form input:focus,
+.phone-category-form textarea:focus,
+.phone-category-form select:focus {
+  outline: none;
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 4px var(--primary-light);
+  transform: translateY(-1px);
+}
+
+.phone-category-form input:hover,
+.phone-category-form textarea:hover,
+.phone-category-form select:hover {
+  border-color: var(--secondary-color);
+}
+
+.phone-category-form textarea {
+  min-height: 120px;
+  resize: vertical;
+  font-family: inherit;
+}
+
+.phone-category-form input::placeholder,
+.phone-category-form textarea::placeholder {
+  color: var(--text-muted);
+  opacity: 0.7;
+}
+
+/* ============================================
+   FIELD HINTS
+   ============================================ */
+.field-hint {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--spacing-xs);
+  margin-top: var(--spacing-sm);
+  color: var(--text-secondary);
+  font-size: 0.875rem;
+  line-height: 1.5;
+  padding: var(--spacing-sm) var(--spacing-md);
+  background: var(--bg-secondary);
+  border-radius: var(--border-radius-sm);
+  border-left: 3px solid var(--primary-color);
+}
+
+.hint-icon {
+  font-size: 1rem;
+  flex-shrink: 0;
+}
+
+/* ============================================
+   VALIDATION STATES
+   ============================================ */
+.phone-category-form input.is-invalid,
+.phone-category-form textarea.is-invalid {
+  border-color: var(--danger-color);
+}
+
+.phone-category-form input.is-invalid:focus,
+.phone-category-form textarea.is-invalid:focus {
+  box-shadow: 0 0 0 4px rgba(239, 68, 68, 0.1);
+}
+
+.phone-category-form input.is-valid,
+.phone-category-form textarea.is-valid {
+  border-color: var(--success-color);
+}
+
+.phone-category-form input.is-valid:focus,
+.phone-category-form textarea.is-valid:focus {
+  box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.1);
+}
+
+/* Messages d'erreur Symfony */
+.phone-category-form .invalid-feedback,
+.phone-category-form .form-error-message,
+.phone-category-form ul.form-error-list {
+  display: block;
+  color: var(--danger-color);
+  font-size: 0.875rem;
+  margin-top: var(--spacing-sm);
+  font-weight: 500;
+  list-style: none;
+  padding: var(--spacing-sm) var(--spacing-md);
+  background: rgba(239, 68, 68, 0.1);
+  border-radius: var(--border-radius-sm);
+  border-left: 3px solid var(--danger-color);
+}
+
+.phone-category-form .invalid-feedback::before,
+.phone-category-form .form-error-message::before,
+.phone-category-form ul.form-error-list li::before {
+  content: "⚠️ ";
+  margin-right: 0.25rem;
+}
+
+/* ============================================
+   FORM ACTIONS
+   ============================================ */
+.form-actions {
+  margin-top: var(--spacing-2xl);
+  padding-top: var(--spacing-xl);
+  border-top: 2px solid var(--border-color);
+}
+
+.actions-group {
+  display: flex;
+  gap: var(--spacing-md);
+  flex-wrap: wrap;
+  justify-content: flex-start;
+}
+
+/* =========================

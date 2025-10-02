@@ -1,5 +1,7 @@
 # see https://symfony.com/doc/current/reference/configuration/framework.html
 framework:
+    assets:
+        version: 'v4'   # incrémente à chaque déploiement
     secret: '%env(APP_SECRET)%'
     default_locale: fr
     trusted_proxies: '%env(TRUSTED_PROXIES)%'

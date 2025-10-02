@@ -383,7 +383,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
 {% block stylesheets %}
 {{ parent() }}
-<link rel="stylesheet" href="{{ asset('assets/css/clients/form.css') }}">
+<link rel="stylesheet" href="{{ asset('styles/clients/form.css') }}">
 {% endblock %}
 
 {% block body %}
@@ -424,6 +424,9 @@ document.addEventListener('DOMContentLoaded', function () {
             🔑 Accès administrateur
           </span>
         {% endif %}
+        
+     
+    
       </div>
     </div>
 
@@ -558,6 +561,13 @@ document.addEventListener('DOMContentLoaded', function () {
         <button type="submit" class="btn-primary">
           ✅ {{ mode == 'new' ? 'Créer le client' : 'Enregistrer' }}
         </button>
+
+        
+
+        
+        <a href="{{ path('client_suggest_edit', {id: client.id}) }}" class="btn-primary">
+          <i class="bi bi-lightbulb me-1"></i> Suggérer une correction
+        </a>
       </div>
 
       {{ form_end(form) }}

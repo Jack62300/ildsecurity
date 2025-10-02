@@ -1,0 +1,154 @@
+{% extends 'base.html.twig' %}
+{% block title %}Revue de suggestion{% endblock %}
+
+{% block stylesheets %}
+  {{ parent() }}
+  <link rel="stylesheet" href="{{ asset('styles/modification/review.css') }}">
+{% endblock %}
+
+{% block body %}
+<div class="container py-4">
+
+  {# === En-tête avec gradient === #}
+  <div class="page-header">
+    <div class="d-flex justify-content-between align-items-center">
+      <div class="header-content">
+        <h1>Revue de suggestion</h1>
+        <p class="subtitle mb-0">
+          Client : <strong class="client-name">{{ req.client.nom }}</strong>
+        </p>
+      </div>
+      <div class="header-badge">
+        <span class="status-review">
+          <i class="bi bi-eye"></i> En cours de revue
+        </span>
+      </div>
+    </div>
+  </div>
+
+  {# === Carte principale === #}
+  <div class="review-card">
+    <div class="review-card-body">
+
+      {# === Section des changements === #}
+      <div class="changes-section">
+        <div class="section-header">
+          <h5 class="section-title">
+            <i class="bi bi-arrow-left-right"></i>
+            <span>Changements proposés</span>
+          </h5>
+          <span class="changes-count">{{ changes|length }} modification{{ changes|length > 1 ? 's' : '' }}</span>
+        </div>
+
+        <div class="changes-list">
+          {% for field, diff in changes %}
+            {# Libellé lisible #}
+            {% set label = fieldLabels[field] ?? field|capitalize %}
+
+            <div class="change-item">
+              <div class="change-field">
+                <i class="bi bi-pencil-fill"></i>
+                <span class="field-name">{{ label }}</span>
+              </div>
+
+              {# Valeurs: on privilégie *_label quand présent (organisme/agence), sinon brut #}
+              {% set from = diff.from_label is defined ? diff.from_label : (diff.from is not null and diff.from is not same as('') ? diff.from : null) %}
+              {% set to   = diff.to_label   is defined ? diff.to_label   : (diff.to   is not null and diff.to   is not same as('') ? diff.to   : null) %}
+
+              <div class="change-values">
+                <div class="value-block value-from">
+                  <label class="value-label">Valeur actuelle</label>
+                  <div class="value-content">
+                    {% if from is not null %}
+                      {{ from }}
+                    {% else %}
+                      <span class="empty-value">Aucune valeur</span>
+                    {% endif %}
+                  </div>
+                </div>
+
+                <div class="arrow-separator">
+                  <i class="bi bi-arrow-right"></i>
+                </div>
+
+                <div class="value-block value-to">
+                  <label class="value-label">Nouvelle valeur</label>
+                  <div class="value-content highlighted">
+                    {% if to is not null %}
+                      {{ to }}
+                    {% else %}
+                      <span class="empty-value">Aucune valeur</span>
+                    {% endif %}
+                  </div>
+                </div>
+              </div>
+            </div>
+          {% endfor %}
+        </div>
+      </div>
+
+      {# === Section des informations du soumettant === #}
+      {% if req.comment or req.submittedByName or req.submittedByEmail %}
+        <hr class="section-divider">
+        <div class="submitter-section">
+          <div class="section-header">
+            <h6 class="section-title">
+              <i class="bi bi-person-circle"></i>
+              <span>Informations du soumettant</span>
+            </h6>
+          </div>
+
+          <div class="submitter-info">
+            {% if req.submittedByName or req.submittedByEmail %}
+              <div class="submitter-details">
+                {% if req.submittedByName %}
+                  <div class="info-item">
+                    <i class="bi bi-person-fill"></i>
+                    <span>{{ req.submittedByName }}</span>
+                  </div>
+                {% endif %}
+                {% if req.submittedByEmail %}
+                  <div class="info-item">
+                    <i class="bi bi-envelope-fill"></i>
+                    <a href="mailto:{{ req.submittedByEmail }}">{{ req.submittedByEmail }}</a>
+                  </div>
+                {% endif %}
+              </div>
+            {% endif %}
+
+            {% if req.comment %}
+              <div class="submitter-comment">
+                <div class="comment-icon"><i class="bi bi-chat-left-quote"></i></div>
+                <div class="comment-content">
+                  <label class="comment-label">Commentaire</label>
+                  <p class="comment-text">{{ req.comment }}</p>
+                </div>
+              </div>
+            {% endif %}
+          </div>
+        </div>
+      {% endif %}
+
+      {# === Actions === #}
+      <div class="review-actions">
+        <form method="post" class="actions-form">
+          <button type="submit" name="action" value="reject" class="btn btn-reject">
+            <i class="bi bi-x-circle"></i><span>Rejeter</span>
+          </button>
+          <button type="submit" name="action" value="approve" class="btn btn-approve">
+            <i class="bi bi-check-circle"></i><span>Approuver et appliquer</span>
+          </button>
+        </form>
+      </div>
+
+    </div>
+  </div>
+
+  {# === Bouton retour === #}
+  <div class="back-navigation">
+    <a href="{{ path('mod_request_admin_index') }}" class="btn-back">
+      <i class="bi bi-arrow-left"></i><span>Retour à la liste</span>
+    </a>
+  </div>
+</div>
+{% endblock %}
