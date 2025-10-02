@@ -1,5 +1,5 @@
 <?php
-// src/Controller/OrganismeController.php
+
 namespace App\Controller;
 
 use App\Entity\Organisme;

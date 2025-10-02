@@ -1,5 +1,5 @@
 <?php
-// src/Entity/ListAgence.php
+
 namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
