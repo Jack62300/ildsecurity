@@ -1,149 +1,210 @@
-/* USERS PAGE — Scoped styles (wrapper .users-page) */
-/* Rien ne fuit vers la navbar ou les autres pages. */
+/* USERS PAGE — ILD SECURITY THEME
+   Scope: .users-page
+   Palette: brand-dark/brand/brand-mid + amber accent
+   Date: 2025-10-03
+*/
 
-/* ========== TOKENS SCOPÉS ========== */
+/* ===== Tokens (scopés) ===== */
 .users-page{
-  --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  --card-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
-  --card-shadow-hover: 0 15px 40px rgba(0, 0, 0, 0.12);
-  --border-radius: 12px;
-  --border-radius-lg: 16px;
-  --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  --brand-dark:#0b1e39;            /* bleu nuit */
+  --brand:#0a3a7a;                 /* bleu sécurité */
+  --brand-mid:#1a4f9a;             /* bleu moyen */
+  --accent-amber:#f59e0b;
+
+  --primary-gradient: linear-gradient(135deg, var(--brand-dark) 0%, var(--brand) 100%);
+  --soft-gradient: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+
+  --card-shadow: 0 10px 30px rgba(0,0,0,.08);
+  --card-shadow-hover: 0 15px 40px rgba(0,0,0,.12);
+
+  --radius:12px;
+  --radius-lg:16px;
+  --transition: all .3s cubic-bezier(.4,0,.2,1);
 }
 
-/* ========== HEADER SECTION ========== */
+/* ===== Header ===== */
 .users-page .page-header{
   background: var(--primary-gradient);
-  border-radius: var(--border-radius-lg);
-  color: #fff;
-  padding: 2rem;
-  margin-bottom: 2rem;
-  position: relative;
-  overflow: hidden;
+  color:#fff;
+  border-radius: var(--radius-lg);
+  padding:2rem;
+  margin-bottom:2rem;
+  position:relative;
+  overflow:hidden;
+  box-shadow: 0 12px 28px rgba(10,58,122,.25);
 }
 .users-page .page-header::before{
-  content:'';
-  position:absolute; inset:0 0 0 auto;
-  background:url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="80" cy="20" r="20" fill="rgba(255,255,255,0.1)"/><circle cx="90" cy="60" r="15" fill="rgba(255,255,255,0.08)"/><circle cx="70" cy="80" r="10" fill="rgba(255,255,255,0.06)"/></svg>') no-repeat right top / 200px 200px;
-  opacity:.3;
+  content:"";
+  position:absolute; inset:0;
+  background:
+    radial-gradient(1000px 600px at 110% -20%, rgba(255,255,255,.18), transparent 60%),
+    radial-gradient(700px 500px at -20% 120%, rgba(255,255,255,.10), transparent 60%);
+  opacity:.35; pointer-events:none;
 }
-.users-page .page-header h1{
-  font-size:2.5rem; font-weight:700; margin-bottom:.5rem; position:relative; z-index:1;
-}
-.users-page .page-header .subtitle{ opacity:.9; font-size:1.1rem; position:relative; z-index:1; }
+.users-page .page-header h1{ font-weight:800; letter-spacing:.3px; }
+.users-page .page-header .subtitle{ opacity:.95; font-size:1.05rem; }
 
 .users-page .btn-new-user{
-  position:relative; z-index:1;
-  background:rgba(255,255,255,.15);
-  border:2px solid rgba(255,255,255,.3);
-  color:#fff; font-weight:600; border-radius:var(--border-radius);
-  backdrop-filter:blur(10px); transition:var(--transition);
+  background: rgba(255,255,255,.15);
+  border:2px solid rgba(255,255,255,.35);
+  color:#fff;
+  font-weight:700;
+  border-radius: var(--radius);
+  backdrop-filter: blur(10px);
+  transition: var(--transition);
 }
 .users-page .btn-new-user:hover{
-  background:rgba(255,255,255,.25); border-color:rgba(255,255,255,.5);
-  color:#fff; transform:translateY(-2px);
+  background: rgba(255,255,255,.22);
+  border-color: rgba(255,255,255,.55);
+  transform: translateY(-2px);
+  color:#fff;
 }
 
-/* ========== TABLEAU (Desktop) ========== */
+/* ===== Table (desktop) ===== */
 .users-page .modern-table-container{
-  background:#fff; border-radius:var(--border-radius-lg);
-  box-shadow:var(--card-shadow);
-  overflow:visible !important;
-  margin-bottom:2rem; padding-bottom:10px;
+  background:#fff;
+  border-radius: var(--radius-lg);
+  box-shadow: var(--card-shadow);
+  overflow: visible !important;
+  margin-bottom:2rem;
+  padding-bottom:10px;
 }
 .users-page .modern-table{ margin:0; border:none; overflow:visible; }
 .users-page .modern-table thead th{
-  background:linear-gradient(135deg,#f8fafc 0%,#e2e8f0 100%);
-  color:#2d3748; font-weight:700; font-size:.9rem; text-transform:uppercase;
-  letter-spacing:.5px; border:none; padding:1.25rem 1rem;
+  background: var(--soft-gradient);
+  color:#1e293b;
+  border:none;
+  padding:1.1rem 1rem;
+  font-weight:800;
+  font-size:.9rem;
+  text-transform:uppercase;
+  letter-spacing:.05em;
 }
-.users-page .modern-table tbody tr{ transition:var(--transition); border:none; position:relative; }
-.users-page .modern-table tbody tr:hover{ background:#f8fafc; transform:none; }
+.users-page .modern-table tbody tr{ position:relative; transition:var(--transition); }
+.users-page .modern-table tbody tr:hover{ background:#f8fafc; }
 .users-page .modern-table tbody td{
-  padding:1rem; border-top:1px solid rgba(0,0,0,.05); vertical-align:middle; overflow:visible;
+  padding:1rem;
+  border-top:1px solid rgba(0,0,0,.05);
+  vertical-align:middle;
+  overflow:visible;
 }
 
-/* Avatar + typographies de ligne */
+/* Avatar + textes */
 .users-page .user-avatar{
-  width:50px; height:50px; border-radius:50%;
-  background:var(--primary-gradient); display:flex; place-items:center; justify-content:center;
-  color:#fff; font-weight:700; font-size:1.2rem; transition:var(--transition);
+  width:48px; height:48px; border-radius:50%;
+  background: var(--primary-gradient);
+  display:flex; align-items:center; justify-content:center;
+  color:#fff; font-weight:800; font-size:1.1rem;
+  box-shadow: 0 6px 16px rgba(10,58,122,.25);
+  transition: var(--transition);
 }
-.users-page .user-avatar:hover{ transform:scale(1.1); }
-.users-page .user-name{ font-weight:600; font-size:1.1rem; color:#2d3748; }
-.users-page .user-id{ font-size:.8rem; color:#6c757d; font-weight:500; }
+.users-page .user-avatar:hover{ transform: scale(1.06); }
+.users-page .user-name{ font-weight:700; color:#0f172a; }
+.users-page .user-id{ font-size:.78rem; color:#64748b; }
 
-/* ========== BADGES RÔLES ========== */
+/* ===== Badges rôles ===== */
 .users-page .role-badge{
-  font-weight:600; font-size:.75rem; padding:.35rem .75rem; border-radius:50px; border:none;
-  letter-spacing:.3px; margin:.1rem; position:relative; overflow:hidden;
+  display:inline-flex; align-items:center; gap:.4rem;
+  padding:.35rem .7rem;
+  border-radius:999px;
+  font-size:.75rem; font-weight:700;
+  color:#fff; border:1px solid transparent;
+  position:relative; overflow:hidden;
 }
 .users-page .role-badge::before{
-  content:''; position:absolute; inset:0; left:-100%;
-  background:linear-gradient(90deg,transparent,rgba(255,255,255,.2),transparent);
+  content:""; position:absolute; inset:0; left:-100%;
+  background: linear-gradient(90deg,transparent,rgba(255,255,255,.22),transparent);
   transition:left .5s;
 }
 .users-page .role-badge:hover::before{ left:100%; }
-.users-page .role-admin{ background:#dc2626; color:#fff; }
-.users-page .role-dev{ background:#0ea5e9; color:#fff; }
-.users-page .role-support{ background:#8b5cf6; color:#fff; }
-.users-page .role-operateur{ background:#10b981; color:#fff; }
-.users-page .role-user{ background:#6b7280; color:#fff; }
 
-/* ========== ACTIONS DROPDOWN (scopé) ========== */
+.users-page .role-admin{ background:#b91c1c; }        /* rouge foncé */
+.users-page .role-dev{ background:#0ea5e9; }           /* bleu clair */
+.users-page .role-support{ background:#7c3aed; }       /* violet */
+.users-page .role-operateur{ background:#059669; }     /* vert */
+.users-page .role-user{ background:#475569; }          /* ardoise */
+
+/* ===== Actions dropdown (scopé) ===== */
 .users-page .actions-dropdown{ position:relative; z-index:100; }
 .users-page .actions-dropdown .dropdown-toggle{
-  border-radius:var(--border-radius); border:2px solid #e2e8f0; background:#fff;
-  color:#4a5568; font-weight:600; transition:var(--transition); position:relative; z-index:101;
+  border-radius: var(--radius);
+  border:2px solid #e2e8f0;
+  background:#fff;
+  color:#334155;
+  font-weight:700;
+  transition: var(--transition);
 }
 .users-page .actions-dropdown .dropdown-toggle:hover{
-  border-color:#667eea; color:#667eea; transform:translateY(-2px);
+  border-color: var(--brand-mid);
+  color: var(--brand-mid);
+  transform: translateY(-2px);
 }
-/* IMPORTANT : on N’AFFECTE QUE ce menu, pas la navbar */
+
+/* uniquement le dropdown de cette page */
 .users-page .actions-dropdown .dropdown-menu{
-  border:none; border-radius:var(--border-radius); box-shadow:var(--card-shadow-hover);
-  padding:.5rem 0; z-index:9999 !important; position:absolute !important; overflow:visible !important;
+  border:none;
+  border-radius: var(--radius);
+  box-shadow: var(--card-shadow-hover);
+  padding:.5rem 0;
+  z-index: 9999 !important;
+  position: absolute !important;
+  overflow: visible !important;
 }
 .users-page .actions-dropdown .dropdown-item{
-  padding:.75rem 1.5rem; font-weight:500; transition:var(--transition);
+  padding:.75rem 1.25rem;
+  font-weight:600;
+  transition: var(--transition);
 }
 .users-page .actions-dropdown .dropdown-item:hover{
-  background:#f8fafc; color:#667eea; transform:translateX(5px);
+  background:#f8fafc;
+  color: var(--brand-mid);
+  transform: translateX(5px);
 }
 .users-page .actions-dropdown .dropdown-item.text-danger:hover{
-  background:#fef2f2; color:#dc2626;
+  background:#fef2f2; color:#b91c1c;
 }
-/* Forcer l’ouverture vers le haut pour les 2 dernières lignes */
+/* Ouvre vers le haut pour les 2 dernières lignes si besoin */
 .users-page .modern-table tbody tr:nth-last-child(-n+2) .actions-dropdown .dropdown-menu{
-  top:auto !important; bottom:100% !important; transform:translateY(-5px) !important;
+  top:auto !important; bottom:100% !important; transform: translateY(-6px) !important;
 }
 
-/* ========== CARTES MOBILES ========== */
+/* ===== Cartes (mobile) ===== */
 .users-page .user-card{
-  background:#fff; border-radius:var(--border-radius-lg); box-shadow:var(--card-shadow);
-  margin-bottom:1.5rem; overflow:hidden; transition:var(--transition);
+  background:#fff;
+  border-radius: var(--radius-lg);
+  box-shadow: var(--card-shadow);
+  overflow:hidden;
+  transition: var(--transition);
+  margin-bottom:1.25rem;
 }
-.users-page .user-card:hover{ box-shadow:var(--card-shadow-hover); transform:translateY(-5px); }
+.users-page .user-card:hover{ transform: translateY(-3px); box-shadow: var(--card-shadow-hover); }
 .users-page .user-card-header{
-  display:flex; align-items:center; gap:1rem; padding:1.5rem; border-bottom:1px solid rgba(0,0,0,.05);
+  display:flex; align-items:center; gap:1rem;
+  padding:1.1rem 1.25rem;
+  border-bottom:1px solid rgba(0,0,0,.06);
 }
-.users-page .user-card-info h5{ margin:0 0 .25rem 0; font-weight:700; color:#2d3748; }
-.users-page .user-card-actions{ display:flex; gap:.5rem; padding:1rem 1.5rem; }
+.users-page .user-card-info h5{ font-weight:800; color:#0f172a; margin:0 0 .15rem; }
+.users-page .user-card-actions{
+  display:flex; gap:.5rem; padding:1rem 1.25rem;
+}
 .users-page .btn-card-action{
-  flex:1; border-radius:var(--border-radius); font-weight:600; transition:var(--transition);
-  display:flex; align-items:center; justify-content:center; gap:.5rem;
+  flex:1; display:flex; align-items:center; justify-content:center; gap:.5rem;
+  border-radius: var(--radius);
+  font-weight:700;
+  transition: var(--transition);
 }
-.users-page .btn-card-action:hover{ transform:translateY(-2px); }
+.users-page .btn-card-action:hover{ transform: translateY(-2px); }
 
-/* ========== ÉTAT VIDE ========== */
+/* ===== Empty state ===== */
 .users-page .empty-state{
-  text-align:center; padding:4rem 2rem; background:#fff; border-radius:var(--border-radius-lg); box-shadow:var(--card-shadow);
+  text-align:center; background:#fff; border-radius: var(--radius-lg);
+  box-shadow: var(--card-shadow); padding:3rem 2rem;
 }
-.users-page .empty-state-icon{ font-size:4rem; color:#a0aec0; margin-bottom:1rem; }
-.users-page .empty-state h4{ color:#2d3748; font-weight:600; margin-bottom:.5rem; }
-.users-page .empty-state p{ color:#6c757d; margin-bottom:0; }
+.users-page .empty-state-icon{ font-size:3.5rem; color:#94a3b8; margin-bottom:.5rem; }
+.users-page .empty-state h4{ font-weight:800; color:#0f172a; }
+.users-page .empty-state p{ color:#64748b; }
 
-/* ========== RESPONSIVE ========== */
+/* ===== Responsive ===== */
 @media (max-width:768px){
   .users-page .page-header{ padding:1.5rem; text-align:center; }
   .users-page .page-header h1{ font-size:2rem; }
@@ -153,16 +214,14 @@
   .users-page .mobile-cards{ display:none; }
 }
 
-/* ========== ANIMATIONS ========== */
+/* ===== Petits plus ===== */
+.users-page .modern-table-container,
+.users-page .user-card{ animation: users-slideInUp .45s ease-out; }
+
 @keyframes users-slideInUp{
-  from{ opacity:0; transform:translateY(20px); }
-  to{ opacity:1; transform:translateY(0); }
+  from{ opacity:0; transform: translateY(14px); }
+  to{ opacity:1; transform: translateY(0); }
 }
-.users-page .user-card,
-.users-page .modern-table-container{ animation:users-slideInUp .5s ease-out; }
 
-/* ========== FIXES ADDITIONNELS SCOPÉS ========== */
-.users-page .table-responsive{ overflow:visible !important; }
-
-/* ⚠️ Supprimé : .dropdown-backdrop global — pouvait garder un overlay
-   et gêner les survols/hovers de la navbar. */
+/* Assure que table-responsive (si utilisée) ne coupe pas les menus */
+.users-page .table-responsive{ overflow: visible !important; }

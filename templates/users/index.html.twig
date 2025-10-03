@@ -5,54 +5,77 @@
 {% block stylesheets %}
   {{ parent() }}
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
-
-<link rel="stylesheet" href="{{ asset('styles/users/index.css') }}">
+  <link rel="stylesheet" href="{{ asset('styles/users/index.css') }}">
 {% endblock %}
 
 {% block body %}
-<div class="container-fluid px-4 py-3">
+<div class="users-page container-fluid px-4 py-3">
 
-  {# ========== HEADER MODERNE ========== #}
-  <div class="page-header">
-    <div class="d-flex justify-content-between align-items-center">
+  {# ===== EN-TÊTE ===== #}
+  <header class="page-header">
+    <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
       <div>
-        <h1>Gestion des Utilisateurs</h1>
-        <p class="subtitle mb-0">{{ users|length }} utilisateur{{ users|length > 1 ? 's' : '' }} enregistré{{ users|length > 1 ? 's' : '' }}</p>
+        <h1 class="mb-1">Gestion des utilisateurs</h1>
+        <p class="subtitle mb-0">
+          {{ users|length }} utilisateur{{ users|length > 1 ? 's' : '' }} enregistré{{ users|length > 1 ? 's' : '' }}
+        </p>
       </div>
-      <a href="{{ path('users_new') }}" class="btn btn-new-user">
-        <i class="bi bi-plus-lg me-2"></i>Nouvel Utilisateur
+
+      <a href="{{ path('users_new') }}"
+         class="btn btn-new-user"
+         aria-label="Créer un nouvel utilisateur">
+        <i class="bi bi-plus-lg me-2" aria-hidden="true"></i>
+        Nouvel utilisateur
       </a>
     </div>
-  </div>
+  </header>
 
   {% if users is empty %}
-    {# ========== ÉTAT VIDE ========== #}
-    <div class="empty-state">
-      <i class="bi bi-people empty-state-icon"></i>
+    {# ===== ÉTAT VIDE ===== #}
+    <section class="empty-state">
+      <i class="bi bi-people empty-state-icon" aria-hidden="true"></i>
       <h4>Aucun utilisateur trouvé</h4>
-      <p>Commencez par ajouter votre premier utilisateur pour voir la liste ici</p>
-    </div>
+      <p>Ajoutez votre premier utilisateur pour commencer.</p>
+      <a href="{{ path('users_new') }}" class="btn btn-new-user mt-3">
+        <i class="bi bi-plus-lg me-2" aria-hidden="true"></i>Créer un utilisateur
+      </a>
+    </section>
   {% else %}
 
-    {# ========== TABLEAU MODERNE (Desktop) ========== #}
-    <div class="modern-table-container">
-      <table class="table modern-table">
+    {# ===== TABLEAU (Desktop) ===== #}
+    <section class="modern-table-container">
+      <table class="table modern-table align-middle mb-0">
         <thead>
           <tr>
-            <th style="width: 60px;"></th>
-            <th>Utilisateur</th>
-            <th>Email</th>
-            <th>Agence</th>
-            <th>Rôles</th>
-            <th style="width: 120px;" class="text-center">Actions</th>
+            <th scope="col" style="width:60px;"></th>
+            <th scope="col">Utilisateur</th>
+            <th scope="col">Email</th>
+            <th scope="col">Agence</th>
+            <th scope="col">Rôles</th>
+            <th scope="col" class="text-center" style="width:120px;">Actions</th>
           </tr>
         </thead>
         <tbody>
+        {% set roleLabels = {
+          'ROLE_ADMIN': 'Administrateur',
+          'ROLE_DEV': 'Développeur',
+          'ROLE_SUPPORT': 'Support',
+          'ROLE_OPERATEUR': 'Agent mobile',
+          'ROLE_USER': 'Utilisateur'
+        } %}
+        {% set roleClasses = {
+          'ROLE_ADMIN': 'role-admin',
+          'ROLE_DEV': 'role-dev',
+          'ROLE_SUPPORT': 'role-support',
+          'ROLE_OPERATEUR': 'role-operateur',
+          'ROLE_USER': 'role-user'
+        } %}
+
         {% for u in users %}
           <tr>
             <td>
-              <div class="user-avatar">
-                {{ u.username|slice(0, 1)|upper }}
+              <div class="user-avatar" aria-hidden="true">
+                {{ u.username|slice(0,1)|upper }}
               </div>
             </td>
             <td>
@@ -60,30 +83,16 @@
               <div class="user-id">#{{ u.id }}</div>
             </td>
             <td>
-              <i class="bi bi-envelope text-muted me-2"></i>{{ u.email }}
+              <i class="bi bi-envelope text-muted me-2" aria-hidden="true"></i>{{ u.email }}
             </td>
             <td>
               {% if u.agence %}
-                <i class="bi bi-building text-muted me-2"></i>{{ u.agence }}
+                <i class="bi bi-building text-muted me-2" aria-hidden="true"></i>{{ u.agence }}
               {% else %}
                 <span class="text-muted fst-italic">Non assignée</span>
               {% endif %}
             </td>
             <td>
-              {% set roleLabels = {
-                'ROLE_ADMIN': 'Responsable',
-                'ROLE_DEV': 'Développeur',
-                'ROLE_SUPPORT': 'Administrateur',
-                'ROLE_OPERATEUR': 'Agent Mobile',
-                'ROLE_USER': 'Utilisateur'
-              } %}
-              {% set roleClasses = {
-                'ROLE_ADMIN': 'role-admin',
-                'ROLE_DEV': 'role-dev',
-                'ROLE_SUPPORT': 'role-support',
-                'ROLE_OPERATEUR': 'role-operateur',
-                'ROLE_USER': 'role-user'
-              } %}
               {% for role in u.roles %}
                 <span class="role-badge {{ roleClasses[role] ?? 'role-user' }}">
                   {{ roleLabels[role] ?? role }}
@@ -92,26 +101,29 @@
             </td>
             <td class="text-center">
               <div class="dropdown actions-dropdown">
-                <button class="btn btn-sm dropdown-toggle" 
-                        type="button" 
+                <button class="btn btn-sm dropdown-toggle"
+                        type="button"
                         data-bs-toggle="dropdown"
                         data-bs-auto-close="true"
-                        data-bs-boundary="viewport">
-                  <i class="bi bi-three-dots"></i>
+                        data-bs-boundary="viewport"
+                        aria-expanded="false"
+                        aria-label="Actions pour {{ u.username }}">
+                  <i class="bi bi-three-dots" aria-hidden="true"></i>
                 </button>
                 <ul class="dropdown-menu dropdown-menu-end">
                   <li>
                     <a class="dropdown-item" href="{{ path('users_edit', {id: u.id}) }}">
-                      <i class="bi bi-pencil me-2"></i>Modifier
+                      <i class="bi bi-pencil me-2" aria-hidden="true"></i>Modifier
                     </a>
                   </li>
                   <li><hr class="dropdown-divider"></li>
                   <li>
-                    <form method="post" action="{{ path('users_delete', {id: u.id}) }}"
-                          onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer cet utilisateur ?');">
+                    <form method="post"
+                          action="{{ path('users_delete', {id: u.id}) }}"
+                          onsubmit="return confirm('Supprimer cet utilisateur ?');">
                       <input type="hidden" name="_token" value="{{ csrf_token('delete_user_' ~ u.id) }}">
                       <button class="dropdown-item text-danger" type="submit">
-                        <i class="bi bi-trash me-2"></i>Supprimer
+                        <i class="bi bi-trash me-2" aria-hidden="true"></i>Supprimer
                       </button>
                     </form>
                   </li>
@@ -122,41 +134,27 @@
         {% endfor %}
         </tbody>
       </table>
-    </div>
+    </section>
 
-    {# ========== CARTES MOBILES ========== #}
-    <div class="mobile-cards">
+    {# ===== CARTES (Mobile) ===== #}
+    <section class="mobile-cards">
       {% for u in users %}
-        <div class="user-card">
+        <article class="user-card">
           <div class="user-card-header">
-            <div class="user-avatar">
-              {{ u.username|slice(0, 1)|upper }}
+            <div class="user-avatar" aria-hidden="true">
+              {{ u.username|slice(0,1)|upper }}
             </div>
             <div class="user-card-info flex-grow-1">
-              <h5>{{ u.username }}</h5>
-              <p class="text-muted small mb-2">
-                <i class="bi bi-envelope me-1"></i>{{ u.email }}
+              <h5 class="mb-1">{{ u.username }}</h5>
+              <p class="text-muted small mb-1">
+                <i class="bi bi-envelope me-1" aria-hidden="true"></i>{{ u.email }}
               </p>
               {% if u.agence %}
                 <p class="text-muted small mb-2">
-                  <i class="bi bi-building me-1"></i>{{ u.agence }}
+                  <i class="bi bi-building me-1" aria-hidden="true"></i>{{ u.agence }}
                 </p>
               {% endif %}
               <div class="mb-0">
-                {% set roleLabels = {
-                  'ROLE_ADMIN': 'Responsable',
-                  'ROLE_DEV': 'Développeur', 
-                  'ROLE_SUPPORT': 'Administrateur',
-                  'ROLE_OPERATEUR': 'Agent Mobile',
-                  'ROLE_USER': 'Utilisateur'
-                } %}
-                {% set roleClasses = {
-                  'ROLE_ADMIN': 'role-admin',
-                  'ROLE_DEV': 'role-dev',
-                  'ROLE_SUPPORT': 'role-support',
-                  'ROLE_OPERATEUR': 'role-operateur',
-                  'ROLE_USER': 'role-user'
-                } %}
                 {% for role in u.roles %}
                   <span class="role-badge {{ roleClasses[role] ?? 'role-user' }}">
                     {{ roleLabels[role] ?? role }}
@@ -165,50 +163,45 @@
               </div>
             </div>
           </div>
-          
+
           <div class="user-card-actions">
-            <a href="{{ path('users_edit', {id: u.id}) }}" 
-               class="btn btn-primary btn-card-action">
-              <i class="bi bi-pencil"></i>Modifier
+            <a href="{{ path('users_edit', {id: u.id}) }}" class="btn btn-primary btn-card-action">
+              <i class="bi bi-pencil" aria-hidden="true"></i>Modifier
             </a>
-            <form method="post" 
+            <form method="post"
                   action="{{ path('users_delete', {id: u.id}) }}"
                   onsubmit="return confirm('Supprimer cet utilisateur ?');"
                   class="d-inline flex-fill">
               <input type="hidden" name="_token" value="{{ csrf_token('delete_user_' ~ u.id) }}">
-              <button class="btn btn-outline-danger btn-card-action w-100">
-                <i class="bi bi-trash"></i>Supprimer
+              <button class="btn btn-outline-danger btn-card-action w-100" type="submit">
+                <i class="bi bi-trash" aria-hidden="true"></i>Supprimer
               </button>
             </form>
           </div>
-        </div>
+        </article>
       {% endfor %}
-    </div>
+    </section>
 
   {% endif %}
 </div>
 
-{# ========== JAVASCRIPT POUR GESTION DROPDOWNS ========== #}
+{# ===== JS : ajustement dropdown bas de page (scopé) ===== #}
 <script>
-document.addEventListener('DOMContentLoaded', function() {
-  // Gestion intelligente de la position des dropdowns
-  const dropdowns = document.querySelectorAll('.actions-dropdown');
-  
-  dropdowns.forEach(dropdown => {
-    const toggle = dropdown.querySelector('.dropdown-toggle');
-    const menu = dropdown.querySelector('.dropdown-menu');
-    
-    toggle.addEventListener('click', function() {
-      // Calculer la position et ajuster si nécessaire
+document.addEventListener('DOMContentLoaded', () => {
+  document.querySelectorAll('.users-page .actions-dropdown').forEach(d => {
+    const toggle = d.querySelector('.dropdown-toggle');
+    const menu = d.querySelector('.dropdown-menu');
+    toggle?.addEventListener('click', () => {
       setTimeout(() => {
-        const rect = menu.getBoundingClientRect();
-        const windowHeight = window.innerHeight;
-        
-        // Si le menu dépasse en bas de l'écran
-        if (rect.bottom > windowHeight - 20) {
+        const r = menu.getBoundingClientRect();
+        if (r.bottom > window.innerHeight - 20) {
           menu.style.top = 'auto';
           menu.style.bottom = '100%';
-          menu.style.transform = 'translateY(-5px)';
+          menu.style.transform = 'translateY(-6px)';
+        } else {
+          menu.style.top = '';
+          menu.style.bottom = '';
+          menu.style.transform = '';
         }
       }, 10);
     });

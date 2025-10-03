@@ -46,14 +46,13 @@ class UserType extends AbstractType
             'label' => 'Rôle',
             'choices' => [
                 'Administrateur' => User::ROLE_ADMIN,
-                'Développeur'    => User::ROLE_DEV,
-                'Support'        => User::ROLE_SUPPORT,
-                'Opérateur'      => User::ROLE_OPERATEUR,
+                'Astreinte'        => User::ROLE_SUPPORT,
+                'Agent'      => User::ROLE_OPERATEUR,
                 // Pas de ROLE_USER ici: il est donné par défaut et géré par la hiérarchie
             ],
             'expanded'   => true,   // radios jolies; mets false si tu veux un select
             'multiple'   => false,
-            'required'   => false,
+            'required'   => true,
             'placeholder'=> false,  // évite “None”
         ])
             ->add('plainPassword', PasswordType::class, [
