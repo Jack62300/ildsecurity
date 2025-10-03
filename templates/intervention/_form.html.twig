@@ -1,239 +1,248 @@
 {# ====================== FORMULAIRE BON D'INTERVENTION ====================== #}
-
 <link rel="stylesheet" href="{{ asset('styles/intervention/_form.css') }}">
 
-<div class="boi">
-  {{ form_start(form, {'attr': {'class': 'sheet'}}) }}
+{# 
+  Astuce : passe data-surface="dark" sur .boi pour la variante sombre
+  <div class="boi" data-surface="dark"> … </div>
+#}
+<div class="interventions-page">
+  <div class="boi">
+    {{ form_start(form, {'attr': {'class': 'sheet'}}) }}
 
-  <div class="band">Bon d'intervention – Compte rendu</div>
+    <div class="band">Bon d'intervention – Compte rendu</div>
 
-  <div class="stamps">
-    <div class="stamp"></div>
-    <div class="stamp"></div>
-  </div>
-
-  {# Client / Adresse / Ville #}
-  <div class="line">
-    <div class="field">
-      <div class="lbl">Client</div>
-      <div class="under">{{ form_widget(form.client, {'attr': {'class': 'form-control-plaintext', 'style':'padding:0'}}) }}</div>
+    <div class="stamps">
+      <div class="stamp"></div>
+      <div class="stamp"></div>
     </div>
-    <div class="field">
-      <div class="lbl">Adresse</div>
-      <div class="under">{{ form_widget(form.adresse, {'attr': {'class': 'form-control-plaintext', 'style':'padding:0'}}) }}</div>
-    </div>
-    <div class="field">
-      <div class="lbl">Ville</div>
-      <div class="under">{{ form_widget(form.ville, {'attr': {'class': 'form-control-plaintext', 'style':'padding:0'}}) }}</div>
-    </div>
-  </div>
 
-  {# Veille #}
-  <div class="tick-grid">
-    <label class="tick">{{ form_widget(form.vIntrusion) }} Intrusion</label>
-    <label class="tick">{{ form_widget(form.vIncendie) }} Incendie</label>
-    <label class="tick">{{ form_widget(form.vAgression) }} Agression</label>
-    <label class="tick">{{ form_widget(form.vDefautSecteur) }} Défaut secteur</label>
-
-    <label class="tick">{{ form_widget(form.vDefautBatterie) }} Défaut batterie</label>
-    <label class="tick">{{ form_widget(form.vAbsTest) }} ABS test</label>
-    <label class="tick">{{ form_widget(form.vAbsMes) }} ABS MES</label>
-    <label class="tick">{{ form_widget(form.vMhsNonAutorisee) }} MHS non autorisée</label>
-
-    <label class="tick">{{ form_widget(form.vMaintenance) }} Maintenance</label>
-    <label class="tick">{{ form_widget(form.vTechnique) }} Technique</label>
-    <label class="tick">{{ form_widget(form.vAscenseur) }} Ascenseur</label>
-    <label class="tick">{{ form_widget(form.vAutre) }} Autre</label>
-  </div>
-
-  <div class="divider">Compte rendu</div>
-
-  <div class="cr-wrap">
-    <div class="cr-group">
-      <div class="lbl">Type d'intervention</div>
-      <div class="inline">
-        {{ form_widget(form.compteRendu) }}
+    {# Client / Adresse / Ville #}
+    <div class="line">
+      <div class="field">
+        <div class="lbl">Client</div>
+        <div class="under">
+          {{ form_widget(form.client, {'attr': {'class': 'form-control-plaintext', 'style': 'padding:0'}}) }}
+        </div>
       </div>
-    </div>
-    <div class="cr-group">
-      <div class="lbl">Avec moyen d'accès</div>
-      <div class="inline">
-        {{ form_widget(form.avecMoyenAcces) }}
+      <div class="field">
+        <div class="lbl">Adresse</div>
+        <div class="under">
+          {{ form_widget(form.adresse, {'attr': {'class': 'form-control-plaintext', 'style': 'padding:0'}}) }}
+        </div>
       </div>
-    </div>
-    <div class="datebox">
-      <div class="date-title">Date</div>
-      <div class="date-input">{{ form_widget(form.dateBon) }}</div>
-    </div>
-  </div>
-
-  <div class="detail-head">Détail de la prestation</div>
-
-  {# Heures #}
-  <div class="hours">
-    <div class="hour">
-      <div class="H">Heure d'appel</div>
-      <div class="time">{{ form_widget(form.heureAppel) }}</div>
-    </div>
-    <div class="hour">
-      <div class="H">Heure d'arrivée</div>
-      <div class="time">{{ form_widget(form.heureArrivee) }}</div>
-    </div>
-    <div class="hour">
-      <div class="H">Heure de départ</div>
-      <div class="time">{{ form_widget(form.heureDepart) }}</div>
-    </div>
-  </div>
-
-  {# Lignes 1 choix #}
-  <div class="rows">
-    <div class="rowline">
-      <div class="label">Constat météo</div>
-      <div class="choices">{{ form_widget(form.constatMeteo) }}</div>
-    </div>
-
-    <div class="rowline">
-      <div class="label">Circulation</div>
-      <div class="choices">
-        {{ form_widget(form.circulation) }}
-        <span class="dash"><span>Motif</span>{{ form_widget(form.circulationMotif, {'attr': {'placeholder':'(si mauvaise)'}}) }}</span>
+      <div class="field">
+        <div class="lbl">Ville</div>
+        <div class="under">
+          {{ form_widget(form.ville, {'attr': {'class': 'form-control-plaintext', 'style': 'padding:0'}}) }}
+        </div>
       </div>
     </div>
 
-    <div class="rowline">
-      <div class="label">Circuit de vérification</div>
-      <div class="choices">
-        {{ form_widget(form.circuitVerification) }}
-        <span class="dash"><span>Points</span>{{ form_widget(form.circuitPoints, {'attr': {'placeholder':'(si extérieur)'}}) }}</span>
+    {# Veille #}
+    <div class="tick-grid">
+      <label class="tick">{{ form_widget(form.vIntrusion) }} Intrusion</label>
+      <label class="tick">{{ form_widget(form.vIncendie) }} Incendie</label>
+      <label class="tick">{{ form_widget(form.vAgression) }} Agression</label>
+      <label class="tick">{{ form_widget(form.vDefautSecteur) }} Défaut secteur</label>
+
+      <label class="tick">{{ form_widget(form.vDefautBatterie) }} Défaut batterie</label>
+      <label class="tick">{{ form_widget(form.vAbsTest) }} ABS test</label>
+      <label class="tick">{{ form_widget(form.vAbsMes) }} ABS MES</label>
+      <label class="tick">{{ form_widget(form.vMhsNonAutorisee) }} MHS non autorisée</label>
+
+      <label class="tick">{{ form_widget(form.vMaintenance) }} Maintenance</label>
+      <label class="tick">{{ form_widget(form.vTechnique) }} Technique</label>
+      <label class="tick">{{ form_widget(form.vAscenseur) }} Ascenseur</label>
+      <label class="tick">{{ form_widget(form.vAutre) }} Autre</label>
+    </div>
+
+    <div class="divider">Compte rendu</div>
+
+    <div class="cr-wrap">
+      <div class="cr-group">
+        <div class="lbl">Type d'intervention</div>
+        <div class="inline">{{ form_widget(form.compteRendu) }}</div>
+      </div>
+
+      <div class="cr-group">
+        <div class="lbl">Avec moyen d'accès</div>
+        <div class="inline">{{ form_widget(form.avecMoyenAcces) }}</div>
+      </div>
+
+      <div class="datebox">
+        <div class="date-title">Date</div>
+        <div class="date-input">{{ form_widget(form.dateBon) }}</div>
       </div>
     </div>
 
-    <div class="rowline">
-      <div class="label">Lumière allumée</div>
-      <div class="choices">
-        {{ form_widget(form.lumiereAllumee) }}
-        <span class="dash"><span>Pièce</span>{{ form_widget(form.lumierePiece) }}</span>
+    <div class="detail-head">Détail de la prestation</div>
+
+    {# Heures #}
+    <div class="hours">
+      <div class="hour">
+        <div class="H">Heure d'appel</div>
+        <div class="time">{{ form_widget(form.heureAppel) }}</div>
+      </div>
+      <div class="hour">
+        <div class="H">Heure d'arrivée</div>
+        <div class="time">{{ form_widget(form.heureArrivee) }}</div>
+      </div>
+      <div class="hour">
+        <div class="H">Heure de départ</div>
+        <div class="time">{{ form_widget(form.heureDepart) }}</div>
       </div>
     </div>
 
-    <div class="rowline">
-      <div class="label">Issue(s) ouverte(s)</div>
-      <div class="choices">
-        {{ form_widget(form.issuesOuvertes) }}
-        <span class="dash"><span>Lesquelles</span>{{ form_widget(form.issuesLesquelles) }}</span>
+    {# Lignes 1 choix #}
+    <div class="rows">
+      <div class="rowline">
+        <div class="label">Constat météo</div>
+        <div class="choices">{{ form_widget(form.constatMeteo) }}</div>
+      </div>
+
+      <div class="rowline">
+        <div class="label">Circulation</div>
+        <div class="choices">
+          {{ form_widget(form.circulation) }}
+          <span class="dash">
+            <span>Motif</span>{{ form_widget(form.circulationMotif, {'attr': {'placeholder':'(si mauvaise)'}}) }}
+          </span>
+        </div>
+      </div>
+
+      <div class="rowline">
+        <div class="label">Circuit de vérification</div>
+        <div class="choices">
+          {{ form_widget(form.circuitVerification) }}
+          <span class="dash">
+            <span>Points</span>{{ form_widget(form.circuitPoints, {'attr': {'placeholder':'(si extérieur)'}}) }}
+          </span>
+        </div>
+      </div>
+
+      <div class="rowline">
+        <div class="label">Lumière allumée</div>
+        <div class="choices">
+          {{ form_widget(form.lumiereAllumee) }}
+          <span class="dash"><span>Pièce</span>{{ form_widget(form.lumierePiece) }}</span>
+        </div>
+      </div>
+
+      <div class="rowline">
+        <div class="label">Issue(s) ouverte(s)</div>
+        <div class="choices">
+          {{ form_widget(form.issuesOuvertes) }}
+          <span class="dash"><span>Lesquelles</span>{{ form_widget(form.issuesLesquelles) }}</span>
+        </div>
+      </div>
+
+      <div class="rowline"><div class="label">Sirène en fonction</div><div class="choices">{{ form_widget(form.sireneEnFonction) }}</div></div>
+      <div class="rowline"><div class="label">Système</div><div class="choices">{{ form_widget(form.systemeEtat) }}</div></div>
+      <div class="rowline"><div class="label">Remise en service du système</div><div class="choices">{{ form_widget(form.remiseEnService) }}</div></div>
+      <div class="rowline"><div class="label">Zones</div><div class="choices">{{ form_widget(form.zones) }}</div></div>
+      <div class="rowline"><div class="label">Effraction constatée</div><div class="choices">{{ form_widget(form.effraction) }}</div></div>
+      <div class="rowline"><div class="label">Présence</div><div class="choices">{{ form_widget(form.presence) }}</div></div>
+
+      <div class="rowline">
+        <div class="label">Mise en place de</div>
+        <div class="choices">
+          {{ form_widget(form.miseEnPlace) }}
+          <span class="dash"><span>Demandé par</span>{{ form_widget(form.demandePar) }}</span>
+        </div>
+      </div>
+
+      <div class="rowline">
+        <div class="label">Personnel sur place</div>
+        <div class="choices">
+          {{ form_widget(form.personnelSurPlace) }}
+          <span class="dash"><span>Précisions</span>{{ form_widget(form.personnelNote) }}</span>
+        </div>
+      </div>
+
+      <div class="rowline">
+        <div class="label">Véhicule sur place</div>
+        <div class="choices">
+          {{ form_widget(form.vehiculeSurPlace) }}
+          <span class="dash"><span>Marque</span>{{ form_widget(form.vehiculeMarque) }}</span>
+          <span class="dash"><span>N°</span>{{ form_widget(form.vehiculeNumero) }}</span>
+        </div>
+      </div>
+
+      <div class="rowline">
+        <div class="label">Présence d'animaux</div>
+        <div class="choices">
+          {{ form_widget(form.animaux) }}
+          <span class="dash"><span>Espèce</span>{{ form_widget(form.animauxEspece) }}</span>
+        </div>
       </div>
     </div>
 
-    <div class="rowline"><div class="label">Sirène en fonction</div><div class="choices">{{ form_widget(form.sireneEnFonction) }}</div></div>
-    <div class="rowline"><div class="label">Système</div><div class="choices">{{ form_widget(form.systemeEtat) }}</div></div>
-    <div class="rowline"><div class="label">Remise en service du système</div><div class="choices">{{ form_widget(form.remiseEnService) }}</div></div>
-    <div class="rowline"><div class="label">Zones</div><div class="choices">{{ form_widget(form.zones) }}</div></div>
-    <div class="rowline"><div class="label">Effraction constatée</div><div class="choices">{{ form_widget(form.effraction) }}</div></div>
-    <div class="rowline"><div class="label">Présence</div><div class="choices">{{ form_widget(form.presence) }}</div></div>
+    <div class="comments">
+      <div class="lbl">Commentaires de l'intervenant</div>
+      {{ form_widget(form.commentaires) }}
+    </div>
 
-    <div class="rowline">
-      <div class="label">Mise en place de</div>
-      <div class="choices">
-        {{ form_widget(form.miseEnPlace) }}
-        <span class="dash"><span>Demandé par</span>{{ form_widget(form.demandePar) }}</span>
+    <div class="bon">
+      <div>
+        <div class="lbl">Bon n°</div>
+        {{ form_widget(form.bonNumero, {'attr': {'disabled':'disabled'}}) }}
+      </div>
+      <div>
+        <div class="lbl">Bon d'intervention déposé</div>
+        <div class="choices">
+          {{ form_widget(form.bonDepose) }}
+          <span class="dash"><span>Préciser</span>{{ form_widget(form.bonDeposePrecision) }}</span>
+        </div>
       </div>
     </div>
 
-    <div class="rowline">
-      <div class="label">Personnel sur place</div>
-      <div class="choices">
-        {{ form_widget(form.personnelSurPlace) }}
-        <span class="dash"><span>Précisions</span>{{ form_widget(form.personnelNote) }}</span>
+    {# --- Signatures --- #}
+    <div class="sigs">
+      <div class="sigbox">
+        <div class="cap">Intervenant</div>
+        <div class="body">
+          {{ form_widget(form.intervenant, {'attr': {'class':'form-control-plaintext', 'style':'border:0;max-width:90%'}}) }}
+        </div>
+      </div>
+
+      <div class="sigbox">
+        <div class="cap">Entreprise</div>
+        <div class="body">
+          {{ form_widget(form.entreprise, {'attr': {'class':'form-control-plaintext', 'style':'border:0;max-width:90%'}}) }}
+        </div>
+      </div>
+
+      <div class="sigbox sigbox-sign">
+        <div class="cap">Signature</div>
+
+        <div class="body">
+          <canvas id="signature-pad"></canvas>
+        </div>
+
+        {# outils sous la case signature — classes simples pour laisser le thème agir #}
+        <div class="sigtools">
+          <button type="button" id="sig-undo" class="btn">
+            <i class="bi bi-arrow-counterclockwise me-1"></i> Annuler
+          </button>
+          <button type="button" id="sig-clear" class="btn">
+            <i class="bi bi-eraser me-1"></i> Effacer
+          </button>
+        </div>
+
+        {# champ caché pour envoyer l'image base64 #}
+        <div style="display:none">{{ form_widget(form.signature_draw) }}</div>
       </div>
     </div>
 
-    <div class="rowline">
-      <div class="label">Véhicule sur place</div>
-      <div class="choices">
-        {{ form_widget(form.vehiculeSurPlace) }}
-        <span class="dash"><span>Marque</span>{{ form_widget(form.vehiculeMarque) }}</span>
-        <span class="dash"><span>N°</span>{{ form_widget(form.vehiculeNumero) }}</span>
-      </div>
+    <div class="submit">
+      <button type="submit" class="btn">
+        <i class="bi bi-check-circle me-2"></i>
+        Valider le bon d'intervention
+      </button>
     </div>
 
-    <div class="rowline">
-      <div class="label">Présence d'animaux</div>
-      <div class="choices">
-        {{ form_widget(form.animaux) }}
-        <span class="dash"><span>Espèce</span>{{ form_widget(form.animauxEspece) }}</span>
-      </div>
-    </div>
+    {{ form_end(form) }}
   </div>
-
-  <div class="comments">
-    <div class="lbl" style="font-weight:800;text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px">
-      Commentaires de l'intervenant
-    </div>
-    {{ form_widget(form.commentaires) }}
-  </div>
-
-  <div class="bon">
-    <div>
-      <div class="lbl">Bon n°</div>
-      {{ form_widget(form.bonNumero, {'attr': {'disabled':'disabled'}}) }}
-    </div>
-    <div>
-      <div class="lbl">Bon d'intervention déposé</div>
-      <div class="choices">
-        {{ form_widget(form.bonDepose) }}
-        <span class="dash"><span>Préciser</span>{{ form_widget(form.bonDeposePrecision) }}</span>
-      </div>
-    </div>
-  </div>
-
-{# --- Signatures --- #}
-<div class="sigs">
-  <div class="sigbox">
-    <div class="cap">Intervenant</div>
-    <div class="body">
-      {{ form_widget(form.intervenant, {'attr': {'class':'form-control-plaintext', 'style':'border:0;max-width:90%'}}) }}
-    </div>
-  </div>
-
-  <div class="sigbox">
-    <div class="cap">Entreprise</div>
-    <div class="body">
-      {{ form_widget(form.entreprise, {'attr': {'class':'form-control-plaintext', 'style':'border:0;max-width:90%'}}) }}
-    </div>
-  </div>
-
-  <div class="sigbox sigbox-sign">
-    <div class="cap">Signature</div>
-
-    <div class="body">
-      <canvas id="signature-pad"></canvas>
-    </div>
-
-    {# boutons alignés sous la case signature #}
-    <div class="sigtools btn-toolbar justify-content-center border-top">
-      <div class="btn-group mt-2 mb-2">
-        <button type="button" id="sig-undo" class="btn btn-sm btn-outline-secondary">
-          <i class="bi bi-arrow-counterclockwise me-1"></i> Annuler
-        </button>
-        <button type="button" id="sig-clear" class="btn btn-sm btn-outline-danger">
-          <i class="bi bi-eraser me-1"></i> Effacer
-        </button>
-      </div>
-    </div>
-
-    {# champ caché pour envoyer l'image base64 #}
-    <div style="display:none">{{ form_widget(form.signature_draw) }}</div>
-  </div>
-</div>
-
-  <div class="submit">
-    <button type="submit" class="btn">
-      <i class="bi bi-check-circle me-2"></i>
-      Valider le bon d'intervention
-    </button>
-  </div>
-
-  {{ form_end(form) }}
 </div>
 
 {# ======================== Signature Pad (JS) ============================= #}
@@ -255,16 +264,15 @@
   }
 
   const pad = new SignaturePad(canvas, {
-    minWidth: 0.8, 
-    maxWidth: 2.5, 
+    minWidth: 0.8,
+    maxWidth: 2.5,
     throttle: 16,
-    backgroundColor: 'rgba(255,255,255,0)', 
+    backgroundColor: 'rgba(255,255,255,0)',
     penColor: '#1e40af',
     velocityFilterWeight: 0.7,
     minDistance: 5,
   });
 
-  // Fonction de redimensionnement améliorée
   function resizeCanvas() {
     const data = pad.toData();
     fitCanvas();
@@ -272,17 +280,14 @@
     pad.fromData(data);
   }
 
-  // Gestionnaire de redimensionnement avec délai
   let resizeTimeout;
   window.addEventListener('resize', () => {
     clearTimeout(resizeTimeout);
     resizeTimeout = setTimeout(resizeCanvas, 250);
   });
 
-  // Initialisation
   setTimeout(fitCanvas, 100);
 
-  // Gestionnaires des boutons
   const clearBtn = document.getElementById('sig-clear');
   const undoBtn = document.getElementById('sig-undo');
 
@@ -307,39 +312,24 @@
     });
   }
 
-  // Mise à jour du champ caché lors de la signature
   pad.addEventListener('endStroke', () => {
     hidden.value = pad.isEmpty() ? '' : pad.toDataURL('image/png');
   });
 
-  // Soumission du formulaire
-  const form = canvas.closest('form');
-  if (form) {
-    form.addEventListener('submit', (e) => {
+  const formEl = canvas.closest('form');
+  if (formEl) {
+    formEl.addEventListener('submit', () => {
       hidden.value = pad.isEmpty() ? '' : pad.toDataURL('image/png');
     });
   }
 
-  // Support tactile amélioré
   canvas.style.touchAction = 'none';
-  
-  // Prévenir le scroll sur mobile lors de la signature
-  canvas.addEventListener('touchstart', (e) => {
-    e.preventDefault();
-  }, { passive: false });
-  
-  canvas.addEventListener('touchmove', (e) => {
-    e.preventDefault();
-  }, { passive: false });
+  canvas.addEventListener('touchstart', (e) => { e.preventDefault(); }, { passive: false });
+  canvas.addEventListener('touchmove', (e) => { e.preventDefault(); }, { passive: false });
 })();
 
-// Animation d'apparition des éléments lors du scroll
-document.addEventListener('DOMContentLoaded', function() {
-  const observerOptions = {
-    threshold: 0.1,
-    rootMargin: '0px 0px -50px 0px'
-  };
-
+// Animations d'apparition
+document.addEventListener('DOMContentLoaded', () => {
   const observer = new IntersectionObserver((entries) => {
     entries.forEach(entry => {
       if (entry.isIntersecting) {
@@ -347,9 +337,8 @@ document.addEventListener('DOMContentLoaded', function() {
         entry.target.style.transform = 'translateY(0)';
       }
     });
-  }, observerOptions);
+  }, { threshold: 0.1, rootMargin: '0px 0px -50px 0px' });
 
-  // Observer tous les éléments avec animation
   document.querySelectorAll('.boi .rowline, .boi .hour, .boi .sigbox').forEach(el => {
     el.style.opacity = '0';
     el.style.transform = 'translateY(20px)';
@@ -357,26 +346,23 @@ document.addEventListener('DOMContentLoaded', function() {
     observer.observe(el);
   });
 
-  // Animation des checkboxes lors du check
+  // Micro feedback sur check/radios
   document.querySelectorAll('.boi input[type="checkbox"], .boi input[type="radio"]').forEach(input => {
     input.addEventListener('change', function() {
-      if (this.checked) {
+      if (this.checked && this.parentElement) {
         this.parentElement.style.transform = 'scale(1.05)';
-        setTimeout(() => {
-          this.parentElement.style.transform = '';
-        }, 200);
+        setTimeout(() => { this.parentElement.style.transform = ''; }, 200);
       }
     });
   });
 
-  // Effet focus amélioré pour les champs
+  // Effet focus doux
   document.querySelectorAll('.boi input, .boi textarea').forEach(field => {
     field.addEventListener('focus', function() {
-      this.parentElement.style.transform = 'translateY(-2px)';
+      if (this.parentElement) this.parentElement.style.transform = 'translateY(-2px)';
     });
-    
     field.addEventListener('blur', function() {
-      this.parentElement.style.transform = '';
+      if (this.parentElement) this.parentElement.style.transform = '';
     });
   });
 });

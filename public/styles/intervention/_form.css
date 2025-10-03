@@ -1,770 +1,323 @@
-/* Extracted from templates/intervention/_form.html.twig on 2025-09-27T00:36:11.119Z */
-
-/* ---- Variables CSS ---- */
-.boi {
-    --primary: #1e40af;
-    --primary-light: #3b82f6;
-    --secondary: #64748b;
-    --success: #059669;
-    --danger: #dc2626;
-    --warning: #d97706;
-    --dark: #1e293b;
-    --light: #f8fafc;
-    --gray-50: #f9fafb;
-    --gray-100: #f3f4f6;
-    --gray-200: #e5e7eb;
-    --gray-300: #d1d5db;
-    --gray-400: #9ca3af;
-    --gray-500: #6b7280;
-    --gray-600: #4b5563;
-    --gray-700: #374151;
-    --gray-800: #1f2937;
-    --gray-900: #111827;
-    --border-radius: 12px;
-    --border-radius-sm: 8px;
-    --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
-    --shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
-    --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
-    --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
-}
-
-/* ---- Conteneur principal ---- */
-.boi {
-    max-width: 1200px;
-    margin: 2rem auto;
-    padding: 0 1rem;
-    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-    line-height: 1.5;
-    color: var(--gray-900);
-}
-
-/* ---- Feuille principale ---- */
-.boi .sheet {
-    background: white;
-    border-radius: var(--border-radius);
-    box-shadow: var(--shadow-xl);
-    overflow: hidden;
-    border: 1px solid var(--gray-200);
-}
-
-/* ---- En-tête ---- */
-.boi .band {
-    background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
-    color: white;
-    padding: 1.5rem 2rem;
-    text-align: center;
-    font-weight: 700;
-    font-size: 1.25rem;
-    letter-spacing: 0.05em;
-    text-transform: uppercase;
-    position: relative;
-    overflow: hidden;
-}
-
-.boi .band::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.1'%3E%3Ccircle cx='30' cy='30' r='2'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
-    opacity: 0.3;
-}
-
-.boi .band > * {
-    position: relative;
-    z-index: 1;
-}
-
-/* ---- Zones de tampons ---- */
-.boi .stamps {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 1.5rem;
-    padding: 1.5rem 2rem;
-    background: var(--gray-50);
-    border-bottom: 1px solid var(--gray-200);
-}
-
-.boi .stamp {
-    height: 120px;
-    border: 2px dashed var(--gray-300);
-    border-radius: var(--border-radius-sm);
-    background: white;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: var(--gray-400);
-    font-weight: 500;
-    font-size: 0.875rem;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-    position: relative;
-    transition: all 0.2s ease;
-}
-
-.boi .stamp::before {
-    content: 'TAMPON';
-    opacity: 0.7;
-}
-
-.boi .stamp:hover {
-    border-color: var(--primary);
-    background: var(--light);
-}
-
-/* ---- Informations client ---- */
-.boi .line {
-    display: grid;
-    grid-template-columns: 1.5fr 1.5fr 1fr;
-    gap: 2rem;
-    padding: 1.5rem 2rem;
-    border-bottom: 1px solid var(--gray-200);
-    background: white;
-}
-
-.boi .field .lbl {
-    font-size: 0.75rem;
-    color: var(--primary);
-    text-transform: uppercase;
-    font-weight: 700;
-    margin-bottom: 0.5rem;
-    letter-spacing: 0.05em;
-}
-
-.boi .field .under {
-    border-bottom: 2px solid var(--primary);
-    padding-bottom: 0.5rem;
-    min-height: 1.5rem;
-    display: flex;
-    align-items: end;
-}
-
-.boi .field input {
-    border: none !important;
-    background: transparent !important;
-    padding: 0 !important;
-    font-weight: 600;
-    font-size: 1rem;
-    color: var(--gray-800);
-    width: 100%;
-}
-
-/* ---- Section veille ---- */
-.boi .tick-grid {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 1rem;
-    padding: 1.5rem 2rem;
-    background: var(--light);
-    border-bottom: 1px solid var(--gray-200);
-}
-
-.boi .tick {
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-    font-size: 0.875rem;
-    font-weight: 500;
-    color: var(--gray-700);
-    padding: 0.75rem;
-    background: white;
-    border-radius: var(--border-radius-sm);
-    border: 1px solid var(--gray-200);
-    transition: all 0.2s ease;
-    cursor: pointer;
-}
-
-.boi .tick:hover {
-    background: var(--gray-50);
-    border-color: var(--primary);
-}
-
-/* ---- Checkbox personnalisées carrées ---- */
-.boi .tick input[type="checkbox"] {
-    appearance: none;
-    -webkit-appearance: none;
-    -moz-appearance: none;
-    width: 1.25rem;
-    height: 1.25rem;
-    border: 2px solid var(--gray-300);
-    border-radius: 0.25rem;
-    background: white;
-    cursor: pointer;
-    transition: all 0.2s ease;
-    position: relative;
-    flex-shrink: 0;
-}
-
-.boi .tick input[type="checkbox"]:hover {
-    border-color: var(--success);
-}
-
-.boi .tick input[type="checkbox"]:checked {
-    background: var(--success);
-    border-color: var(--success);
-}
-
-.boi .tick input[type="checkbox"]:checked::before {
-    content: '✓';
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    color: white;
-    font-weight: bold;
-    font-size: 0.875rem;
-    line-height: 1;
-}
-
-.boi .tick input[type="checkbox"]:focus {
-    outline: none;
-    box-shadow: 0 0 0 3px rgba(5, 150, 105, 0.2);
-}
-
-/* ---- Séparateurs ---- */
-.boi .divider {
-    background: linear-gradient(90deg, var(--primary) 0%, var(--primary-light) 100%);
-    color: white;
-    padding: 1rem 2rem;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-    font-size: 0.875rem;
-    border-top: 1px solid var(--gray-200);
-    border-bottom: 1px solid var(--gray-200);
-}
-
-/* ---- Section compte rendu ---- */
-.boi .cr-wrap {
-    display: grid;
-    grid-template-columns: 1.2fr 1fr 0.8fr;
-    gap: 2rem;
-    padding: 1.5rem 2rem;
-    border-bottom: 1px solid var(--gray-200);
-    background: white;
-}
-
-.boi .cr-group .lbl {
-    font-size: 0.75rem;
-    color: var(--primary);
-    text-transform: uppercase;
-    font-weight: 700;
-    margin-bottom: 0.75rem;
-    letter-spacing: 0.05em;
-}
-
-.boi .inline {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 1rem;
-    align-items: center;
-}
-
-.boi .datebox .date-title {
-    font-size: 0.75rem;
-    color: var(--primary);
-    text-transform: uppercase;
-    font-weight: 700;
-    margin-bottom: 0.75rem;
-    letter-spacing: 0.05em;
-}
-
-.boi .datebox input {
-    border: 2px solid var(--gray-300);
-    border-radius: var(--border-radius-sm);
-    padding: 0.75rem;
-    font-weight: 600;
-    transition: all 0.2s ease;
-    width: 100%;
-}
-
-.boi .datebox input:focus {
-    outline: none;
-    border-color: var(--primary);
-    box-shadow: 0 0 0 3px rgb(59 130 246 / 0.1);
-}
-
-/* ---- En-tête détail prestation ---- */
-.boi .detail-head {
-    background: var(--gray-800);
-    color: white;
-    padding: 1rem 2rem;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-    font-size: 0.875rem;
-    border-top: 1px solid var(--gray-200);
-    border-bottom: 1px solid var(--gray-200);
-}
-
-/* ---- Section heures ---- */
-.boi .hours {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 1.5rem;
-    padding: 1.5rem 2rem;
-    border-bottom: 1px solid var(--gray-200);
-    background: var(--gray-50);
-}
-
-.boi .hour {
-    background: white;
-    border: 1px solid var(--gray-200);
-    border-radius: var(--border-radius-sm);
-    padding: 1.25rem;
-    box-shadow: var(--shadow-sm);
-    transition: all 0.2s ease;
-}
-
-.boi .hour:hover {
-    box-shadow: var(--shadow);
-    border-color: var(--primary);
-}
-
-.boi .hour .H {
-    font-weight: 700;
-    color: var(--primary);
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-    margin-bottom: 0.75rem;
-    font-size: 0.75rem;
-}
-
-.boi .hour .time input {
-    border: none;
-    background: transparent;
-    width: 100%;
-    height: 2.5rem;
-    font-weight: 700;
-    font-size: 1.125rem;
-    color: var(--gray-800);
-    outline: none;
-    text-align: center;
-}
-
-/* ---- Lignes de détail ---- */
-.boi .rows {
-    padding: 0.5rem 2rem 1rem;
-    background: white;
+/* ILD SECURITY — BON D’INTERVENTION (FORM)
+   Scoped: .interventions-page
+   Surface-aware + design demandé • 2025-10-03
+   Usage: <div class="interventions-page"><div class="boi">…</div></div>
+*/
+
+/* ===================== TOKENS (scopés au composant) ===================== */
+.interventions-page .boi{
+  /* Brand sécurité */
+  --brand-dark:#0b1e39;
+  --brand:#0a3a7a;
+  --brand-mid:#1a4f9a;
+  --primary-gradient:linear-gradient(135deg,#0b1e39 0%,#0a3a7a 100%);
+
+  /* États */
+  --success:#10b981;
+  --danger:#ef4444;
+  --warning:#d97706;
+
+  /* SURFACE (LIGHT par défaut) */
+  --surface-bg:#f8fafc;          /* grands fonds “section” */
+  --panel-bg:#ffffff;            /* cartes / panneaux */
+  --panel-border:#e5e7eb;        /* bordures cartes */
+  --muted-bg:#f3f4f6;            /* zones grisées douces */
+
+  /* Texte */
+  --ink:#0f172a;
+  --ink-soft:#475569;
+  --ink-muted:#94a3b8;
+
+  /* Rayon / ombres */
+  --radius:12px; --radius-sm:8px;
+  --shadow-sm:0 1px 2px rgba(0,0,0,.06);
+  --shadow:0 1px 3px rgba(0,0,0,.1),0 1px 2px -1px rgba(0,0,0,.1);
+  --shadow-lg:0 10px 15px -3px rgba(0,0,0,.1),0 4px 6px -4px rgba(0,0,0,.1);
+  --shadow-xl:0 20px 25px -5px rgba(0,0,0,.10),0 8px 10px -6px rgba(0,0,0,.10);
+
+  /* Typo */
+  font-family:'Inter',system-ui,-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;
+  color:var(--ink); line-height:1.5;
+}
+
+/* ===== Variante SURFACE SOMBRE (comme la navbar) ===== */
+.interventions-page .boi[data-surface="dark"]{
+  --surface-bg:#0f172a;
+  --panel-bg:#111827;
+  --panel-border:#1f2937;
+  --muted-bg:#0b1222;
+
+  --ink:#e5edf7;
+  --ink-soft:#cbd5e1;
+  --ink-muted:#7c8aa0;
+}
+
+/* ===================== Layout de la feuille ===================== */
+.interventions-page .boi{ max-width:1200px; margin:2rem auto; padding:0 1rem; }
+.interventions-page .boi .sheet{
+  background:var(--panel-bg);
+  border-radius:var(--radius);
+  box-shadow:var(--shadow-xl);
+  overflow:hidden;
+  border:1px solid var(--panel-border);
+}
+
+/* ===================== Bandeau ===================== */
+.interventions-page .boi .band{
+  background:var(--primary-gradient); color:#fff;
+  padding:1.5rem 2rem; text-align:center; font-weight:800; font-size:1.15rem;
+  letter-spacing:.06em; text-transform:uppercase; position:relative; overflow:hidden;
+}
+.interventions-page .boi .band::before{
+  content:''; position:absolute; inset:0; opacity:.25; pointer-events:none;
+  background:
+    radial-gradient(800px 800px at 110% -10%, rgba(255,255,255,.2), transparent 60%),
+    radial-gradient(600px 600px at -10% 110%, rgba(255,255,255,.15), transparent 60%);
+}
+.interventions-page .boi .band>*{ position:relative; z-index:1; }
+
+/* ===================== Zones tampon ===================== */
+.interventions-page .boi .stamps{
+  display:grid; grid-template-columns:1fr 1fr; gap:1.5rem;
+  padding:1.5rem 2rem; background:var(--surface-bg); border-bottom:1px solid var(--panel-border);
+}
+.interventions-page .boi .stamp{
+  height:120px; border:2px dashed var(--panel-border); border-radius:var(--radius-sm);
+  background:var(--panel-bg); display:flex; align-items:center; justify-content:center;
+  color:var(--ink-muted); font-weight:700; font-size:.85rem; text-transform:uppercase; letter-spacing:.05em;
+  transition:all .2s ease;
+}
+.interventions-page .boi .stamp::before{ content:'TAMPON'; opacity:.85; }
+.interventions-page .boi .stamp:hover{ border-color:var(--brand-mid); background:var(--muted-bg); }
+
+/* ===================== Ligne infos client ===================== */
+.interventions-page .boi .line{
+  display:grid; grid-template-columns:1.5fr 1.5fr 1fr; gap:2rem;
+  padding:1.5rem 2rem; border-bottom:1px solid var(--panel-border); background:var(--panel-bg);
+}
+.interventions-page .boi .field .lbl{
+  font-size:.72rem; color:var(--brand-mid); text-transform:uppercase; font-weight:800;
+  margin-bottom:.5rem; letter-spacing:.06em;
+}
+.interventions-page .boi .field .under{
+  border-bottom:2px solid var(--brand-mid); padding-bottom:.5rem; min-height:1.5rem; display:flex; align-items:end;
 }
-
-.boi .rowline {
-    display: grid;
-    grid-template-columns: 1.1fr 2.2fr;
-    gap: 2rem;
-    align-items: center;
-    border-bottom: 1px solid var(--gray-100);
-    padding: 1.25rem 0;
-    transition: all 0.2s ease;
-}
-
-.boi .rowline:hover {
-    background: var(--gray-50);
-    margin: 0 -1rem;
-    padding-left: 1rem;
-    padding-right: 1rem;
-    border-radius: var(--border-radius-sm);
-}
-
-.boi .rowline .label {
-    font-weight: 600;
-    color: var(--gray-700);
-    font-size: 0.925rem;
-}
-
-.boi .choices {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 1rem;
-    align-items: center;
-}
-
-.boi .dash {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.5rem;
-    background: var(--gray-50);
-    padding: 0.5rem 1rem;
-    border-radius: var(--border-radius-sm);
-    border: 1px solid var(--gray-200);
-}
-
-.boi .dash span {
-    font-size: 0.75rem;
-    font-weight: 600;
-    color: var(--gray-600);
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-}
-
-.boi .dash input[type="text"] {
-    border: none;
-    background: transparent;
-    padding: 0.25rem 0.5rem;
-    min-width: 120px;
-    font-weight: 500;
-    color: var(--gray-800);
-}
-
-/* ---- Boutons radio et checkbox standard ---- */
-.boi .form-check {
-    display: flex;
-    align-items: center;
-    margin: 0 0.5rem 0.5rem 0;
-    gap: 0.5rem;
-    padding: 0.5rem 1rem;
-    background: white;
-    border: 1px solid var(--gray-200);
-    border-radius: var(--border-radius-sm);
-    transition: all 0.2s ease;
-    cursor: pointer;
-    box-shadow: var(--shadow-sm);
-}
-
-.boi .form-check:hover {
-    background: var(--gray-50);
-    border-color: var(--primary);
-}
-
-.boi .form-check-input {
-    margin: 0;
-    width: 1rem;
-    height: 1rem;
-    border: 2px solid var(--gray-300);
-    transition: all 0.2s ease;
-    flex-shrink: 0;
-}
-
-.boi .form-check-input:checked {
-    background: var(--primary);
-    border-color: var(--primary);
-}
-
-.boi .form-check-input:focus {
-    outline: none;
-    border-color: var(--primary);
-    box-shadow: 0 0 0 3px rgb(59 130 246 / 0.1);
-}
-
-.boi .form-check-label {
-    font-weight: 500;
-    color: var(--gray-700);
-    font-size: 0.875rem;
-    cursor: pointer;
-    margin: 0;
-    line-height: 1.4;
-}
-
-.boi .inline > div,
-.boi .choices > div {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.5rem;
-}
-
-/* ---- Section commentaires ---- */
-.boi .comments {
-    padding: 1.5rem 2rem;
-    background: var(--gray-50);
-    border-top: 1px solid var(--gray-200);
-}
-
-.boi .comments .lbl {
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-    margin-bottom: 1rem;
-    color: var(--primary);
-    font-size: 0.75rem;
-}
-
-.boi .comments textarea {
-    width: 100%;
-    min-height: 120px;
-    border: 2px solid var(--gray-300);
-    border-radius: var(--border-radius-sm);
-    padding: 1rem;
-    font-family: inherit;
-    font-size: 0.925rem;
-    line-height: 1.5;
-    transition: all 0.2s ease;
-    resize: vertical;
-}
-
-.boi .comments textarea:focus {
-    outline: none;
-    border-color: var(--primary);
-    box-shadow: 0 0 0 3px rgb(59 130 246 / 0.1);
-}
-
-/* ---- Section bon ---- */
-.boi .bon {
-    display: grid;
-    grid-template-columns: 1fr 2fr;
-    gap: 2rem;
-    padding: 1.5rem 2rem;
-    background: white;
-    border-top: 1px solid var(--gray-200);
-}
-
-.boi .bon .lbl {
-    font-size: 0.75rem;
-    color: var(--primary);
-    text-transform: uppercase;
-    font-weight: 700;
-    margin-bottom: 0.75rem;
-    letter-spacing: 0.05em;
-}
-
-.boi .bon input[disabled] {
-    background: var(--gray-100);
-    border: 2px solid var(--gray-300);
-    border-radius: var(--border-radius-sm);
-    color: var(--gray-700);
-    padding: 0.75rem 1rem;
-    font-weight: 600;
-    width: 100%;
-}
-
-/* ---- Section signatures ---- */
-.boi .sigs {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 1.5rem;
-    padding: 2rem;
-    background: var(--gray-50);
-    border-top: 1px solid var(--gray-200);
-}
-
-.boi .sigbox {
-    background: white;
-    border: 2px solid var(--gray-300);
-    border-radius: var(--border-radius);
-    overflow: hidden;
-    box-shadow: var(--shadow);
-    transition: all 0.2s ease;
-}
-
-.boi .sigbox:hover {
-    border-color: var(--primary);
-    box-shadow: var(--shadow-lg);
-}
-
-.boi .sigbox .cap {
-    background: var(--primary);
-    color: white;
-    padding: 0.75rem 1rem;
-    text-transform: uppercase;
-    font-size: 0.75rem;
-    letter-spacing: 0.05em;
-    font-weight: 700;
-    text-align: center;
-}
-
-.boi .sigbox .body {
-    padding: 1rem;
-    min-height: 160px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: white;
-}
-
-.boi .sigbox input {
-    border: none !important;
-    background: transparent !important;
-    width: 100%;
-    text-align: center;
-    font-weight: 600;
-    color: var(--gray-800);
-    font-size: 0.925rem;
-}
-
-/* ---- Canvas signature ---- */
-.boi .sigbox-sign .body {
-    padding: 0.5rem;
-    min-height: 140px;
-}
-
-.boi .sigbox canvas {
-    width: 100%;
-    height: 100%;
-    touch-action: none;
-    display: block;
-    cursor: crosshair;
-    border-radius: 0.25rem;
-}
-
-/* ---- Outils signature ---- */
-.boi .sigtools {
-    background: var(--gray-100);
-    padding: 0.75rem;
-    display: flex;
-    gap: 0.5rem;
-    justify-content: center;
-    border-top: 1px solid var(--gray-200);
-}
-
-.boi .sigtools .btn {
-    background: white;
-    border: 1px solid var(--gray-300);
-    border-radius: 0.375rem;
-    padding: 0.5rem 1rem;
-    font-size: 0.75rem;
-    font-weight: 600;
-    color: var(--gray-700);
-    transition: all 0.2s ease;
-    cursor: pointer;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-}
-
-.boi .sigtools .btn:hover {
-    background: var(--gray-50);
-    border-color: var(--primary);
-    color: var(--primary);
+.interventions-page .boi .field input{
+  border:0 !important; background:transparent !important; padding:0 !important;
+  font-weight:700; font-size:1rem; color:var(--ink); width:100%;
 }
 
-.boi .sigtools .btn:active {
-    transform: translateY(1px);
+/* ===================== Veille (checkbox) ===================== */
+.interventions-page .boi .tick-grid{
+  display:grid; grid-template-columns:repeat(4,1fr); gap:1rem;
+  padding:1.5rem 2rem; background:var(--surface-bg); border-bottom:1px solid var(--panel-border);
+}
+.interventions-page .boi .tick{
+  display:flex; align-items:center; gap:.75rem; font-size:.9rem; font-weight:600; color:var(--ink-soft);
+  padding:.75rem; background:var(--panel-bg); border-radius:var(--radius-sm); border:1px solid var(--panel-border);
+  transition:all .2s ease; cursor:pointer; box-shadow:var(--shadow-sm);
+}
+.interventions-page .boi .tick:hover{ background:var(--muted-bg); border-color:var(--brand-mid); }
+.interventions-page .boi .tick input[type="checkbox"]{
+  appearance:none; width:1.25rem; height:1.25rem; border:2px solid var(--panel-border);
+  border-radius:.25rem; background:var(--panel-bg); transition:all .2s ease; position:relative; flex-shrink:0;
 }
+.interventions-page .boi .tick input[type="checkbox"]:hover{ border-color:var(--success); }
+.interventions-page .boi .tick input[type="checkbox"]:checked{ background:var(--success); border-color:var(--success); }
+.interventions-page .boi .tick input[type="checkbox"]:checked::before{
+  content:'✓'; position:absolute; inset:0; display:flex; align-items:center; justify-content:center;
+  color:#fff; font-weight:800; font-size:.85rem;
+}
+.interventions-page .boi .tick input[type="checkbox"]:focus{ outline:none; box-shadow:0 0 0 3px rgba(16,185,129,.25); }
+
+/* ===================== Séparateurs ===================== */
+.interventions-page .boi .divider{
+  background: linear-gradient(90deg, var(--brand) 0%, var(--brand-mid) 100%);
+  color:#fff; padding:1rem 2rem; font-weight:800; text-transform:uppercase;
+  letter-spacing:.06em; font-size:.85rem; border-top:1px solid var(--panel-border); border-bottom:1px solid var(--panel-border);
+}
 
-/* ---- Bouton de soumission ---- */
-.boi .submit {
-    background: linear-gradient(135deg, var(--gray-800) 0%, var(--gray-700) 100%);
-    padding: 2rem;
-    display: flex;
-    justify-content: center;
-    border-top: 1px solid var(--gray-200);
+/* ===================== Bloc CR (type / moyen / date) ===================== */
+.interventions-page .boi .cr-wrap{
+  display:grid; grid-template-columns:1.2fr 1fr .8fr; gap:2rem;
+  padding:1.5rem 2rem; border-bottom:1px solid var(--panel-border); background:var(--panel-bg);
 }
-
-.boi .submit .btn {
-    background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
-    color: white;
-    border: none;
-    border-radius: var(--border-radius);
-    padding: 1rem 2.5rem;
-    font-weight: 700;
-    font-size: 1rem;
-    letter-spacing: 0.05em;
-    text-transform: uppercase;
-    cursor: pointer;
-    transition: all 0.2s ease;
-    box-shadow: var(--shadow-lg);
-}
-
-.boi .submit .btn:hover {
-    transform: translateY(-1px);
-    box-shadow: var(--shadow-xl);
-}
-
-.boi .submit .btn:active {
-    transform: translateY(0);
+.interventions-page .boi .cr-group .lbl,
+.interventions-page .boi .datebox .date-title{
+  font-size:.72rem; color:var(--brand-mid); text-transform:uppercase; font-weight:800; margin-bottom:.75rem; letter-spacing:.06em;
 }
-
-/* ---- Masquer éléments vides ---- */
-.boi input[type="radio"][value=""] {
-    display: none;
+.interventions-page .boi .inline{ display:flex; flex-wrap:wrap; gap:1rem; align-items:center; }
+.interventions-page .boi .datebox input{
+  border:2px solid var(--panel-border); border-radius:var(--radius-sm); padding:.75rem; font-weight:700;
+  transition:all .2s ease; width:100%; background:var(--panel-bg); color:var(--ink);
 }
-
-.boi input[type="radio"][value=""] + label {
-    display: none;
+.interventions-page .boi .datebox input:focus{ outline:none; border-color:var(--brand-mid); box-shadow:0 0 0 3px rgba(26,79,154,.15); }
+
+/* ===================== En-tête “Détail prestation” ===================== */
+.interventions-page .boi .detail-head{
+  background: var(--brand-dark); color:#fff; padding:1rem 2rem; font-weight:800;
+  text-transform:uppercase; letter-spacing:.06em; font-size:.85rem; border-top:1px solid var(--panel-border); border-bottom:1px solid var(--panel-border);
 }
 
-/* ---- Responsive Design ---- */
-@media (max-width: 1024px) {
-    .boi {
-        margin: 1rem auto;
-        padding: 0 0.5rem;
-    }
-    
-    .boi .sheet {
-        border-radius: var(--border-radius-sm);
-    }
-    
-    .boi .line {
-        padding: 1rem 1.5rem;
-    }
-    
-    .boi .cr-wrap,
-    .boi .hours,
-    .boi .bon {
-        padding: 1rem 1.5rem;
-    }
+/* ===================== Heures ===================== */
+.interventions-page .boi .hours{
+  display:grid; grid-template-columns:repeat(3,1fr); gap:1.5rem;
+  padding:1.5rem 2rem; border-bottom:1px solid var(--panel-border); background:var(--surface-bg);
+}
+.interventions-page .boi .hour{
+  background:var(--panel-bg); border:1px solid var(--panel-border); border-radius:var(--radius-sm);
+  padding:1.25rem; box-shadow:var(--shadow-sm); transition:all .2s ease;
+}
+.interventions-page .boi .hour:hover{ box-shadow:var(--shadow); border-color:var(--brand-mid); }
+.interventions-page .boi .hour .H{
+  font-weight:800; color:var(--brand-mid); text-transform:uppercase; letter-spacing:.06em; margin-bottom:.75rem; font-size:.75rem;
+}
+.interventions-page .boi .hour .time input{
+  border:0; background:transparent; width:100%; height:2.5rem; font-weight:800; font-size:1.1rem; color:var(--ink); outline:none; text-align:center;
+}
+
+/* ===================== Lignes de détail ===================== */
+.interventions-page .boi .rows{ padding:.5rem 2rem 1rem; background:var(--panel-bg); }
+.interventions-page .boi .rowline{
+  display:grid; grid-template-columns:1.1fr 2.2fr; gap:2rem; align-items:center;
+  border-bottom:1px solid var(--panel-border); padding:1.15rem 0; transition:all .2s ease;
+}
+.interventions-page .boi .rowline:hover{ background:var(--muted-bg); margin:0 -1rem; padding-left:1rem; padding-right:1rem; border-radius:var(--radius-sm); }
+.interventions-page .boi .rowline .label{ font-weight:700; color:var(--ink-soft); font-size:.95rem; }
+.interventions-page .boi .choices{ display:flex; flex-wrap:wrap; gap:1rem; align-items:center; }
+
+/* tags input inline */
+.interventions-page .boi .dash{
+  display:inline-flex; align-items:center; gap:.5rem; background:var(--muted-bg);
+  padding:.5rem 1rem; border-radius:var(--radius-sm); border:1px solid var(--panel-border);
+}
+.interventions-page .boi .dash span{ font-size:.72rem; font-weight:800; color:var(--ink-muted); text-transform:uppercase; letter-spacing:.05em; }
+.interventions-page .boi .dash input[type="text"]{ border:0; background:transparent; padding:.25rem .5rem; min-width:120px; font-weight:600; color:var(--ink); }
+
+/* radios/checkbox (widgets Symfony) */
+.interventions-page .boi .form-check{
+  display:flex; align-items:center; gap:.5rem; margin:0 .5rem .5rem 0; padding:.5rem 1rem;
+  background:var(--panel-bg); border:1px solid var(--panel-border); border-radius:var(--radius-sm);
+  transition:all .2s ease; cursor:pointer; box-shadow:var(--shadow-sm);
+}
+.interventions-page .boi .form-check:hover{ background:var(--muted-bg); border-color:var(--brand-mid); }
+.interventions-page .boi .form-check-input{ margin:0; width:1rem; height:1rem; border:2px solid var(--panel-border); transition:all .2s ease; flex-shrink:0; }
+.interventions-page .boi .form-check-input:checked{ background:var(--brand-mid); border-color:var(--brand-mid); }
+.interventions-page .boi .form-check-input:focus{ outline:none; border-color:var(--brand-mid); box-shadow:0 0 0 3px rgba(26,79,154,.15); }
+.interventions-page .boi .form-check-label{ font-weight:600; color:var(--ink-soft); font-size:.88rem; cursor:pointer; margin:0; line-height:1.4; }
+.interventions-page .boi .inline>div,
+.interventions-page .boi .choices>div{ display:flex; flex-wrap:wrap; gap:.5rem; }
+
+/* ===================== Commentaires ===================== */
+.interventions-page .boi .comments{
+  padding:1.5rem 2rem; background:var(--surface-bg); border-top:1px solid var(--panel-border);
+}
+.interventions-page .boi .comments .lbl{ font-weight:900; text-transform:uppercase; letter-spacing:.06em; margin-bottom:1rem; color:var(--brand-mid); font-size:.75rem; }
+.interventions-page .boi .comments textarea{
+  width:100%; min-height:120px; border:2px solid var(--panel-border); border-radius:var(--radius-sm);
+  padding:1rem; font-family:inherit; font-size:.95rem; line-height:1.5; transition:all .2s ease;
+  resize:vertical; background:var(--panel-bg); color:var(--ink);
+}
+.interventions-page .boi .comments textarea:focus{ outline:none; border-color:var(--brand-mid); box-shadow:0 0 0 3px rgba(26,79,154,.12); }
+
+/* ===================== Section bon ===================== */
+.interventions-page .boi .bon{
+  display:grid; grid-template-columns:1fr 2fr; gap:2rem;
+  padding:1.5rem 2rem; background:var(--panel-bg); border-top:1px solid var(--panel-border);
+}
+.interventions-page .boi .bon .lbl{ font-size:.72rem; color:var(--brand-mid); text-transform:uppercase; font-weight:800; margin-bottom:.75rem; letter-spacing:.06em; }
+.interventions-page .boi .bon input[disabled]{
+  background:var(--muted-bg); border:2px solid var(--panel-border); border-radius:var(--radius-sm);
+  color:var(--ink-soft); padding:.75rem 1rem; font-weight:800; width:100%;
+}
+
+/* ===================== Signatures ===================== */
+.interventions-page .boi .sigs{
+  display:grid; grid-template-columns:repeat(3,1fr); gap:1.5rem;
+  padding:2rem; background:var(--surface-bg); border-top:1px solid var(--panel-border);
+}
+.interventions-page .boi .sigbox{
+  background:var(--panel-bg); border:2px solid var(--panel-border); border-radius:var(--radius);
+  overflow:hidden; box-shadow:var(--shadow); transition:all .2s ease;
+}
+.interventions-page .boi .sigbox:hover{ border-color:var(--brand-mid); box-shadow:var(--shadow-lg); }
+.interventions-page .boi .sigbox .cap{
+  background: var(--primary-gradient); color:#fff; padding:.75rem 1rem;
+  text-transform:uppercase; font-size:.75rem; letter-spacing:.06em; font-weight:900; text-align:center;
+}
+.interventions-page .boi .sigbox .body{ padding:1rem; min-height:160px; display:flex; align-items:center; justify-content:center; background:var(--panel-bg); }
+.interventions-page .boi .sigbox input{
+  border:0 !important; background:transparent !important; width:100%; text-align:center; font-weight:700; color:var(--ink); font-size:.95rem;
+}
+/* Canvas signature */
+.interventions-page .boi .sigbox-sign .body{ padding:.5rem; min-height:140px; }
+.interventions-page .boi .sigbox canvas{ width:100%; height:100%; touch-action:none; display:block; cursor:crosshair; border-radius:.25rem; }
+
+/* Outils signature */
+.interventions-page .boi .sigtools{
+  background:var(--muted-bg); padding:.75rem; display:flex; gap:.5rem; justify-content:center; border-top:1px solid var(--panel-border);
+}
+.interventions-page .boi .sigtools .btn{
+  background:var(--panel-bg); border:1px solid var(--panel-border); border-radius:.375rem;
+  padding:.45rem 1rem; font-size:.75rem; font-weight:800; color:var(--ink-soft);
+  transition:all .2s ease; cursor:pointer; text-transform:uppercase; letter-spacing:.05em;
+}
+.interventions-page .boi .sigtools .btn:hover{ background:var(--muted-bg); border-color:var(--brand-mid); color:var(--brand-mid); }
+.interventions-page .boi .sigtools .btn:active{ transform:translateY(1px); }
+
+/* ===================== Zone soumission ===================== */
+.interventions-page .boi .submit{
+  background: linear-gradient(135deg,#0f172a 0%,#111827 100%);
+  padding:2rem; display:flex; justify-content:center; border-top:1px solid var(--panel-border);
+}
+.interventions-page .boi .submit .btn{
+  background: linear-gradient(135deg,var(--brand) 0%,var(--brand-mid) 100%);
+  color:#fff; border:none; border-radius:14px; padding:1rem 2.25rem;
+  font-weight:900; font-size:1rem; letter-spacing:.06em; text-transform:uppercase; cursor:pointer;
+  transition:all .2s ease; box-shadow:0 12px 24px rgba(10,58,122,.25);
+}
+.interventions-page .boi .submit .btn:hover{ transform:translateY(-1px); box-shadow:0 16px 30px rgba(10,58,122,.30); }
+.interventions-page .boi .submit .btn:active{ transform:translateY(0); }
+
+/* ===================== Masques widgets vides ===================== */
+.interventions-page .boi input[type="radio"][value=""]{ display:none; }
+.interventions-page .boi input[type="radio"][value=""]+label{ display:none; }
+
+/* ===================== Responsive ===================== */
+@media (max-width:1024px){
+  .interventions-page .boi{ margin:1rem auto; padding:0 .5rem; }
+  .interventions-page .boi .sheet{ border-radius:var(--radius-sm); }
+  .interventions-page .boi .line,
+  .interventions-page .boi .cr-wrap,
+  .interventions-page .boi .hours,
+  .interventions-page .boi .bon{ padding:1rem 1.5rem; }
+}
+@media (max-width:768px){
+  .interventions-page .boi .stamps{ grid-template-columns:1fr; gap:1rem; padding:1rem 1.5rem; }
+  .interventions-page .boi .line{ grid-template-columns:1fr; gap:1rem; }
+  .interventions-page .boi .tick-grid{ grid-template-columns:repeat(2,1fr); gap:.75rem; padding:1rem 1.5rem; }
+  .interventions-page .boi .cr-wrap{ grid-template-columns:1fr; gap:1.5rem; }
+  .interventions-page .boi .hours{ grid-template-columns:1fr; gap:1rem; }
+  .interventions-page .boi .bon{ grid-template-columns:1fr; gap:1rem; }
+  .interventions-page .boi .sigs{ grid-template-columns:1fr; gap:1rem; padding:1.5rem; }
+  .interventions-page .boi .rowline{ grid-template-columns:1fr; gap:1rem; text-align:left; }
+  .interventions-page .boi .choices{ justify-content:flex-start; }
+}
+@media (max-width:480px){
+  .interventions-page .boi .tick-grid{ grid-template-columns:1fr; }
+  .interventions-page .boi .tick{ padding:.5rem; font-size:.82rem; }
+  .interventions-page .boi .band{ padding:1rem; font-size:1rem; }
+  .interventions-page .boi .rows{ padding:.5rem 1rem 1rem; }
+  .interventions-page .boi .comments{ padding:1rem; }
+}
+
+/* ===================== Impression ===================== */
+@media print{
+  .interventions-page .boi{ margin:0; padding:0; }
+  .interventions-page .boi .sheet{ box-shadow:none; border:1px solid #000; border-radius:0; }
+  .interventions-page .boi .submit,
+  .interventions-page .boi .sigtools{ display:none !important; }
+  .interventions-page .boi .band{ background:#0a3a7a !important; -webkit-print-color-adjust:exact; print-color-adjust:exact; }
 }
 
-@media (max-width: 768px) {
-    .boi .stamps {
-        grid-template-columns: 1fr;
-        gap: 1rem;
-        padding: 1rem 1.5rem;
-    }
-    
-    .boi .line {
-        grid-template-columns: 1fr;
-        gap: 1rem;
-    }
-    
-    .boi .tick-grid {
-        grid-template-columns: repeat(2, 1fr);
-        gap: 0.75rem;
-        padding: 1rem 1.5rem;
-    }
-    
-    .boi .cr-wrap {
-        grid-template-columns: 1fr;
-        gap: 1.5rem;
-    }
-    
-    .boi .hours {
-        grid-template-columns: 1fr;
-        gap: 1rem;
-    }
-    
-    .boi .bon {
-        grid-template-columns: 1fr;
-        gap: 1rem;
-    }
-    
-    .boi .sigs {
-        grid-template-columns: 1fr;
-        gap: 1rem;
-        padding: 1.5rem;
-    }
-    
-    .boi .rowline {
-        grid-template-columns: 1fr;
-        gap: 1rem;
-        text-align: left;
-    }
-    
-    .boi .choices {
-        justify-content: flex-start;
-    }
-}
 
-@media (max-width: 480px) {
-    .boi .tick-grid {
-        grid-template-columns: 1fr;
-    }
-    
-    .boi .tick {
-        padding: 0.5rem;
-        font-size: 0.8rem;
-    }
-    
-    .boi .band {
-        padding: 1rem;
-        font-size: 1rem;
-    }
-    
-    .boi .rows {
-        padding: 0.5rem 1rem 1rem;
-    }
-    
-    .boi .comments {
-        padding: 1rem;
-    }
-}
