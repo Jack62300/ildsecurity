@@ -1,409 +1,306 @@
-/* Extracted from templates/home/index.html.twig on 2025-09-27T00:36:11.111Z */
+/* HOME / LOGIN — THEME SÉCURITÉ PRIVÉE (cohérent avec la page index) */
+/* Date: 2025-10-03 */
 
 /* ========== VARIABLES CSS MODERNES ========== */
-    :root {
-      --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      --security-gradient: linear-gradient(135deg, #1e3a8a 0%, #1e40af 25%, #3b82f6 50%, #1e40af 75%, #1e3a8a 100%);
-      --card-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
-      --card-shadow-hover: 0 25px 80px rgba(0, 0, 0, 0.2);
-      --border-radius: 12px;
-      --border-radius-lg: 20px;
-      --transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-      --glass-bg: rgba(255, 255, 255, 0.95);
-      --glass-border: rgba(255, 255, 255, 0.3);
-    }
+/* Si ces variables existent déjà globalement (via la page index), 
+   tu peux supprimer ce bloc et ne garder que les usages en dessous. */
+:root {
+  /* Palette marque commune */
+  --brand-dark: #0b1e39;         /* Bleu nuit profond */
+  --brand: #0a3a7a;              /* Bleu sécurité (focus/cta) */
+  --brand-mid: #1a4f9a;          /* Intermédiaire, pour dégradés doux */
+  --brand-bright: #3b82f6;       /* Accent lumineux ponctuel (rare) */
+  --accent-amber: #f59e0b;       /* Alertes / badges info */
+  --text-on-dark: #e5edf7;
 
-    /* ========== BODY ET LAYOUT PRINCIPAL ========== */
-    body {
-      background: var(--security-gradient);
-      min-height: 100vh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 2rem 1rem;
-      position: relative;
-      overflow-x: hidden;
-    }
+  /* Dégradés / effets */
+  --primary-gradient: linear-gradient(135deg, var(--brand-dark) 0%, var(--brand) 100%);
+  --security-gradient: linear-gradient(
+    135deg,
+    var(--brand-dark) 0%,
+    var(--brand) 25%,
+    var(--brand-mid) 50%,
+    var(--brand) 75%,
+    var(--brand-dark) 100%
+  );
 
-    /* Effets de fond sécurité privée */
-    body::before {
-      content: '';
-      position: fixed;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      background-image: 
-        radial-gradient(circle at 20% 80%, rgba(255,255,255,0.04) 0%, transparent 50%),
-        radial-gradient(circle at 80% 20%, rgba(255,255,255,0.03) 0%, transparent 50%),
-        radial-gradient(circle at 40% 40%, rgba(255,255,255,0.02) 0%, transparent 50%);
-      pointer-events: none;
-      z-index: -2;
-    }
+  --card-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+  --card-shadow-hover: 0 25px 80px rgba(0, 0, 0, 0.2);
+  --border-radius: 12px;
+  --border-radius-lg: 20px;
+  --transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  --glass-bg: rgba(255, 255, 255, 0.95);
+  --glass-border: rgba(255, 255, 255, 0.3);
+}
 
-    /* Motif de sécurité en arrière-plan */
-    body::after {
-      content: '';
-      position: fixed;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><g opacity="0.02"><path d="M50 10 L60 25 L50 40 L40 25 Z" fill="white"/><circle cx="20" cy="20" r="8" fill="none" stroke="white" stroke-width="1"/><circle cx="80" cy="80" r="6" fill="none" stroke="white" stroke-width="1"/><rect x="70" y="15" width="12" height="12" fill="none" stroke="white" stroke-width="1"/><polygon points="15,75 25,70 30,85 20,90" fill="none" stroke="white" stroke-width="1"/></g></svg>');
-      background-size: 200px 200px;
-      pointer-events: none;
-      z-index: -1;
-      animation: securityPattern 60s linear infinite;
-    }
+/* ========== BODY ET LAYOUT PRINCIPAL ========== */
+body {
+  background: var(--security-gradient);
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem 1rem;
+  position: relative;
+  overflow-x: hidden;
+}
 
-    @keyframes securityPattern {
-      0% { transform: translate(0, 0); }
-      100% { transform: translate(-200px, -200px); }
-    }
+/* Effets de fond sécurité privée */
+body::before {
+  content: '';
+  position: fixed; inset: 0;
+  background-image: 
+    radial-gradient(circle at 20% 80%, rgba(255,255,255,0.04) 0%, transparent 50%),
+    radial-gradient(circle at 80% 20%, rgba(255,255,255,0.03) 0%, transparent 50%),
+    radial-gradient(circle at 40% 40%, rgba(255,255,255,0.02) 0%, transparent 50%);
+  pointer-events: none;
+  z-index: -2;
+}
 
-    /* ========== CARTE DE CONNEXION ========== */
-    .login-container {
-      width: 100%;
-      max-width: 450px;
-      animation: slideInUp 0.8s ease-out;
-    }
+/* Motif de sécurité en arrière-plan */
+body::after {
+  content: '';
+  position: fixed; inset: 0;
+  background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><g opacity="0.02"><path d="M50 10 L60 25 L50 40 L40 25 Z" fill="white"/><circle cx="20" cy="20" r="8" fill="none" stroke="white" stroke-width="1"/><circle cx="80" cy="80" r="6" fill="none" stroke="white" stroke-width="1"/><rect x="70" y="15" width="12" height="12" fill="none" stroke="white" stroke-width="1"/><polygon points="15,75 25,70 30,85 20,90" fill="none" stroke="white" stroke-width="1"/></g></svg>');
+  background-size: 200px 200px;
+  pointer-events: none;
+  z-index: -1;
+  animation: securityPattern 60s linear infinite;
+}
 
-    @keyframes slideInUp {
-      from {
-        opacity: 0;
-        transform: translateY(50px);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
-    }
+@keyframes securityPattern {
+  0% { transform: translate(0, 0); }
+  100% { transform: translate(-200px, -200px); }
+}
 
-    .login-card {
-      background: var(--glass-bg);
-      backdrop-filter: blur(20px);
-      -webkit-backdrop-filter: blur(20px);
-      border: 1px solid var(--glass-border);
-      border-radius: var(--border-radius-lg);
-      box-shadow: var(--card-shadow);
-      overflow: hidden;
-      transition: var(--transition);
-    }
+/* ========== CARTE DE CONNEXION ========== */
+.login-container {
+  width: 100%;
+  max-width: 450px;
+  animation: slideInUp 0.8s ease-out;
+}
 
-    .login-card:hover {
-      box-shadow: var(--card-shadow-hover);
-      transform: translateY(-5px);
-    }
+@keyframes slideInUp {
+  from { opacity: 0; transform: translateY(50px); }
+  to { opacity: 1; transform: translateY(0); }
+}
 
-    /* ========== SECTION LOGO ========== */
-    .logo-section {
-      background: linear-gradient(135deg, rgba(30, 58, 138, 0.1), rgba(30, 64, 175, 0.05));
-      padding: 3rem 2rem 2rem;
-      text-align: center;
-      border-bottom: 1px solid rgba(30, 58, 138, 0.1);
-      position: relative;
-    }
+.login-card {
+  background: var(--glass-bg);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--border-radius-lg);
+  box-shadow: var(--card-shadow);
+  overflow: hidden;
+  transition: var(--transition);
+}
 
-    .logo-section::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><g opacity="0.03"><circle cx="20" cy="20" r="15" fill="none" stroke="white" stroke-width="2"/><path d="M70 10 L85 20 L80 35 L65 30 Z" fill="white"/><rect x="15" y="70" width="20" height="15" fill="none" stroke="white" stroke-width="1.5"/></g></svg>');
-      background-size: 150px 150px;
-      pointer-events: none;
-      opacity: 0.5;
-    }
+.login-card:hover {
+  box-shadow: var(--card-shadow-hover);
+  transform: translateY(-5px);
+}
 
-    .company-logo {
-      width: 120px;
-      height: 120px;
-      margin: 0 auto 1.5rem;
-      background: white;
-      border-radius: var(--border-radius-lg);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      box-shadow: 0 15px 40px rgba(30, 58, 138, 0.15);
-      transition: var(--transition);
-      position: relative;
-      z-index: 1;
-      border: 3px solid rgba(30, 58, 138, 0.1);
-    }
+/* ========== SECTION LOGO ========== */
+.logo-section {
+  background: linear-gradient(135deg, color-mix(in oklab, var(--brand-dark) 12%, transparent), color-mix(in oklab, var(--brand) 6%, transparent));
+  padding: 3rem 2rem 2rem;
+  text-align: center;
+  border-bottom: 1px solid color-mix(in oklab, var(--brand-dark) 12%, transparent);
+  position: relative;
+}
 
-    .company-logo:hover {
-      transform: scale(1.05) rotate(2deg);
-      box-shadow: 0 20px 50px rgba(30, 58, 138, 0.25);
-      border-color: rgba(30, 58, 138, 0.2);
-    }
+.logo-section::before {
+  content: '';
+  position: absolute; inset: 0;
+  background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><g opacity="0.03"><circle cx="20" cy="20" r="15" fill="none" stroke="white" stroke-width="2"/><path d="M70 10 L85 20 L80 35 L65 30 Z" fill="white"/><rect x="15" y="70" width="20" height="15" fill="none" stroke="white" stroke-width="1.5"/></g></svg>');
+  background-size: 150px 150px;
+  pointer-events: none;
+  opacity: 0.5;
+}
 
-    .company-logo img {
-      max-width: 80px;
-      max-height: 80px;
-      object-fit: contain;
-    }
+.company-logo {
+  width: 120px; height: 120px; margin: 0 auto 1.5rem;
+  background: white; border-radius: var(--border-radius-lg);
+  display: flex; align-items: center; justify-content: center;
+  box-shadow: 0 15px 40px color-mix(in oklab, var(--brand-dark) 20%, transparent);
+  transition: var(--transition); position: relative; z-index: 1;
+  border: 3px solid color-mix(in oklab, var(--brand-dark) 15%, transparent);
+}
 
-    .company-title {
-      color: rgba(15, 15, 15, 0.9);
-      font-size: 1.8rem;
-      font-weight: 700;
-      margin-bottom: 0.5rem;
-      text-shadow: 0 2px 10px rgba(0,0,0,0.2);
-      position: relative;
-      z-index: 1;
-    }
+.company-logo:hover {
+  transform: scale(1.05) rotate(2deg);
+  box-shadow: 0 20px 50px color-mix(in oklab, var(--brand-dark) 30%, transparent);
+  border-color: color-mix(in oklab, var(--brand-dark) 25%, transparent);
+}
 
-    .company-subtitle {
-      color: rgba(15, 15, 15, 0.9);
-      font-size: 1rem;
-      font-weight: 500;
-      margin: 0;
-      text-shadow: 0 1px 5px rgba(0,0,0,0.1);
-      position: relative;
-      z-index: 1;
-    }
+.company-logo img {
+  max-width: 80px; max-height: 80px; object-fit: contain;
+}
 
-    /* ========== FORMULAIRE ========== */
-    .form-section {
-      padding: 2.5rem 2rem;
-    }
+.company-title {
+  color: rgba(15, 15, 15, 0.9);
+  font-size: 1.8rem; font-weight: 700; margin-bottom: 0.5rem;
+  text-shadow: 0 2px 10px rgba(0,0,0,0.2);
+  position: relative; z-index: 1;
+}
 
-    .form-group {
-      margin-bottom: 1.5rem;
-      position: relative;
-    }
+.company-subtitle {
+  color: rgba(15, 15, 15, 0.9);
+  font-size: 1rem; font-weight: 500; margin: 0;
+  text-shadow: 0 1px 5px rgba(0,0,0,0.1);
+  position: relative; z-index: 1;
+}
 
-    .form-control {
-      background: rgba(255,255,255,0.9);
-      border: 2px solid rgba(30, 58, 138, 0.1);
-      border-radius: var(--border-radius);
-      padding: 1.2rem 1.2rem 1.2rem 3.5rem;
-      font-size: 1rem;
-      font-weight: 500;
-      color: #1e3a8a;
-      transition: var(--transition);
-      width: 100%;
-    }
+/* ========== FORMULAIRE ========== */
+.form-section { padding: 2.5rem 2rem; }
 
-    .form-control:focus {
-      background: white;
-      border-color: #3b82f6;
-      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
-      transform: translateY(-2px);
-      outline: none;
-    }
+.form-group { margin-bottom: 1.5rem; position: relative; }
 
-    .form-control:hover {
-      background: white;
-      border-color: rgba(59, 130, 246, 0.3);
-    }
+.form-control {
+  background: rgba(255,255,255,0.9);
+  border: 2px solid color-mix(in oklab, var(--brand) 12%, transparent);
+  border-radius: var(--border-radius);
+  padding: 1.2rem 1.2rem 1.2rem 3.5rem;
+  font-size: 1rem; font-weight: 500;
+  color: var(--brand); transition: var(--transition); width: 100%;
+}
 
-    .form-control::placeholder {
-      color: rgba(30, 58, 138, 0.6);
-      font-weight: 400;
-    }
+.form-control:focus {
+  background: white;
+  border-color: var(--brand);
+  box-shadow: 0 0 0 3px color-mix(in oklab, var(--brand) 25%, transparent);
+  transform: translateY(-2px);
+  outline: none;
+}
 
-    /* Icônes des champs */
-    .form-group::before {
-      content: '';
-      position: absolute;
-      left: 1.2rem;
-      top: 50%;
-      transform: translateY(-50%);
-      font-family: 'bootstrap-icons';
-      font-size: 1.2rem;
-      color: rgba(59, 130, 246, 0.7);
-      z-index: 2;
-      transition: var(--transition);
-    }
+.form-control:hover {
+  background: white;
+  border-color: color-mix(in oklab, var(--brand) 30%, transparent);
+}
 
-    .form-group.email::before {
-      content: '\F32F'; /* bi-envelope */
-    }
+.form-control::placeholder {
+  color: color-mix(in oklab, var(--brand) 60%, #94a3b8);
+  font-weight: 400;
+}
 
-    .form-group.password::before {
-      content: '\F4CA'; /* bi-shield-lock */
-    }
+/* Icônes des champs (Bootstrap Icons) */
+.form-group::before {
+  content: '';
+  position: absolute;
+  left: 1.2rem; top: 50%;
+  transform: translateY(-50%);
+  font-family: 'bootstrap-icons';
+  font-size: 1.2rem;
+  color: color-mix(in oklab, var(--brand) 70%, var(--brand-bright));
+  z-index: 2; transition: var(--transition);
+}
+.form-group.email::before { content: '\F32F'; }   /* bi-envelope */
+.form-group.password::before { content: '\F4CA'; }/* bi-shield-lock */
+.form-group.agency::before { content: '\F1AD'; }  /* bi-building */
 
-    .form-group.agency::before {
-      content: '\F1AD'; /* bi-building */
-    }
+.form-group:focus-within::before {
+  color: var(--brand);
+  transform: translateY(-50%) scale(1.1);
+}
 
-    .form-group:focus-within::before {
-      color: #3b82f6;
-      transform: translateY(-50%) scale(1.1);
-    }
+/* ========== BOUTON DE CONNEXION ========== */
+.btn-login {
+  background: linear-gradient(135deg, var(--brand-dark) 0%, var(--brand-bright) 50%, var(--brand) 100%);
+  border: none; color: white;
+  font-weight: 700; font-size: 1.1rem; letter-spacing: 1px;
+  padding: 1.2rem 2rem; border-radius: var(--border-radius);
+  width: 100%; transition: var(--transition); position: relative; overflow: hidden;
+  text-transform: uppercase;
+  box-shadow: 0 8px 25px color-mix(in oklab, var(--brand-dark) 35%, transparent);
+  display: flex; align-items: center; justify-content: center; gap: 0.5rem;
+}
 
-    /* ========== BOUTON DE CONNEXION ========== */
-    .btn-login {
-      background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 50%, #1e40af 100%);
-      border: none;
-      color: white;
-      font-weight: 700;
-      font-size: 1.1rem;
-      letter-spacing: 1px;
-      padding: 1.2rem 2rem;
-      border-radius: var(--border-radius);
-      width: 100%;
-      transition: var(--transition);
-      position: relative;
-      overflow: hidden;
-      text-transform: uppercase;
-      box-shadow: 0 8px 25px rgba(30, 58, 138, 0.3);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 0.5rem;
-    }
+.btn-login::before {
+  content: '';
+  position: absolute; top: 0; left: -100%;
+  width: 100%; height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+  transition: left 0.5s;
+}
+.btn-login:hover::before { left: 100%; }
 
-    .btn-login::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: -100%;
-      width: 100%;
-      height: 100%;
-      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
-      transition: left 0.5s;
-    }
+.btn-login:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 12px 35px color-mix(in oklab, var(--brand-dark) 45%, transparent);
+  color: white;
+}
+.btn-login:active { transform: translateY(-1px); }
+.btn-login .btn-text, .btn-login .btn-icon { position: relative; z-index: 2; }
+.btn-login .btn-icon { font-size: 1.2rem; }
 
-    .btn-login:hover::before {
-      left: 100%;
-    }
+/* ========== MESSAGES D'ERREUR / AVERTISSEMENT ========== */
+.alert-danger {
+  background: linear-gradient(135deg, rgba(248, 113, 113, 0.1), rgba(239, 68, 68, 0.05));
+  border: 1px solid rgba(248, 113, 113, 0.2);
+  border-radius: var(--border-radius);
+  color: #dc2626;
+  padding: 1rem 1.2rem; margin-bottom: 1.5rem;
+  font-weight: 500; backdrop-filter: blur(10px);
+  animation: shakeError 0.5s ease-out;
+}
+@keyframes shakeError {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-5px); }
+  75% { transform: translateX(5px); }
+}
 
-    .btn-login:hover {
-      transform: translateY(-3px);
-      box-shadow: 0 12px 35px rgba(30, 58, 138, 0.4);
-      color: white;
-    }
+.footer-section {
+  background: linear-gradient(135deg, color-mix(in oklab, var(--brand-dark) 8%, transparent), color-mix(in oklab, var(--brand) 4%, transparent));
+  padding: 1.5rem 2rem;
+  border-top: 1px solid color-mix(in oklab, var(--brand-dark) 12%, transparent);
+}
 
-    .btn-login:active {
-      transform: translateY(-1px);
-    }
+.alert-warning {
+  background: linear-gradient(135deg, color-mix(in oklab, var(--accent-amber) 18%, transparent), color-mix(in oklab, var(--accent-amber) 10%, transparent));
+  border: 1px solid color-mix(in oklab, var(--accent-amber) 35%, transparent);
+  border-radius: var(--border-radius);
+  color: color-mix(in oklab, var(--accent-amber) 55%, #6b4e16);
+  padding: 1rem; margin: 0; font-weight: 500; font-size: 0.9rem; text-align: center;
+  backdrop-filter: blur(10px);
+}
 
-    .btn-login .btn-text {
-      position: relative;
-      z-index: 2;
-    }
+/* ========== RESPONSIVE ========== */
+@media (max-width: 768px) {
+  body { padding: 1rem; }
+  .login-container { max-width: 100%; }
+  .logo-section { padding: 2rem 1.5rem 1.5rem; }
+  .company-logo { width: 100px; height: 100px; }
+  .company-title { font-size: 1.5rem; }
+  .form-section { padding: 2rem 1.5rem; }
+  .footer-section { padding: 1.5rem; }
+}
 
-    .btn-login .btn-icon {
-      position: relative;
-      z-index: 2;
-      font-size: 1.2rem;
-    }
+/* ========== EFFETS DE CHARGEMENT ========== */
+.btn-login.loading .btn-text { opacity: 0.7; }
+.btn-login.loading::after {
+  content: ''; position: absolute; width: 20px; height: 20px; margin: auto;
+  border: 2px solid transparent; border-top-color: white; border-radius: 50%;
+  animation: spin 1s linear infinite; z-index: 3;
+}
+@keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
 
-    /* ========== MESSAGES D'ERREUR ========== */
-    .alert-danger {
-      background: linear-gradient(135deg, rgba(248, 113, 113, 0.1), rgba(239, 68, 68, 0.05));
-      border: 1px solid rgba(248, 113, 113, 0.2);
-      border-radius: var(--border-radius);
-      color: #dc2626;
-      padding: 1rem 1.2rem;
-      margin-bottom: 1.5rem;
-      font-weight: 500;
-      backdrop-filter: blur(10px);
-      animation: shakeError 0.5s ease-out;
-    }
+/* ========== ACCESSIBILITÉ ========== */
+.visually-hidden {
+  position: absolute !important; width: 1px !important; height: 1px !important;
+  padding: 0 !important; margin: -1px !important; overflow: hidden !important;
+  clip: rect(0, 0, 0, 0) !important; white-space: nowrap !important; border: 0 !important;
+}
+/* Focus visible pour l'accessibilité */
+.form-control:focus-visible,
+.btn-login:focus-visible {
+  outline: 3px solid color-mix(in oklab, var(--brand) 45%, transparent);
+  outline-offset: 2px;
+}
 
-    @keyframes shakeError {
-      0%, 100% { transform: translateX(0); }
-      25% { transform: translateX(-5px); }
-      75% { transform: translateX(5px); }
-    }
-
-    /* ========== FOOTER ========== */
-    .footer-section {
-      background: linear-gradient(135deg, rgba(30, 58, 138, 0.05), rgba(30, 64, 175, 0.02));
-      padding: 1.5rem 2rem;
-      border-top: 1px solid rgba(30, 58, 138, 0.1);
-    }
-
-    .alert-warning {
-      background: linear-gradient(135deg, rgba(251, 191, 36, 0.1), rgba(245, 158, 11, 0.05));
-      border: 1px solid rgba(251, 191, 36, 0.2);
-      border-radius: var(--border-radius);
-      color: #92400e;
-      padding: 1rem;
-      margin: 0;
-      font-weight: 500;
-      font-size: 0.9rem;
-      text-align: center;
-      backdrop-filter: blur(10px);
-    }
-
-    /* ========== RESPONSIVE ========== */
-    @media (max-width: 768px) {
-      body {
-        padding: 1rem;
-      }
-      
-      .login-container {
-        max-width: 100%;
-      }
-      
-      .logo-section {
-        padding: 2rem 1.5rem 1.5rem;
-      }
-      
-      .company-logo {
-        width: 100px;
-        height: 100px;
-      }
-      
-      .company-title {
-        font-size: 1.5rem;
-      }
-      
-      .form-section {
-        padding: 2rem 1.5rem;
-      }
-      
-      .footer-section {
-        padding: 1.5rem;
-      }
-    }
-
-    /* ========== EFFETS DE CHARGEMENT ========== */
-    .btn-login.loading .btn-text {
-      opacity: 0.7;
-    }
-
-    .btn-login.loading::after {
-      content: '';
-      position: absolute;
-      width: 20px;
-      height: 20px;
-      margin: auto;
-      border: 2px solid transparent;
-      border-top-color: white;
-      border-radius: 50%;
-      animation: spin 1s linear infinite;
-      z-index: 3;
-    }
-
-    @keyframes spin {
-      0% { transform: rotate(0deg); }
-      100% { transform: rotate(360deg); }
-    }
-
-    /* ========== ACCESSIBILITÉ ========== */
-    .visually-hidden {
-      position: absolute !important;
-      width: 1px !important;
-      height: 1px !important;
-      padding: 0 !important;
-      margin: -1px !important;
-      overflow: hidden !important;
-      clip: rect(0, 0, 0, 0) !important;
-      white-space: nowrap !important;
-      border: 0 !important;
-    }
-
-    /* Focus visible pour l'accessibilité */
-    .form-control:focus-visible,
-    .btn-login:focus-visible {
-      outline: 3px solid rgba(59, 130, 246, 0.5);
-      outline-offset: 2px;
-    }
+/* ========== DARK MODE (optionnel si page isolée) ========== */
+@media (prefers-color-scheme: dark) {
+  .company-title, .company-subtitle { color: var(--text-on-dark); text-shadow: none; }
+  .login-card { background: rgba(17, 24, 39, 0.6); border-color: rgba(255,255,255,0.08); }
+  .form-control { background: rgba(255,255,255,0.85); }
+}

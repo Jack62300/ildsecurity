@@ -80,14 +80,14 @@ document.addEventListener('DOMContentLoaded', function () {
   geoBtn.type = 'button';
   geoBtn.id = 'btn-geocode';
   geoBtn.textContent = 'Localiser';
-  geoBtn.className = 'btn-primary';
+  geoBtn.className = 'btn btn-dark';
   Object.assign(geoBtn.style, { padding:'.4rem .8rem', marginRight:'8px' });
 
   const osmQuick = document.createElement('button');
   osmQuick.type = 'button';
   osmQuick.id = 'osm-quick';
   osmQuick.textContent = 'Voir sur OpenStreetMap';
-  osmQuick.className = 'btn-secondary';
+  osmQuick.className = 'btn btn-dark';
   Object.assign(osmQuick.style, { padding:'.4rem .8rem', display:'none' });
 
   toolsRow.appendChild(geoBtn);
@@ -554,21 +554,22 @@ document.addEventListener('DOMContentLoaded', function () {
         </div>
       </div>
 
-      <div class="form-actions">
-        <a href="{{ path('clients_index') }}" class="btn-secondary">
-          ❌ Annuler
-        </a>
-        <button type="submit" class="btn-primary">
-          ✅ {{ mode == 'new' ? 'Créer le client' : 'Enregistrer' }}
-        </button>
+     <div class="form-actions">
+  <a href="{{ path('clients_index') }}" class="btn-cancel">
+    <i class="bi bi-x-lg"></i> Annuler
+  </a>
 
-        
+  <button type="submit" class="btn-save">
+    <i class="bi bi-check2-square"></i>
+    {{ mode == 'new' ? 'Créer le client' : 'Enregistrer' }}
+  </button>
 
-        
-        <a href="{{ path('client_suggest_edit', {id: client.id}) }}" class="btn-primary">
-          <i class="bi bi-lightbulb me-1"></i> Suggérer une correction
-        </a>
-      </div>
+{% if not (is_granted('ROLE_ADMIN') or is_granted('ROLE_DEV') or is_granted('ROLE_SUPPORT')) %}
+  <a href="{{ path('client_suggest_edit', {id: client.id}) }}" class="btn-primary">
+    <i class="bi bi-lightbulb"></i> Suggérer une correction
+  </a>
+{% endif %}
+</div>
 
       {{ form_end(form) }}
     </div>

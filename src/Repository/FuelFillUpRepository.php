@@ -1,14 +1,18 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Repository;
 
-use App\Entity\Vehicle;
 use App\Entity\FuelFillUp;
-use Doctrine\ORM\QueryBuilder;
-use Doctrine\Persistence\ManagerRegistry;
+use App\Entity\Vehicle;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\Persistence\ManagerRegistry;
 
-class FuelFillUpRepository extends ServiceEntityRepository
+/**
+ * @extends ServiceEntityRepository<FuelFillUp>
+ */
+final class FuelFillUpRepository extends ServiceEntityRepository
 {
     public function __construct(ManagerRegistry $registry)
     {
@@ -16,44 +20,91 @@ class FuelFillUpRepository extends ServiceEntityRepository
     }
 
     /**
-     * Dernier plein pour un véhicule avant une date donnée (ou le plus récent si null)
+     * Historique d’un véhicule (du plus récent au plus ancien).
+     *
+     * @return array<FuelFillUp>
      */
-    public function findPreviousForVehicle(Vehicle $vehicle, ?\DateTimeImmutable $before = null): ?FuelFillUp
+    public function findByVehicle(Vehicle $vehicle): array
+    {
+        /** @var array<FuelFillUp> $rows */
+        $rows = $this->createQueryBuilder('f')
+            ->andWhere('f.vehicle = :v')->setParameter('v', $vehicle)
+            ->orderBy('f.filledAt', 'DESC')
+            ->getQuery()->getResult();
+
+        return $rows;
+    }
+
+    /**
+     * Plein précédent d’un véhicule avant une date donnée (si $before = null, le plus récent strictement antérieur n’existe pas → retourne le plus récent).
+     */
+    public function findPreviousForVehicle(Vehicle $vehicle, ?\DateTimeInterface $before = null): ?FuelFillUp
     {
         $qb = $this->createQueryBuilder('f')
-            ->andWhere('f.vehicle = :v')
-            ->andWhere('f.status != :status')
-            ->setParameter('v', $vehicle)
-            ->setParameter('status', 'validated')
+            ->andWhere('f.vehicle = :v')->setParameter('v', $vehicle)
             ->orderBy('f.filledAt', 'DESC')
             ->setMaxResults(1);
 
-        if ($before) {
-            $qb->andWhere('f.filledAt < :before')->setParameter('before', $before);
+        if ($before !== null) {
+            $qb->andWhere('f.filledAt < :b')->setParameter('b', $before);
         }
 
-        return $qb->getQuery()->getOneOrNullResult();
+        /** @var FuelFillUp|null $res */
+        $res = $qb->getQuery()->getOneOrNullResult();
+        return $res;
     }
 
-    public function createNotValidatedQb(): QueryBuilder
-        {
-            return $this->createQueryBuilder('f')
-                ->andWhere('COALESCE(f.status, \'\') <> :validated')
-                ->setParameter('validated', 'validated')
-                ->orderBy('f.filledAt', 'DESC');
+    /**
+     * Alias rétro-compat pour du code existant.
+     */
+    public function findPrevForVehicle(Vehicle $vehicle, ?\DateTimeInterface $before = null): ?FuelFillUp
+    {
+        return $this->findPreviousForVehicle($vehicle, $before);
+    }
+
+    /**
+     * Version “compteur” : précédent strictement en-dessous d’un odomètre donné.
+     */
+    public function findPreviousOdometerForVehicle(Vehicle $vehicle, int $currentOdometer): ?FuelFillUp
+    {
+        /** @var FuelFillUp|null $res */
+        $res = $this->createQueryBuilder('f')
+            ->andWhere('f.vehicle = :vehicle')
+            ->andWhere('f.odometer < :currentOdometer')
+            ->andWhere('f.odometer IS NOT NULL')
+            ->setParameter('vehicle', $vehicle)
+            ->setParameter('currentOdometer', $currentOdometer)
+            ->orderBy('f.odometer', 'DESC')   // le plus proche en dessous
+            ->setMaxResults(1)
+            ->getQuery()
+            ->getOneOrNullResult();
+
+        return $res;
+    }
+
+    /**
+     * Pleins d’une période + statut optionnel.
+     *
+     * @return array<FuelFillUp>
+     */
+    public function findForPeriod(?\DateTimeImmutable $from, ?\DateTimeImmutable $to, ?string $status = null): array
+    {
+        $qb = $this->createQueryBuilder('f')
+            ->leftJoin('f.vehicle', 'v')->addSelect('v')
+            ->orderBy('f.filledAt', 'DESC');
+
+        if ($from !== null) {
+            $qb->andWhere('f.filledAt >= :from')->setParameter('from', $from);
+        }
+        if ($to !== null) {
+            $qb->andWhere('f.filledAt < :to')->setParameter('to', $to);
+        }
+        if ($status !== null && $status !== '') {
+            $qb->andWhere('f.status = :s')->setParameter('s', $status);
         }
 
-        public function findPreviousOdometerForVehicle(Vehicle $vehicle, int $currentOdometer): ?FuelFillUp
-        {
-            return $this->createQueryBuilder('f')
-                ->andWhere('f.vehicle = :vehicle')
-                ->andWhere('f.odometer < :currentOdometer')
-                ->andWhere('f.odometer IS NOT NULL')
-                ->setParameter('vehicle', $vehicle)
-                ->setParameter('currentOdometer', $currentOdometer)
-                ->orderBy('f.odometer', 'DESC')  // Le plus proche en dessous
-                ->setMaxResults(1)
-                ->getQuery()
-                ->getOneOrNullResult();
-        }
+        /** @var array<FuelFillUp> $rows */
+        $rows = $qb->getQuery()->getResult();
+        return $rows;
+    }
 }
