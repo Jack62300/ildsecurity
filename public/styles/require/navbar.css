@@ -7,7 +7,7 @@
 /* ===================== TOKENS DU COMPOSANT ===================== */
 .modern-navbar{
   /* Palette / thèmes du composant (défaut : surface claire) */
-  --nav-gradient: linear-gradient(135deg,#0b1e39 0%,#0a3a7a 100%);
+  --nav-gradient: linear-gradient(135deg,#0b1e39 0%,#0b1e39 100%);
   --nav-shadow: 0 8px 32px rgba(0,0,0,.1);
 
   --nav-bg: rgba(255,255,255,.95);
@@ -91,7 +91,7 @@
 }
 .nav-link-modern::before{
   content:''; position:absolute; inset:0; left:-100%;
-  background: linear-gradient(90deg,transparent,rgba(10,58,122,.10),transparent);
+  background: rgba(10,58,122,0.10);
   transition: left .5s var(--nav-ease);
 }
 .nav-link-modern:hover::before{ left:100%; }
