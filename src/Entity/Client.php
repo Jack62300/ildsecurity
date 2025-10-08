@@ -4,13 +4,15 @@ namespace App\Entity;
 
 use App\Entity\ListAgence;
 use App\Entity\ClientPhoto;
-use App\Repository\ClientRepository;
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
+use App\Security\Auditable;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
-use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+use App\Security\AuditableEntity;
+use App\Repository\ClientRepository;
+use Doctrine\Common\Collections\Collection;
+use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
 #[ORM\Entity(repositoryClass: ClientRepository::class)]
 #[ORM\Table(
@@ -24,7 +26,8 @@ use Symfony\Component\Validator\Constraints as Assert;
     fields: ['adresseNormalized'],
     message: 'Un client avec cette adresse existe déjà.'
 )]
-class Client
+#[Auditable]
+class Client implements AuditableEntity
 {
     #[ORM\Id, ORM\GeneratedValue, ORM\Column]
     private ?int $id = null;

@@ -2,12 +2,14 @@
 
 namespace App\Entity;
 
+use App\Security\Auditable;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
 #[ORM\Entity]
 #[ORM\Table(name: 'organisme')]
 #[UniqueEntity(fields: ['name'], message: 'Cet organisme existe déjà.')]
+#[Auditable]
 class Organisme
 {
     #[ORM\Id, ORM\GeneratedValue, ORM\Column]

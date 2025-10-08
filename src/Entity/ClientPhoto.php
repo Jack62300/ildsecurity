@@ -2,14 +2,16 @@
 
 namespace App\Entity;
 
-use App\Repository\ClientPhotoRepository;
+use App\Security\Auditable;
 use Doctrine\ORM\Mapping as ORM;
+use App\Repository\ClientPhotoRepository;
 use Symfony\Component\HttpFoundation\File\File;
-use Symfony\Component\Validator\Constraints as Assert;
 use Vich\UploaderBundle\Mapping\Annotation as Vich;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: ClientPhotoRepository::class)]
 #[Vich\Uploadable]
+#[Auditable]
 class ClientPhoto
 {
     #[ORM\Id, ORM\GeneratedValue, ORM\Column]

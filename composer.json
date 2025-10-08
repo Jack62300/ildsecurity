@@ -7,13 +7,14 @@
         "php": ">=8.2",
         "ext-ctype": "*",
         "ext-iconv": "*",
-        "amphp/http-client": "5",
+        "amphp/http-client": "^5",
         "doctrine/dbal": "^3",
         "doctrine/doctrine-bundle": "^2.15",
         "doctrine/doctrine-migrations-bundle": "^3.4",
         "doctrine/orm": "^3.5",
         "knplabs/knp-paginator-bundle": "^6.9",
         "mobiledetect/mobiledetectlib": "^4.8",
+        "paragonie/sodium_compat": "^2.4",
         "phpdocumentor/reflection-docblock": "^5.6",
         "phpoffice/phpspreadsheet": "^5.1",
         "phpstan/phpdoc-parser": "^2.2",
@@ -100,7 +101,8 @@
     "extra": {
         "symfony": {
             "allow-contrib": false,
-            "require": "7.3.*"
+            "require": "7.3.*",
+            "docker": true
         }
     },
     "require-dev": {

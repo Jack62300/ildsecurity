@@ -2,10 +2,12 @@
 
 namespace App\Entity;
 
-use App\Repository\InterventionRepository;
+use App\Security\Auditable;
 use Doctrine\ORM\Mapping as ORM;
+use App\Repository\InterventionRepository;
 
 #[ORM\Entity(repositoryClass: InterventionRepository::class)]
+#[Auditable]
 class Intervention
 {
     #[ORM\Id]

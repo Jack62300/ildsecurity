@@ -2,11 +2,13 @@
 
 namespace App\Entity;
 
-use App\Repository\ModificationRequestRepository;
+use App\Security\Auditable;
 use Doctrine\ORM\Mapping as ORM;
+use App\Repository\ModificationRequestRepository;
 
 #[ORM\Entity(repositoryClass: ModificationRequestRepository::class)]
 #[ORM\HasLifecycleCallbacks]
+#[Auditable]
 class ModificationRequest
 {
     public const STATUS_PENDING  = 'pending';

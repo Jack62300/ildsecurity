@@ -2,11 +2,13 @@
 
 namespace App\Entity;
 
-use App\Repository\PhoneNumberRepository;
+use App\Security\Auditable;
 use Doctrine\ORM\Mapping as ORM;
+use App\Repository\PhoneNumberRepository;
 
 #[ORM\Entity(repositoryClass: PhoneNumberRepository::class)]
 #[ORM\Table(name: 'phone_number')]
+#[Auditable]
 class PhoneNumber
 {
     #[ORM\Id]

@@ -1,14 +1,16 @@
 <?php
 namespace App\Entity;
 
-use App\Repository\UserRepository;
+use App\Security\Auditable;
 use Doctrine\ORM\Mapping as ORM;
-use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+use App\Repository\UserRepository;
 use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[UniqueEntity(fields: ['email'], message: 'Cet e-mail est déjà utilisé.')]
+#[Auditable]
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
     // Rôles disponibles

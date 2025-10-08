@@ -2,15 +2,17 @@
 namespace App\Entity;
 
 use App\Entity\FuelFillUp;
+use App\Security\Auditable;
 use Doctrine\ORM\Mapping as ORM;
+use Doctrine\Common\Collections\Collection;
 use Symfony\Component\HttpFoundation\File\File;
 use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
 use Vich\UploaderBundle\Mapping\Annotation as Vich;
 use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity]
 #[Vich\Uploadable]
+#[Auditable]
 class Vehicle
 {
     #[ORM\Id, ORM\GeneratedValue, ORM\Column]

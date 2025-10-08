@@ -2,28 +2,41 @@
 namespace App\Controller;
 
 use App\Entity\TrustedDevice;
-use App\Repository\TrustedDeviceRepository;
+use Symfony\Component\Mime\Email;
+use Symfony\Component\Mailer\Mailer;
 use App\Security\TrustedDeviceManager;
+use Symfony\Component\Mailer\Transport;
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use App\Repository\TrustedDeviceRepository;
+use Symfony\Component\HttpFoundation\Cookie;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
-use Symfony\Component\Mailer\Transport;
-use Symfony\Component\Mailer\Mailer;
-use Symfony\Component\Mime\Email;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 class TrustedDeviceController extends AbstractController
 {
-    #[Route('/device/approve/{id}/{token}', name: 'device_approve', methods: ['GET'])]
-    public function approve(int $id, string $token, TrustedDeviceManager $manager): Response
+   #[Route('/device/approve', name: 'device_approve')]
+    public function approve(Request $request, TrustedDeviceManager $devices): Response
     {
-        $ok = $manager->approve($id, $token);
+        $id   = (int) $request->query->get('id', 0);
+        $tok  = (string) $request->query->get('token', '');
+        $did  = (string) $request->query->get('did', ''); // rawDeviceId envoyé dans l’email
 
-        return $this->render('security/device_approve_result.html.twig', [
-            'success' => $ok,
-        ]);
+        if ($id && $tok && $did && $devices->approve($id, $tok, $did)) {
+            // Pose le cookie tdid (HttpOnly, Secure, SameSite=Lax) pour ~13 mois
+            $resp = new RedirectResponse($this->generateUrl('app_login'));
+            $resp->headers->setCookie(
+                Cookie::create('tdid', $did, new \DateTimeImmutable('+400 days'), '/', null, true, true, false, 'Lax')
+            );
+            $this->addFlash('success', 'Appareil approuvé. Vous pouvez vous connecter.');
+            return $resp;
+        }
+
+        $this->addFlash('danger', 'Lien invalide ou expiré.');
+        return $this->redirectToRoute('app_login');
     }
 
     #[IsGranted('ROLE_ADMIN')]

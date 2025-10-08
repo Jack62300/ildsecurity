@@ -21,6 +21,8 @@ services:
     _defaults:
         autowire: true # Automatically injects dependencies in your services.
         autoconfigure: true # Automatically registers your services as commands, event subscribers, etc.
+        bind:
+            $ipPepper: '%env(APP_IP_PEPPER)%'
     App\Security\TrustedDeviceManager:
         arguments:
             $trustedIps: '%trusted_ips%'
@@ -40,6 +42,18 @@ services:
         arguments:
             $labels: '%app.export.labels%'
 
+    App\Security\AuditLogger:
+        arguments:
+            $ipPepper: '%env(APP_IP_PEPPER)%'
+
+    App\EventListener\DoctrineAuditListener:
+        arguments:
+            $ipPepper: '%env(APP_IP_PEPPER)%'
+        tags:
+            - { name: doctrine.event_listener, event: prePersist }
+            - { name: doctrine.event_listener, event: preUpdate }
+            - { name: doctrine.event_listener, event: preRemove }
+            - { name: doctrine.event_listener, event: postFlush }
 
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones

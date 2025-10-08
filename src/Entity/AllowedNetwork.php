@@ -2,11 +2,13 @@
 // src/Entity/AllowedNetwork.php
 namespace App\Entity;
 
-use App\Repository\AllowedNetworkRepository;
+use App\Security\Auditable;
 use Doctrine\ORM\Mapping as ORM;
+use App\Repository\AllowedNetworkRepository;
 
 #[ORM\Entity(repositoryClass: AllowedNetworkRepository::class)]
 #[ORM\Table(name: 'allowed_networks')]
+#[Auditable]
 class AllowedNetwork
 {
     #[ORM\Id]

@@ -1,12 +1,14 @@
 <?php
 namespace App\Entity;
 
-use App\Repository\FuelFillUpRepository;
+use App\Security\Auditable;
 use Doctrine\ORM\Mapping as ORM;
+use App\Repository\FuelFillUpRepository;
 use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: FuelFillUpRepository::class)]
 #[ORM\Table(name: "fuel_fillup")]
+#[Auditable]
 class FuelFillUp
 {
     #[ORM\Id, ORM\GeneratedValue, ORM\Column]

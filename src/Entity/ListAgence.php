@@ -2,10 +2,12 @@
 
 namespace App\Entity;
 
+use App\Security\Auditable;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity]
 #[ORM\Table(name: 'list_agence')]
+#[Auditable]
 class ListAgence
 {
     #[ORM\Id, ORM\GeneratedValue, ORM\Column]

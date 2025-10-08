@@ -2,13 +2,15 @@
 
 namespace App\Entity;
 
-use App\Repository\PhoneCategoryRepository;
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
+use App\Security\Auditable;
 use Doctrine\ORM\Mapping as ORM;
+use App\Repository\PhoneCategoryRepository;
+use Doctrine\Common\Collections\Collection;
+use Doctrine\Common\Collections\ArrayCollection;
 
 #[ORM\Entity(repositoryClass: PhoneCategoryRepository::class)]
 #[ORM\Table(name: 'phone_category')]
+#[Auditable]
 class PhoneCategory
 {
     #[ORM\Id]
