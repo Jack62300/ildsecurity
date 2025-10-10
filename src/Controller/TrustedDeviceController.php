@@ -21,16 +21,11 @@ class TrustedDeviceController extends AbstractController
    #[Route('/device/approve', name: 'device_approve')]
     public function approve(Request $request, TrustedDeviceManager $devices): Response
     {
-        $id   = (int) $request->query->get('id', 0);
-        $tok  = (string) $request->query->get('token', '');
-        $did  = (string) $request->query->get('did', ''); // rawDeviceId envoyé dans l’email
+        $id  = (int) $request->query->get('id', 0);
+        $tok = (string) $request->query->get('token', '');
 
-        if ($id && $tok && $did && $devices->approve($id, $tok, $did)) {
-            // Pose le cookie tdid (HttpOnly, Secure, SameSite=Lax) pour ~13 mois
+        if ($id && $tok && $devices->approve($id, $tok)) {
             $resp = new RedirectResponse($this->generateUrl('app_login'));
-            $resp->headers->setCookie(
-                Cookie::create('tdid', $did, new \DateTimeImmutable('+400 days'), '/', null, true, true, false, 'Lax')
-            );
             $this->addFlash('success', 'Appareil approuvé. Vous pouvez vous connecter.');
             return $resp;
         }
